@@ -1,0 +1,108 @@
+@{
+    ViewData["Title"] = "Proveedores";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Gestión de Proveedores</h1>
+    <p>Seleccione una opción</p>
+</div>
+
+<div class="container mt-5">
+    <div class="row">
+
+        <!-- Registrar proveedor -->
+        <div class="col-md-4 mb-4">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <h3>Registrar proveedor</h3>
+                    <p>Registrar un nuevo proveedor</p>
+
+                    <a asp-controller="Proveedor"
+                       asp-action="Create"
+                       class="btn btn-primary">
+                        Registrar
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Buscar proveedor -->
+        <div class="col-md-4 mb-4">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <h3>Buscar proveedor</h3>
+                    <p>Buscar un proveedor por su código</p>
+
+                    <a asp-controller="Proveedor"
+                       asp-action="Details"
+                       class="btn btn-primary">
+                        Buscar
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Consultar lista -->
+        <div class="col-md-4 mb-4">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <h3>Consultar proveedores</h3>
+                    <p>Ver la lista de proveedores registrados</p>
+
+                    <a asp-controller="Proveedor"
+                       asp-action="Index"
+                       class="btn btn-primary">
+                        Consultar
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actualizar datos -->
+        <div class="col-md-4 mb-4">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <h3>Actualizar datos</h3>
+                    <p>Modificar los datos de un proveedor</p>
+
+                    <a asp-controller="Proveedor"
+                       asp-action="IndexActualizar"
+                       class="btn btn-primary">
+                        Actualizar
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Eliminar proveedor -->
+        <div class="col-md-4 mb-4">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <h3>Eliminar proveedor</h3>
+                    <p>Eliminar un proveedor registrado</p>
+
+                    <a asp-controller="Proveedor"
+                       asp-action="IndexEliminar"
+                       class="btn btn-danger">
+                        Eliminar
+                    </a>
+                </div>
+            </div>
+        </div>
+        <!-- Volver a inicio -->
+        <div class="col-md-4 mb-4">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <h3>Volver a inicio</h3>
+                    <p>Regresar a la página principal</p>
+
+                    <a asp-controller="Home"
+                       asp-action="Index"
+                       class="btn btn-secondary">
+                        Volver al inicio
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

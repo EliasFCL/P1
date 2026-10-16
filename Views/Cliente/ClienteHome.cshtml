@@ -1,0 +1,109 @@
+@{
+    ViewData["Title"] = "Clientes";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Gestión de Clientes</h1>
+    <p>Seleccione una opción</p>
+</div>
+
+<div class="container mt-5">
+    <div class="row">
+
+        <!-- Registrar cliente -->
+        <div class="col-md-4 mb-4">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <h3>Registrar cliente</h3>
+                    <p>Registrar un nuevo cliente</p>
+
+                    <a asp-controller="Cliente"
+                       asp-action="Create"
+                       class="btn btn-primary">
+                        Registrar
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Buscar cliente -->
+        <div class="col-md-4 mb-4">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <h3>Buscar cliente</h3>
+                    <p>Buscar un cliente por su identificación</p>
+
+                    <a asp-controller="Cliente"
+                       asp-action="Details"
+                       class="btn btn-primary">
+                        Buscar
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Consultar lista -->
+        <div class="col-md-4 mb-4">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <h3>Consultar clientes</h3>
+                    <p>Ver la lista de clientes registrados</p>
+
+                    <a asp-controller="Cliente"
+                       asp-action="Index"
+                       class="btn btn-primary">
+                        Consultar
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actualizar datos -->
+        <div class="col-md-4 mb-4">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <h3>Actualizar datos</h3>
+                    <p>Modificar los datos de un cliente</p>
+
+                    <a asp-controller="Cliente"
+                       asp-action="IndexActualizar"
+                       class="btn btn-primary">
+                        Actualizar
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Eliminar cliente -->
+        <div class="col-md-4 mb-4">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <h3>Eliminar cliente</h3>
+                    <p>Eliminar un cliente registrado</p>
+
+                    <a asp-controller="Cliente"
+                       asp-action="IndexEliminar"
+                       class="btn btn-danger">
+                        Eliminar
+                    </a>
+                </div>
+            </div>
+        </div>
+
+                        <!-- Volver a inicio -->
+        <div class="col-md-4 mb-4">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <h3>Volver a inicio</h3>
+                    <p>Regresar a la página principal</p>
+
+                    <a asp-controller="Home"
+                       asp-action="Index"
+                       class="btn btn-secondary">
+                        Volver al inicio
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

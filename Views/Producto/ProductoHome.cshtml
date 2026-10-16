@@ -1,0 +1,108 @@
+@{
+    ViewData["Title"] = "Productos";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Gestión de Productos</h1>
+    <p>Seleccione una opción</p>
+</div>
+
+<div class="container mt-5">
+    <div class="row">
+
+        <!-- Registrar producto -->
+        <div class="col-md-4 mb-4">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <h3>Registrar producto</h3>
+                    <p>Registrar un nuevo producto</p>
+
+                    <a asp-controller="Producto"
+                       asp-action="Create"
+                       class="btn btn-primary">
+                        Registrar
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Buscar producto -->
+        <div class="col-md-4 mb-4">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <h3>Buscar producto</h3>
+                    <p>Buscar un producto por su código</p>
+
+                    <a asp-controller="Producto"
+                       asp-action="Details"
+                       class="btn btn-primary">
+                        Buscar
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Consultar lista -->
+        <div class="col-md-4 mb-4">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <h3>Consultar productos</h3>
+                    <p>Ver la lista de productos registrados</p>
+
+                    <a asp-controller="Producto"
+                       asp-action="Index"
+                       class="btn btn-primary">
+                        Consultar
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actualizar datos -->
+        <div class="col-md-4 mb-4">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <h3>Actualizar datos</h3>
+                    <p>Modificar los datos de un producto</p>
+
+                    <a asp-controller="Producto"
+                       asp-action="IndexActualizar"
+                       class="btn btn-primary">
+                        Actualizar
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Eliminar producto -->
+        <div class="col-md-4 mb-4">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <h3>Eliminar producto</h3>
+                    <p>Eliminar un producto registrado</p>
+
+                    <a asp-controller="Producto"
+                       asp-action="IndexEliminar"
+                       class="btn btn-danger">
+                        Eliminar
+                    </a>
+                </div>
+            </div>
+        </div>
+                        <!-- Volver a inicio -->
+        <div class="col-md-4 mb-4">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <h3>Volver a inicio</h3>
+                    <p>Regresar a la página principal</p>
+
+                    <a asp-controller="Home"
+                       asp-action="Index"
+                       class="btn btn-secondary">
+                        Volver al inicio
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

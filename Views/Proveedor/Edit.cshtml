@@ -1,0 +1,83 @@
+@model Proyecto1_EliasCorderoLeon.Models.Proveedor
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Actualizar proveedor</h1>
+
+<h4>Proveedor</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                @*Combo box para el tipo de identificación*@
+                <label asp-for="tipoIdentificacion">Tipo de identificación</label>
+                <select asp-for="tipoIdentificacion" class="form-control">
+                    <option value="Cédula nacional">Cédula nacional</option>
+                    <option value="Cédula jurídica">Cédula jurídica</option>
+                    <option value="DIMEX">DIMEX</option>
+            </select>
+            <div class="form-group">
+                <label asp-for="numId">Identificación</label>
+                <input asp-for="numId" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="Nombre">Nombre</label>
+                <input asp-for="Nombre" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="RazonSocial">Razón social</label>
+                <input asp-for="RazonSocial" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="Telefono">Telefóno</label>
+                <input asp-for="Telefono" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="CorreoElectronico">Correo eletrónico</label>
+                <input asp-for="CorreoElectronico" class="form-control" />
+            </div>
+            <div class="form-group">
+                @*Combo box para el tipo de suministro*@
+                <label asp-for="TipoSuministro">Tipo de suministro</label>
+                <select asp-for="TipoSuministro" class="form-control" />
+                <option value="Carne de res">Carne de res</option>
+                <option value="Carne de cerdo">Carne de cerdo</option>
+                <option value="Pollo">Pollo</option>
+                <option value="Embutidos">Embutidos</option>
+                <option value="Productos procesados">Productos procesados</option>
+                <option value="Empaques">Empaques</option>
+                <option value="Condimentos">Condimentos</option>
+                <option value="Otros">Otros</option>
+            </select>
+        </div>
+            <div class="form-group">
+                @*Combo box para la frecuencia de entrega *@
+                <label asp-for="FrecuenciaEntrega">Frecuencia de entrega</label>
+                <select asp-for="FrecuenciaEntrega" class="form-control" />
+                <option value="Diaria">Diaria</option>
+                <option value="Dos veces por semana">Dos veces por semana</option>
+                <option value="Semanal">Semanal</option>
+                <option value="Quincenal">Quincenal</option>
+                <option value="Contra pedido">Contra pedido</option>
+            </select>
+        </div>
+            <div class="form-group">
+                <input type="submit" value="Actualizar" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="IndexActualizar">Volver</a>||
+    <a asp-action="ProveedorHome">Volver a la gestión de proveedor</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
