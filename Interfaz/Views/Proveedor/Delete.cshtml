@@ -1,0 +1,73 @@
+@model Models.Proveedor
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h3>Esta seguro de eliminar a este proveedor?</h3>
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Si" class="btn btn-danger" />
+    </form>
+<div>
+    <hr />
+    <dl class="row">
+                <dt class = "col-sm-2">
+            Tipo de identificación
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.tipoIdentificacion)
+        </dd>
+                <dt class = "col-sm-2">
+            Identificación
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.numId)
+        </dd>
+        <dt class = "col-sm-2">
+            Razón social
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.RazonSocial)
+        </dd>
+                <dt class = "col-sm-2">
+            Nombre
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Nombre)
+        </dd>
+    </dl>
+    <dl class="row">
+        <dt class = "col-sm-2">
+            Telefóno
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Telefono)
+        </dd>
+    </dl>
+    <dl class="row">
+        <dt class = "col-sm-2">
+            Correo electrónico
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.CorreoElectronico)
+        </dd>
+    </dl>
+    <dl class="row">
+        <dt class = "col-sm-2">
+           Tipo de suministro
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.TipoSuministro)
+        </dd>
+    </dl>
+    <dl class="row">
+        <dt class = "col-sm-2">
+            Frecuencia de entrega
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.FrecuenciaEntrega)
+        </dd>
+</div>
+    <a asp-action="IndexEliminar">Volver</a> ||
+    <a asp-action="ProveedorHome">Volver a la gestión de proveedor</a>

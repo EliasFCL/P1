@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Reflection.Metadata;
 
-namespace Proyecto1_EliasCorderoLeon.Models
+namespace Models
 {
     public class Proveedor : Persona
     {

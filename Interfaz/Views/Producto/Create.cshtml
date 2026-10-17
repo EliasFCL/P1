@@ -1,0 +1,117 @@
+@* Recepcion de json: https://developer.mozilla.org/es/docs/Web/API/Fetch_API/Using_Fetch*@
+@*getElementBy: https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/change_event y https://developer.mozilla.org/es/docs/Web/API/Document/getElementById*@
+
+@model Models.Producto
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Registrar producto</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            @if (ViewBag.MensajeExito != null)
+            {
+                <p style="color: green;">
+                    @ViewBag.MensajeExito
+                </p>
+            }
+            <div class="form-group">
+                 <label class="control-label">Código del producto</label>
+                <input asp-for="codigo" class="form-control" />
+            </div>
+
+            <div class="form-group">
+                 <label class="control-label">Nombre</label>
+                <input asp-for="nombre" class="form-control" />
+            </div>
+
+            <div class="form-group">
+                <label class="control-label">Categoría</label>
+
+                <select asp-for="categoria" id="categoria" class="form-control">
+                    <option value="Carne de res">Carne de res</option>
+                    <option value="Carne de cerdo">Carne de cerdo</option>
+                    <option value="Pollo">Pollo</option>
+                    <option value="Embutidos">Embutidos</option>
+                    <option value="Productos procesados">Productos procesados</option>
+                    <option value="Congelados">Congelados</option>
+                    <option value="Otros">Otros</option>
+                </select>
+            </div>
+
+
+            <div class="form-group">
+                @*Drop box para la unidad de medida*@
+                <label class="control-label">Unidad de medida</label>
+                <select asp-for="unidadMedida" id="unidadMedida" class="form-control">
+                <option value="Kilogramo">Kilogramo</option>
+                <option value="Libra">Libra</option>
+                <option value="Unidad">Unidad</option>
+                <option value="Paquete">Paquete</option>
+                <option value="Bandeja">Bandeja</option>
+            </select>
+
+            <div class="form-group">
+                <label class="control-label">Precio</label>
+                    <input asp-for="precio" id="precio" class="form-control"
+                    onkeydown="return event.key !== '.';" />
+            </div>
+
+            <div class="form-group">
+                <label class="control-label">Existencia actual</label>
+                <input asp-for="existenciaActual" class="form-control" />
+            </div>
+
+            <div class="form-group">
+               <label class="control-label">Existencia minima</label>
+                <input asp-for="existeciaMinima" class="form-control" />
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Registrar producto" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="ProductoHome">Volver</a>
+</div>
+
+    <script>
+        document.getElementById("categoria").addEventListener("change", verificarCombinacion);
+        document.getElementById("unidadMedida").addEventListener("change", verificarCombinacion);
+        verificarCombinacion(); // Llamar a la función al cargar la página para verificar la combinación inicial
+        function verificarCombinacion() {
+
+            var categoria = document.getElementById("categoria").value;
+            var unidadMedida = document.getElementById("unidadMedida").value;
+
+            fetch('@Url.Action("verificarCombinacion", "Producto")', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: 'categoria=' + encodeURIComponent(categoria) +
+                    '&unidadMedida=' + encodeURIComponent(unidadMedida)
+            })
+                .then(response => response.json())
+                .then(data => {
+
+                    var precio = document.getElementById("precio");
+
+                    if (data.existe) {
+                        precio.value = data.precio.toString().replace(/\./g, ',');
+                        precio.readOnly = true;
+                    
+                    }
+                    else {
+                        precio.readOnly = false;
+                    }
+                });
+        }
+    </script>

@@ -1,0 +1,69 @@
+@* Cambiar span por select para el comb box: https://learn.microsoft.com/en-us/aspnet/core/mvc/views/working-with-forms?view=aspnetcore-10.0*@
+@* Crear una vista: Guía para crear un proyecto básico de MVC (Alojado en Aprende U): 10:36*@
+
+@model Models.Cliente
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Digite los datos</h1>
+
+<h4>Persona</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            @if (ViewBag.MensajeExito != null)
+            {
+                <p style="color: green;">
+                    @ViewBag.MensajeExito
+                </p>
+            }
+            <div class="form-group">
+                @* Combo box para el tipo de identificación *@
+                <label class="control-label">Tipo de indetificación</label>
+
+                <select asp-for="tipoIdentificacion" class="form-control">
+                    <option value="Cédula">Cédula</option>
+                    <option value="DIMEX">DIMEX</option>
+                    <option value="Pasaporte">Pasaporte</option>
+                </select>
+            </div>
+
+        <div class="form-group">
+            <label class="control-label">Número de identificación</label>
+            <input asp-for="numId" class="form-control" />
+        </div>
+
+        <div class="form-group">
+            <label class="control-label">Nombre del cliente</label>
+            <input asp-for="nombre" class="form-control" />
+        </div>
+
+        <div class="form-group">
+            <label class="control-label">Primer apellido</label>
+            <input asp-for="apellido1" class="form-control" />
+        </div>
+
+        <div class="form-group">
+            <label class="control-label">Segundo apellido</label>
+            <input asp-for="apellido2" class="form-control" />
+        </div>
+
+        <div class="form-group">
+            <label class="control-label">Fecha de nacimiento</label>
+            <input asp-for="fechaNacimiento" class="form-control" />
+        </div>
+
+        <div class="form-group">
+            <input type="submit" value="Registrar cliente" class="btn btn-primary" />
+        </div>
+    </form>
+</div>
+</div>
+
+<div>
+    <a asp-action="ClienteHome">Volver</a>
+</div>

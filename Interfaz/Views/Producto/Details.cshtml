@@ -1,0 +1,105 @@
+@model Models.Producto
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Buscar Producto</h1>
+            @if (ViewBag.NoEncontrado != null)
+            {
+                <p style="color: darkorange;">
+                    @ViewBag.NoEncontrado
+                </p>
+            }
+            @if (ViewBag.Encontrado != null)
+            {
+                <p style="color: green;">
+                    @ViewBag.Encontrado
+                </p>
+            }
+<form asp-action="Details" method="get">
+    <div class="form-group">
+        <label for="busqueda">Código o nombre del producto</label>
+
+        <input type="text"
+               id="busqueda"
+               name="busqueda"
+               class="form-control"
+               placeholder="Ingrese el código o nombre del producto" />
+
+        <br />
+
+        <button type="submit" class="btn btn-primary">
+            Buscar
+        </button>
+    </div>
+</form>
+
+<div>
+    <h4>Producto</h4>
+    <hr />
+
+    <dl class="row">
+
+        <dt class="col-sm-2">
+            Id único
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Id)
+        </dd>
+
+        <dt class="col-sm-2">
+            Código del producto
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.codigo)
+        </dd>
+
+        <dt class="col-sm-2">
+            Nombre
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.nombre)
+        </dd>
+
+        <dt class="col-sm-2">
+            Categoría
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.categoria)
+        </dd>
+
+        <dt class="col-sm-2">
+            Unidad de medida
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.unidadMedida)
+        </dd>
+
+        <dt class="col-sm-2">
+            Precio
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.precio)
+        </dd>
+
+        <dt class="col-sm-2">
+            Existencia actual
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.existenciaActual)
+        </dd>
+
+        <dt class="col-sm-2">
+            Existencia minima
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.existeciaMinima)
+        </dd>
+
+    </dl>
+</div>
+
+<div>
+    <a asp-action="ProductoHome">Volver</a>
+</div>

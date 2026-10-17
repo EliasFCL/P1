@@ -1,0 +1,80 @@
+@model IEnumerable<Models.Producto>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Seleccione el producto a eliminar</h1>
+@if (ViewBag.Eliminado != null)
+{
+    <p style="color: green;">
+        @ViewBag.Eliminado
+    </p>
+}
+<table class="table">
+    <thead>
+        <tr>
+                        <th>
+                Id único
+            </th>
+            <th>
+                Código
+            </th>
+            <th>
+                Nombre
+            </th>
+            <th>
+                Categoría
+            </th>
+            <th>
+                Unidad de medida
+            </th>
+            <th>
+                Precio
+            </th>
+            <th>
+                Existencia actual
+            </th>
+            <th>
+                Existencia minima
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+             <td>
+                @Html.DisplayFor(model => item.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.codigo)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.nombre)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.categoria)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.unidadMedida)
+            </td>
+            <td>
+                    @item.precio.ToString("N2") CRC
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.existenciaActual)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.existeciaMinima)
+            </td>
+            <td>
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+<div>
+    <a asp-action="ProductoHome">Volver</a>
+</div>

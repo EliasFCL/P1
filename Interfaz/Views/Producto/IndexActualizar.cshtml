@@ -1,0 +1,81 @@
+@model IEnumerable<Models.Producto>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Seleccione el producto a editar</h1>
+@if (ViewBag.Actualizado != null)
+{
+    <p style="color: green;">
+        @ViewBag.Actualizado
+    </p>
+}
+<table class="table">
+    <thead>
+        <tr>
+                        <th>
+                Id único
+            </th>
+            <th>
+                Código
+            </th>
+            <th>
+                Nombre
+            </th>
+            <th>
+                Categoría
+            </th>
+            <th>
+                Unidad de medida
+            </th>
+            <th>
+               Precio
+            </th>
+            <th>
+                Existencia actual
+            </th>
+            <th>
+                Exitencia minima
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+             <td>
+                @Html.DisplayFor(model => item.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.codigo)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.nombre)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.categoria)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.unidadMedida)
+            </td>
+            <td>
+                    @item.precio.ToString("N2") CRC
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.existenciaActual)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.existeciaMinima)
+            </td>
+                        <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Seleccionar</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+            <td>
+                    <a asp-action="ProductoHome">Volver</a>
+            </td>

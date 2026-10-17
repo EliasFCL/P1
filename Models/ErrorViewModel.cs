@@ -1,4 +1,4 @@
-namespace Proyecto1_EliasCorderoLeon.Models
+namespace Models
 {
     public class ErrorViewModel
     {

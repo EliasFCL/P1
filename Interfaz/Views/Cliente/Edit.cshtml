@@ -1,0 +1,60 @@
+@model Models.Cliente
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Actualizar datos</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+
+            <div class="form-group">
+                @* Combo box para el tipo de identificación *@
+                <label class="control-label">Tipo de indetificación</label>
+
+                <select asp-for="tipoIdentificacion" class="form-control">
+                    <option value="Cédula">Cédula</option>
+                    <option value="DIMEX">DIMEX</option>
+                    <option value="Pasaporte">Pasaporte</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Número de identificación</label>
+                <input asp-for="numId" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label class="control-label">Nombre del cliente</label>
+                <input asp-for="nombre" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label class="control-label">Primer apellido</label>
+                <input asp-for="apellido1" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label class="control-label">Segundo apellido</label>
+                <input asp-for="apellido2" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label class="control-label">Fecha de nacimiento</label>
+                <input asp-for="fechaNacimiento" class="form-control" />
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Actualizar" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="IndexActualizar">Volver a la lista</a> ||
+    <a asp-action="ClienteHome">Volver a la gestión de clientes</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Proyecto1_EliasCorderoLeon.Models
+namespace Models
 {
     public class Empleado : Persona
     {
