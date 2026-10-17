@@ -12,8 +12,4 @@
     <Folder Include="Views\Manual\" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Model\Model.csproj" />
-  </ItemGroup>
-
 </Project>

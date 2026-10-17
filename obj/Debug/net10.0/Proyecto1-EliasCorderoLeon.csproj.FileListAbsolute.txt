@@ -297,6 +297,4 @@ C:\Users\Zamael\Desktop\Proyecto1-EliasCorderoLeon\obj\Debug\net10.0\Proyecto1-E
 C:\Users\Zamael\Desktop\Proyecto1-EliasCorderoLeon\obj\Debug\net10.0\ref\Proyecto1-EliasCorderoLeon.dll
 C:\Users\Zamael\Desktop\Proyecto1-EliasCorderoLeon\obj\Debug\net10.0\staticwebassets.upToDateCheck.txt
 C:\Users\Zamael\Desktop\Proyecto1-EliasCorderoLeon\obj\Debug\net10.0\Proyecto.0A886AED.Up2Date
-C:\Users\Zamael\Desktop\Proyecto1-EliasCorderoLeon\bin\Debug\net10.0\Model.dll
-C:\Users\Zamael\Desktop\Proyecto1-EliasCorderoLeon\bin\Debug\net10.0\Model.pdb
-C:\Users\Zamael\Desktop\Proyecto1-EliasCorderoLeon\obj\Debug\net10.0\Proyecto1-EliasCorderoLeon.csproj.AssemblyReference.cache
+C:\Users\Zamael\Desktop\Proyecto1-EliasCorderoLeon\obj\Debug\net10.0\Proyecto1-EliasCorderoLeon.sourcelink.json
