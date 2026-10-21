@@ -5,7 +5,20 @@ namespace Carniceria.API.Modulos
     public class ModuloProducto
     {
         private List<Producto> listaProductos = new List<Producto>();
-
+        public ModuloProducto()
+        {
+            listaProductos.Add(new Producto
+            {
+                Id = 1,
+                codigo = "P001",
+                nombre = "Lomo de vaca",
+                categoria = "Carne de Res",
+                unidadMedida = "Unidad",
+                precio = 3000.4,
+                existenciaActual = 100,
+                existeciaMinima = 20
+            });
+        }
         public void RegistrarProducto(Producto producto)
         {
             producto.Id = listaProductos.Any() ? listaProductos.Max(p => p.Id) + 1 : 1;

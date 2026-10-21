@@ -5,7 +5,21 @@ namespace Carniceria.API.Modulos
     public class ModuloProveedores
     {
         private List<Proveedor> listaProveedores = new List<Proveedor>();
-
+        public ModuloProveedores()
+        {
+            listaProveedores.Add(new Proveedor
+            {
+                Id = 1,
+                tipoIdentificacion = "DIMEX",
+                numId = "111111222222",
+                RazonSocial = "Proveedor de carne",
+                nombre = "Arhtur Morgan",
+                Telefono = 12341234,
+                CorreoElectronico = "arMorgan@gmail.com",
+                TipoSuministro = "Embutidos",
+                FrecuenciaEntrega = "Semanal"
+            });
+        }
         public void RegistrarProveedor(Proveedor proveedor)
         {
             proveedor.Id = listaProveedores.Any() ? listaProveedores.Max(p => p.Id) + 1 : 1;

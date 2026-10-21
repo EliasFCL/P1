@@ -6,7 +6,20 @@ namespace Carniceria.API.Modulos
     public class ModuloCliente
     {
         private static List<Cliente> listaClientes = new List<Cliente>();
-
+        //Dator por efecto
+        public ModuloCliente()
+        {
+            listaClientes.Add(new Cliente
+            {
+                Id = 1,
+                tipoIdentificacion = "Cédula",
+                numId = "2-0851-0970",
+                nombre = "Elias",
+                apellido1 = "Cordero",
+                apellido2 = "Leon",
+                fechaNacimiento = new DateTime(2004, 3, 25)
+            });
+        }
         public void RegistrarCliente(Cliente cliente)
         { 
             cliente.Id = listaClientes.Any() ? listaClientes.Max(c => c.Id) + 1 : 1;

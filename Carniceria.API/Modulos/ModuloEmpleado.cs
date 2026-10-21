@@ -6,6 +6,24 @@ namespace Carniceria.API.Modulos
     {
         private List<Empleado> listaEmpleados = new List<Empleado>();
 
+        public ModuloEmpleado()
+        {
+            listaEmpleados.Add(new Empleado
+            {
+                Id = 1,
+                tipoIdentificacion = "DIMEX",
+                numId = "101010121212",
+                nombre = "Ellie",
+                apellido1 = "Williams",
+                apellido2 = "Miller",
+                fechaNacimiento = new DateTime(2007, 4, 14),
+                cargo = "Administrador",
+                salario = 500000,
+                fechaIngreso = new DateTime(2023, 1, 15),
+                areaTrabajo = "Asistente administrativo",
+                turno = "Mañana"
+            });
+        }
         public void RegistrarEmpleado(Empleado empleado)
         {
             empleado.Id = listaEmpleados.Any() ? listaEmpleados.Max(e => e.Id) + 1 : 1;
