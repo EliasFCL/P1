@@ -1,7 +1,7 @@
 ﻿using Models;
 using System.Text.RegularExpressions;
 
-namespace Proyecto1_EliasCorderoLeon.Validadores
+namespace Carniceria.API.Validadores
 {
     public class EmpleadoValidador
     {

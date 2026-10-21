@@ -1,14 +1,15 @@
 ﻿// Buscar persona: https://www.youtube.com/watch?v=pGzcd3ucIfo&feature=youtu.be 40:45
 using Models;
 
-namespace Proyecto1_EliasCorderoLeon.Areas.Clientes
+namespace Carniceria.API.Modulos
 {
     public class ModuloCliente
     {
-        private List<Cliente> listaClientes = new List<Cliente>();
+        private static List<Cliente> listaClientes = new List<Cliente>();
 
         public void RegistrarCliente(Cliente cliente)
-        {
+        { 
+            cliente.Id = listaClientes.Any() ? listaClientes.Max(c => c.Id) + 1 : 1;
             listaClientes.Add(cliente);
         }
 

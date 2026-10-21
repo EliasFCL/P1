@@ -1,220 +1,140 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Proyecto1_EliasCorderoLeon.Areas.Proveedores;
 using Models;
-using Proyecto1_EliasCorderoLeon.Validadores;
+using Proyecto1_EliasCorderoLeon.Services;
+using System.Globalization;
+using static System.Net.WebRequestMethods;
 
 namespace Proyecto1_EliasCorderoLeon.Controllers
 {
     public class ProveedorController : Controller
     {
-        private static ModuloProveedores moduloProveedor = new ModuloProveedores();
-        // GET: ProveedorController
-        public ActionResult Index()
+        private readonly IProveedorService _proveedorService;
+
+        public ProveedorController(IProveedorService proveedorService)
         {
-            var proveedores = moduloProveedor.ListarProveedores();
+            _proveedorService = proveedorService;
+        }
+
+        public async Task<ActionResult> ProveedorHome()
+        {
+            var proveedores = await _proveedorService.ListarAsync();
             return View(proveedores);
         }
 
-        public ActionResult ProveedorHome()
+        public async Task<ActionResult> Index()
         {
-            var proveedores = moduloProveedor.ListarProveedores();
+            var proveedores = await _proveedorService.ListarAsync();
             return View(proveedores);
         }
 
-        public ActionResult IndexEliminar()
-        {
-            ViewBag.Eliminado = TempData["Eliminado"];
-            var proveedores = moduloProveedor.ListarProveedores();
-            return View(proveedores);
-        }
-
-        public ActionResult IndexActualizar()
+        public async Task<ActionResult> IndexActualizar()
         {
             ViewBag.Actualizado = TempData["Actualizado"];
-            var proveedores = moduloProveedor.ListarProveedores();
+            var proveedores = await _proveedorService.ListarAsync();
             return View(proveedores);
         }
 
-        // GET: ProveedorController/Details/5
-        public ActionResult Details(string busqueda)
+        public async Task<ActionResult> IndexEliminar()
         {
-            if (string.IsNullOrWhiteSpace(busqueda))
-            {
-                return View();
-            }
-            var proveedor = moduloProveedor.BuscarProveedor(busqueda);
+            ViewBag.Eliminado = TempData["Eliminado"];
+            var proveedores = await _proveedorService.ListarAsync();
+            return View(proveedores);
+        }
 
+        public async Task<ActionResult> Details(string busqueda)
+        {
+            //Agregar lo de 2 o mas proveedores
+            if (string.IsNullOrWhiteSpace(busqueda)) return View();
+            var proveedor = await _proveedorService.BuscarAsync(busqueda);
             if (proveedor == null)
             {
-                ViewBag.NoEncontrado = "No se encontró un proveedor con ese código o razón social.";
+                ViewBag.NoEncontrado = "No se encontró un proveedor con ese número de identificación.";
                 return View();
+            }
+            int contador = 0;
+            var proveedores = await _proveedorService.ListarAsync();
+            for (int i = 0; i < proveedores.Count; i++)
+            {
+                if (proveedores[i].RazonSocial.ToString() == busqueda)
+                {
+                    contador = contador + 1;
+                }
+            }
+
+            if (contador > 1)
+            {
+                ViewBag.NoEncontrado = "Existen 2 o más proveedores con esa razón social";
             }
             else
             {
-                int contador = 0;
-                var proveedores = moduloProveedor.ListarProveedores();
-                for (int i = 0; i < proveedores.Count; i++)
-                {
-                    if (proveedores[i].RazonSocial.ToString() == busqueda)
-                    {
-                        contador = contador + 1;
-                    }
-                }
-                if (contador > 1)
-                {
-                    ViewBag.NoEncontrado = "Existen 2 o más proveedores con asa razón social";
-                }
-                else
-                {
-                    ViewBag.Encontrado = "Proveedor encontrado";
-                }
+                ViewBag.Encontrado = "Proveedor encontrado";
             }
-            return View(proveedor);
-        } 
 
-        // GET: ProveedorController/Create
+            return View(proveedor);
+        }
+
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: ProveedorController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Proveedor proveedor)
+        public async Task<ActionResult> Create(Proveedor proveedor)
         {
-            //Datos por defecto para clase Persona
-            proveedor.apellido1 = "ABC";
-            proveedor.apellido2 = "ABC";
-            proveedor.fechaNacimiento = new DateTime(2004, 3, 25);
-            ValidarProveedor validador = new ValidarProveedor();
-            List<string> errores = validador.Validar(proveedor);
-            var Id = moduloProveedor.ListarProveedores();
+            if (proveedor == null) return View();
 
-            if (errores.Any())
+            var (ok, errores) = await _proveedorService.CrearAsync(proveedor);
+            if (!ok)
             {
-                foreach (var error in errores)
-                {
-                    ModelState.AddModelError(string.Empty, error);
-                }
+                foreach (var err in errores) ModelState.AddModelError(string.Empty, err);
                 return View(proveedor);
             }
-            try
-            {   
-                //Incrementar Id
-                if (Id.Any())
-                {
-                    proveedor.Id = Id.Max(p => p.Id) + 1;
-                }
-                else
-                {
-                    proveedor.Id = 1;
-                }
 
-                if (moduloProveedor.ListarProveedores().Any(p => p.numId == proveedor.numId))
-                {
-                    ModelState.AddModelError(string.Empty, "Ese ID de proveedor ya existe.");
-                    return View(proveedor);
-                }
-                
-
-            }
-            catch (Exception e)
-            {
-                return View();
-            }
-            moduloProveedor.RegistrarProveedor(proveedor);
             ModelState.Clear();
             ViewBag.MensajeExito = "Proveedor registrado exitosamente.";
             return View(new Proveedor());
         }
 
-        // GET: ProveedorController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(int id)
         {
-            var proveedor = moduloProveedor.ListarProveedores()
-                .FirstOrDefault(p => p.Id == id);
-
-            if (proveedor == null)
-            {
-                return NotFound();
-            }
-
+            var proveedor = await _proveedorService.BuscarPorIdAsync(id);
+            if (proveedor == null) return NotFound();
             return View(proveedor);
         }
 
-        // POST: ProveedorController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, Proveedor proveedor)
+        public async Task<ActionResult> Edit(int id, Proveedor proveedor)
         {
-            try
+            proveedor.Id = id;
+            var (ok, errores) = await _proveedorService.ActualizarAsync(id, proveedor);
+            if (!ok)
             {
-                //Datos por defecto para clase Persona
-                proveedor.apellido1 = "ABC";
-                proveedor.apellido2 = "ABC";
-                proveedor.fechaNacimiento = new DateTime(2004, 3, 25);
-                var validador = new ValidarProveedor();
-                // Mantener el ID original
-                proveedor.Id = id;
-
-                // Comprobar que el codigo no pertenezca a otro productor
-                if (moduloProveedor.ListarProveedores().Any(p => p.numId == proveedor.numId && p.Id != id))
-                {
-                    ModelState.AddModelError(
-                        string.Empty,
-                        "Ese ID de proveedor ya existe."
-                    );
-
-                    return View(proveedor);
-                }
-
-                // Validar
-                var errores = validador.Validar(proveedor);
-
-                if (errores != null && errores.Any())
-                {
-                    foreach (var err in errores)
-                    {
-                        ModelState.AddModelError(string.Empty, err);
-                    }
-
-                    return View(proveedor);
-                }
-
-                // Actualizar usando el ID original
-                TempData["Actualizado"] = ViewBag.Actualizado = "Proveedor con id único " + proveedor.Id + " actualizado";
-                moduloProveedor.ActualizarProveedor(id.ToString(), proveedor);
-                return RedirectToAction(nameof(IndexActualizar));
+                foreach (var err in errores) ModelState.AddModelError(string.Empty, err);
+                return View(proveedor);
             }
-            catch
-            {
-                return View();
-            }
+
+            TempData["Actualizado"] = "Proveedor con id único " + proveedor.Id + " actualizado";
+            return RedirectToAction(nameof(IndexActualizar));
         }
 
-        // GET: ProveedorController/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
-            var proveedor = moduloProveedor.ListarProveedores().FirstOrDefault(e => e.Id == id);
+            var proveedor = await _proveedorService.BuscarPorIdAsync(id);
+            if (proveedor == null) return NotFound();
             return View(proveedor);
         }
 
-        // POST: ProveedorController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, Proveedor proveedor)
+        public async Task<ActionResult> Delete(int id, Proveedor proveedor)
         {
-            try
-            {
-                TempData["Eliminado"] = ViewBag.Actualizado = "Proveedor eliminado correctamente";
-                moduloProveedor.EliminarProveedor(id.ToString());
-                return RedirectToAction(nameof(IndexEliminar));
-            }
-            catch
-            {
-                return View();
-            }
+            await _proveedorService.EliminarAsync(id);
+            TempData["Eliminado"] = "Proveedor eliminado correctamente";
+            return RedirectToAction(nameof(IndexEliminar));
         }
+
+
     }
 }

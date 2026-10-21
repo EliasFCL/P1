@@ -1,4 +1,26 @@
+using Proyecto1_EliasCorderoLeon.Services;
+
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddHttpClient<IClienteService, ClienteService>(client =>
+{
+    client.BaseAddress = new Uri("http://localhost:5221/");
+});
+
+builder.Services.AddHttpClient<IEmpleadoService, EmpleadoService>(client =>
+{
+    client.BaseAddress = new Uri("http://localhost:5221/");
+});
+
+builder.Services.AddHttpClient<IProductoService, ProductoService>(client =>
+{
+    client.BaseAddress = new Uri("http://localhost:5221/");
+});
+
+
+builder.Services.AddHttpClient<IProveedorService, ProveedorService>(client =>
+{
+    client.BaseAddress = new Uri("http://localhost:5221/");
+});
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

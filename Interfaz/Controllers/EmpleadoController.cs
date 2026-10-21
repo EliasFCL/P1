@@ -1,211 +1,120 @@
 ﻿//Cambio de cargos: https://learn.microsoft.com/en-us/aspnet/core/mvc/views/working-with-forms?view=aspnetcore-10.0
 
 using Microsoft.AspNetCore.Mvc;
-
-using Proyecto1_EliasCorderoLeon.Areas.Empleados;
 using Models;
-using Proyecto1_EliasCorderoLeon.Validadores;
+using Proyecto1_EliasCorderoLeon.Services;
 
 namespace Proyecto1_EliasCorderoLeon.Controllers
 {
     public class EmpleadoController : Controller
     {
-        private static ModuloEmpleado moduloEmpleado = new ModuloEmpleado();
-        // GET: EmpleadoController
-        public ActionResult Index()
+        private readonly IEmpleadoService _empleadoService;
+
+        public EmpleadoController(IEmpleadoService empleadoService)
         {
-            var empleados = moduloEmpleado.ListarEmpleados();
+            _empleadoService = empleadoService;
+        }
+
+        public async Task<ActionResult> EmpleadoHome()
+        {
+            var empleados = await _empleadoService.ListarAsync();
             return View(empleados);
         }
-        public ActionResult IndexActualizar()
+
+        public async Task<ActionResult> Index()
+        {
+            var empleados = await _empleadoService.ListarAsync();
+            return View(empleados);
+        }
+
+        public async Task<ActionResult> IndexActualizar()
         {
             ViewBag.Actualizado = TempData["Actualizado"];
-            var empleados = moduloEmpleado.ListarEmpleados();
+            var empleados = await _empleadoService.ListarAsync();
             return View(empleados);
         }
 
-        public ActionResult IndexEliminar()
+        public async Task<ActionResult> IndexEliminar()
         {
             ViewBag.Eliminado = TempData["Eliminado"];
-            var empleados = moduloEmpleado.ListarEmpleados();
+            var empleados = await _empleadoService.ListarAsync();
             return View(empleados);
         }
 
-        public ActionResult EmpleadoHome()
+        public async Task<ActionResult> Details(string numId)
         {
-            var empleados = moduloEmpleado.ListarEmpleados();
-            return View(empleados);
-        }
+            if (string.IsNullOrWhiteSpace(numId)) return View();
 
-        // GET: EmpleadoController/Details/5
-        public ActionResult Details(string numId)
-        {
-            if (string.IsNullOrWhiteSpace(numId))
-            {
-                return View();
-            }
-
-            var empleado = moduloEmpleado.BuscarEmpleado(numId);
-
+            var empleado = await _empleadoService.BuscarPorNumIdAsync(numId);
             if (empleado == null)
             {
                 ViewBag.NoEncontrado = "No se encontró un empleado con ese número de identificación.";
                 return View();
             }
-            else
-            {
-                ViewBag.Encontrado = "Empleado encontrado";
-            }
-
+            ViewBag.Encontrado = "Empleado encontrado";
             return View(empleado);
         }
 
-        // GET: EmpleadoController/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: EmpleadoController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Empleado empleado)
+        public async Task<ActionResult> Create(Empleado empleado)
         {
-            try
+            if (empleado == null) return View();
+
+            var (ok, errores) = await _empleadoService.CrearAsync(empleado);
+            if (!ok)
             {
-                if (empleado == null)
-                {
-                    return View();
-                }
-                //Incrementar Id
-                var Id = moduloEmpleado.ListarEmpleados();
-
-                if (Id.Any())
-                {
-                    empleado.Id = Id.Max(e => e.Id) + 1;
-                }
-                else
-                {
-                    empleado.Id = 1;
-                }
-
-                if (moduloEmpleado.ListarEmpleados().Any(p => p.numId == empleado.numId))
-                {
-                    ModelState.AddModelError(string.Empty, "Ese identificador ya existe.");
-                    return View(empleado);
-                }
-                
-                EmpleadoValidador validador = new EmpleadoValidador();
-                // Llamada al método estático y uso de la lista de errores
-                var errores = validador.Validar(empleado);
-                if (errores != null && errores.Any())
-                {
-                    // Añadir errores al ModelState para mostrarlos en la vista
-                    foreach (var err in errores)
-                    {
-                        ModelState.AddModelError(string.Empty, err);
-                    }
-                    return View(empleado);
-                }
-                moduloEmpleado.RegistrarEmpleado(empleado);
-                ModelState.Clear();
-                ViewBag.MensajeExito = "Empleado registrado exitosamente.";
-                return View(new Empleado());
-
-            }
-            catch
-            {
+                foreach (var err in errores) ModelState.AddModelError(string.Empty, err);
                 return View(empleado);
             }
 
+            ModelState.Clear();
+            ViewBag.MensajeExito = "Empleado registrado exitosamente.";
+            return View(new Empleado());
         }
 
-        // GET: ClienteController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(int id)
         {
-            var empleado = moduloEmpleado.ListarEmpleados()
-            .FirstOrDefault(e => e.Id == id);
-
-            if (empleado == null)
-            {
-                return NotFound();
-            }
-
+            var empleado = await _empleadoService.BuscarPorIdAsync(id);
+            if (empleado == null) return NotFound();
             return View(empleado);
         }
 
-        // POST: ClienteController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, Empleado empleado)
+        public async Task<ActionResult> Edit(int id, Empleado empleado)
         {
-            try
+            empleado.Id = id;
+            var (ok, errores) = await _empleadoService.ActualizarAsync(id, empleado);
+            if (!ok)
             {
-                var empleadoValidador = new EmpleadoValidador();
-                // Mantener el ID original
-                empleado.Id = id;
-
-                // Comprobar que el numId no pertenezca a OTRO empleado
-                if (moduloEmpleado.ListarEmpleados()
-                    .Any(p => p.numId == empleado.numId && p.Id != id))
-                {
-                    ModelState.AddModelError(
-                        string.Empty,
-                        "Ese identificador ya existe."
-                    );
-
-                    return View(empleado);
-                }
-
-                // Validar
-                var errores = empleadoValidador.Validar(empleado);
-
-                if (errores != null && errores.Any())
-                {
-                    foreach (var err in errores)
-                    {
-                        ModelState.AddModelError(string.Empty, err);
-                    }
-
-                    return View(empleado);
-                }
-
-                // Actualizar usando el ID original
-                moduloEmpleado.ActualizarEmpleado(id.ToString(), empleado);
-                TempData["Actualizado"] = ViewBag.Actualizado = "Empleado con id único " + empleado.Id + " actualizado";
-                return RedirectToAction(nameof(IndexActualizar));
-            }
-            catch
-            {
+                foreach (var err in errores) ModelState.AddModelError(string.Empty, err);
                 return View(empleado);
             }
+
+            TempData["Actualizado"] = "Empleado con id único " + empleado.Id + " actualizado";
+            return RedirectToAction(nameof(IndexActualizar));
         }
 
-        // GET: EmpleadoController/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
-            var empleado = moduloEmpleado.ListarEmpleados()
-                .FirstOrDefault(e => e.Id == id);
+            var empleado = await _empleadoService.BuscarPorIdAsync(id);
+            if (empleado == null) return NotFound();
             return View(empleado);
         }
 
-        // POST: EmpleadoController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, Empleado empleado)
+        public async Task<ActionResult> Delete(int id, Empleado empleado)
         {
-            try
-            {
-                moduloEmpleado.EliminarEmpleado(id.ToString());
-            }
-            catch
-            {
-                return View(empleado);
-            }
-            TempData["Eliminado"] = ViewBag.Actualizado = "Empleado eliminado correctamente";
+            await _empleadoService.EliminarAsync(id);
+            TempData["Eliminado"] = "Empleado eliminado correctamente";
             return RedirectToAction(nameof(IndexEliminar));
         }
-
-
     }
 }

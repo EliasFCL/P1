@@ -1,6 +1,6 @@
 ﻿using Models;
 
-namespace Proyecto1_EliasCorderoLeon.Areas.Proveedores
+namespace Carniceria.API.Modulos
 {
     public class ModuloProveedores
     {
@@ -8,6 +8,7 @@ namespace Proyecto1_EliasCorderoLeon.Areas.Proveedores
 
         public void RegistrarProveedor(Proveedor proveedor)
         {
+            proveedor.Id = listaProveedores.Any() ? listaProveedores.Max(p => p.Id) + 1 : 1;
             listaProveedores.Add(proveedor);
         }
 

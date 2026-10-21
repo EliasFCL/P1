@@ -1,6 +1,6 @@
 ﻿using Models;
 
-namespace Proyecto1_EliasCorderoLeon.Areas.Productos
+namespace Carniceria.API.Modulos
 {
     public class ModuloProducto
     {
@@ -8,6 +8,7 @@ namespace Proyecto1_EliasCorderoLeon.Areas.Productos
 
         public void RegistrarProducto(Producto producto)
         {
+            producto.Id = listaProductos.Any() ? listaProductos.Max(p => p.Id) + 1 : 1;
             listaProductos.Add(producto);
         }
 

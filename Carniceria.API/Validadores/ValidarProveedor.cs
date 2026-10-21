@@ -1,13 +1,12 @@
 ﻿using Models;
 using System.Text.RegularExpressions;
 
-namespace Proyecto1_EliasCorderoLeon.Validadores
+namespace Carniceria.API.Validadores
 {
     public class ValidarProveedor
     {
         public List<string> Validar(Proveedor proveedor)
         {
-            proveedor.nombre = "ABC";
             List<string> errores = new List<string>();
             ValidarPersona validador = new ValidarPersona();
             //Validar Razón social
@@ -25,15 +24,15 @@ namespace Proyecto1_EliasCorderoLeon.Validadores
             }
 
             //Validar nombre
-            if(proveedor.Nombre == null || proveedor.Nombre.Trim() == "")
+            if(proveedor.nombre == null || proveedor.nombre.Trim() == "")
             {
                 errores.Add("El nombre no puede estar vacío.");
             }
-            else if (!Regex.IsMatch(proveedor.Nombre, @"^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$"))
+            else if (!Regex.IsMatch(proveedor.nombre, @"^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$"))
             {
                 errores.Add("El nombre solo puede contener letras y espacios");
             }
-            else if (proveedor.Nombre.Length < 3 || proveedor.Nombre.Length > 100)
+            else if (proveedor.nombre.Length < 3 || proveedor.nombre.Length > 100)
             {
                 errores.Add("El nombre debe tener entre 3 y 100 caracteres.");
             }

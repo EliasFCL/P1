@@ -1,6 +1,6 @@
 ﻿using Models;
 
-namespace Proyecto1_EliasCorderoLeon.Areas.Empleados
+namespace Carniceria.API.Modulos
 {
     public class ModuloEmpleado
     {
@@ -8,6 +8,7 @@ namespace Proyecto1_EliasCorderoLeon.Areas.Empleados
 
         public void RegistrarEmpleado(Empleado empleado)
         {
+            empleado.Id = listaEmpleados.Any() ? listaEmpleados.Max(e => e.Id) + 1 : 1;
             listaEmpleados.Add(empleado);
         }
 
