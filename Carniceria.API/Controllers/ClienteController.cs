@@ -1,12 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿//Estructura de los nuevos controllers: https://learn.microsoft.com/is-is/aspnet/core/web-api/?view=aspnetcore-7.0#1 y
+//https://learn.microsoft.com/lb-lu/aspnet/core/tutorials/first-web-api?view=aspnetcore-10.0&preserve-view=true&tabs=visual-studio
+
+using Microsoft.AspNetCore.Mvc;
 using Models;
 using Carniceria.API.Modulos;
 using Carniceria.API.Validadores;
 
 namespace Carniceria.API.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class ClientesController : ControllerBase
     {
         private static ModuloCliente _modulo = new ModuloCliente();

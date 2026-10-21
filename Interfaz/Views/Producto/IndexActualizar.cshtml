@@ -38,6 +38,9 @@
             <th>
                 Exitencia minima
             </th>
+            <th>
+                Proveedor
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -68,14 +71,16 @@
             <td>
                 @Html.DisplayFor(model => item.existeciaMinima)
             </td>
-                        <td>
+            <td>
+                @Html.DisplayFor(model => item.proveedor)
+            </td>
+            <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Seleccionar</a>
             </td>
         </tr>
 }
     </tbody>
 </table>
-
-            <td>
-                    <a asp-action="ProductoHome">Volver</a>
-            </td>
+<td>
+<a asp-action="ProductoHome">Volver</a>
+</td>

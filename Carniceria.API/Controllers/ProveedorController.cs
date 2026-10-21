@@ -14,7 +14,6 @@ namespace Carniceria.API.Controllers
 
         private static void AplicarDefaults(Proveedor proveedor)
         {
-          //  proveedor.nombre = "ABC";
             proveedor.apellido1 = "ABC";
             proveedor.apellido2 = "ABC";
             proveedor.fechaNacimiento = new DateTime(2004, 3, 25);
@@ -33,13 +32,20 @@ namespace Carniceria.API.Controllers
             return p;
         }
 
-        // GET: api/proveedores/buscar/CODIGO_O_RAZONSOCIAL
+        // GET: api/proveedores/buscar/codigo o razon social
         [HttpGet("buscar/{busqueda}")]
         public ActionResult<Proveedor> Buscar(string busqueda)
         {
             var p = _modulo.BuscarProveedor(busqueda);
             if (p == null) return NotFound();
             return p;
+        }
+        // GET: api/proveedores/nombres
+        [HttpGet("nombres")]
+        public ActionResult<List<string>> ListarNombres()
+        {
+            var nombres = _modulo.ListarProveedores().Select(p => p.nombre).ToList();
+            return Ok(nombres);
         }
 
         // POST: api/proveedores

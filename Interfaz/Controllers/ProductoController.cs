@@ -10,10 +10,11 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
     public class ProductoController : Controller
     {
         private readonly IProductoService _productoService;
-
-        public ProductoController(IProductoService productoService)
+        private readonly IProveedorService _proveedorService;
+        public ProductoController(IProductoService productoService, IProveedorService proveedorService)
         {
             _productoService = productoService;
+            _proveedorService = proveedorService;
         }
 
         public async Task<ActionResult> ProductoHome()
@@ -75,9 +76,9 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
             }
             return View(producto);
         }
-
-        public ActionResult Create()
+        public async Task<ActionResult> Create()
         {
+            ViewBag.Proveedores = await _proveedorService.ListarNombresAsync();
             return View();
         }
 
@@ -91,6 +92,7 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
             if (!ok)
             {
                 foreach (var err in errores) ModelState.AddModelError(string.Empty, err);
+                ViewBag.Proveedores = await _proveedorService.ListarNombresAsync();
                 return View(producto);
             }
 
@@ -102,6 +104,7 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
         public async Task<ActionResult> Edit(int id)
         {
             var producto = await _productoService.BuscarPorIdAsync(id);
+            ViewBag.Proveedores = await _proveedorService.ListarNombresAsync();
             if (producto == null) return NotFound();
             return View(producto);
         }
@@ -115,6 +118,7 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
             if (!ok)
             {
                 foreach (var err in errores) ModelState.AddModelError(string.Empty, err);
+                ViewBag.Proveedores = await _proveedorService.ListarNombresAsync();
                 return View(producto);
             }
 
@@ -138,6 +142,8 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
             return RedirectToAction(nameof(IndexEliminar));
         }
 
+
+        //Recibir la peticion desde el MVC y devolver el resultado
         [HttpPost]
         public async Task<ActionResult> verificarCombinacion(Producto producto)
         {

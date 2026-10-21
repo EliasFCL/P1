@@ -1,4 +1,7 @@
-﻿using Models;
+﻿//Servicios: https://learn.microsoft.com/ca-es/aspnet/core/fundamentals/http-requests?view=aspnetcore-3.0#7
+//Convertir JSON a un objeto: https://learn.microsoft.com/id-id/dotnet/csharp/tutorials/console-webapiclient#1
+
+using Models;
 using System.Net.Http.Json;
 
 namespace Proyecto1_EliasCorderoLeon.Services

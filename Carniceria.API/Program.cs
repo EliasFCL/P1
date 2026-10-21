@@ -1,3 +1,5 @@
+// Repositorio consultado para adaptar el MVC al RESTful: https://github.com/AlanRacic/MovieManagementAPI#1
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.

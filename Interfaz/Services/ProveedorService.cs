@@ -10,8 +10,8 @@ namespace Proyecto1_EliasCorderoLeon.Services
         Task<(bool ok, List<string> errores)> CrearAsync(Proveedor proveedor);
         Task<(bool ok, List<string> errores)> ActualizarAsync(int id, Proveedor proveedor);
         Task<bool> EliminarAsync(int id);
-
         Task<Proveedor?> BuscarAsync(string busqueda);
+        Task<List<string>> ListarNombresAsync();
     }
 
     public class ProveedorService : IProveedorService
@@ -92,6 +92,11 @@ namespace Proyecto1_EliasCorderoLeon.Services
             var resp = await _http.GetAsync($"api/proveedores/buscar/{Uri.EscapeDataString(busqueda)}");
             if (!resp.IsSuccessStatusCode) return null;
             return await resp.Content.ReadFromJsonAsync<Proveedor>();
+        }
+
+        public async Task<List<string>> ListarNombresAsync()
+        {
+            return await _http.GetFromJsonAsync<List<string>>("api/proveedores/nombres") ?? new();
         }
     }
 }

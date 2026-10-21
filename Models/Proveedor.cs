@@ -5,8 +5,6 @@ namespace Models
 {
     public class Proveedor : Persona
     {
-        //[Required(ErrorMessage = "El nombre no puede estar vacio")]
-        //public string Nombre { get; set; }
         [Required(ErrorMessage = "La razón social no puede estar vacia")]
         public string RazonSocial { get; set; }
         [Required(ErrorMessage = "El telefóno no puede estar vacio")]

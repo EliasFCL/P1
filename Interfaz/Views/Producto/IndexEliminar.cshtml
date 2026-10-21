@@ -38,6 +38,9 @@
             <th>
                 Existencia minima
             </th>
+            <th>
+                Proveedor
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -68,6 +71,9 @@
             <td>
                 @Html.DisplayFor(model => item.existeciaMinima)
             </td>
+                <td>
+                    @Html.DisplayFor(model => item.proveedor)
+                </td>
             <td>
                 <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
             </td>

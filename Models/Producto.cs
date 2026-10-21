@@ -17,5 +17,6 @@ namespace Models
         public double precio { get; set; }
         public int? existenciaActual { get; set; }
         public int? existeciaMinima { get; set; }
+        public string proveedor { get; set; }
     }
 }

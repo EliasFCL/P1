@@ -11,6 +11,7 @@ namespace Carniceria.API.Controllers
     public class ProductosController : ControllerBase
     {
         private static ModuloProducto _modulo = new ModuloProducto();
+        private static ModuloProveedores _moduloProveedor = new ModuloProveedores();
         private readonly validarProducto _validador = new validarProducto();
 
         // GET: api/productos
@@ -26,7 +27,7 @@ namespace Carniceria.API.Controllers
             return p;
         }
 
-        // GET: api/productos/buscar/CODIGO_O_NOMBRE
+        // GET: api/productos/buscar/Codigo o nombre
         [HttpGet("buscar/{busqueda}")]
         public ActionResult<Producto> Buscar(string busqueda)
         {
@@ -98,5 +99,13 @@ namespace Carniceria.API.Controllers
             return Ok(new { existe = match != null, precio = match?.precio });
         }
 
+        // Get para obtener los proveedores registrados
+        [HttpGet("buscarProveedor")]
+        public ActionResult buscarProveedor()
+        {
+            var proveedores = _moduloProveedor.ListarProveedores();
+            var nombres = proveedores.Select(p => p.nombre).ToList();
+            return Ok(nombres);
+        }
     }
 }

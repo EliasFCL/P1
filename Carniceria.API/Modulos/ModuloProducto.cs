@@ -16,7 +16,8 @@ namespace Carniceria.API.Modulos
                 unidadMedida = "Unidad",
                 precio = 3000.4,
                 existenciaActual = 100,
-                existeciaMinima = 20
+                existeciaMinima = 20,
+                proveedor = "Arthur Morgan"
             });
         }
         public void RegistrarProducto(Producto producto)
@@ -51,6 +52,7 @@ namespace Carniceria.API.Modulos
                 producto.precio = productoActualizado.precio;
                 producto.existenciaActual = productoActualizado.existenciaActual;
                 producto.existeciaMinima = productoActualizado.existeciaMinima;
+                producto.proveedor = productoActualizado.proveedor;
             }
             return true;
         }

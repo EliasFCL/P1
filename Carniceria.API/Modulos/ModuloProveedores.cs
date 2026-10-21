@@ -13,7 +13,7 @@ namespace Carniceria.API.Modulos
                 tipoIdentificacion = "DIMEX",
                 numId = "111111222222",
                 RazonSocial = "Proveedor de carne",
-                nombre = "Arhtur Morgan",
+                nombre = "Arthur Morgan",
                 Telefono = 12341234,
                 CorreoElectronico = "arMorgan@gmail.com",
                 TipoSuministro = "Embutidos",

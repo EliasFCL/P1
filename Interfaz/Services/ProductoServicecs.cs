@@ -1,4 +1,6 @@
-﻿using Models;
+﻿//Consulta a la API: https://nugetprodusnc-northcentralus-01.regional.azure-api.net/packages/Myth.Testing/4.3.0-preview.2#3
+
+using Models;
 
 namespace Proyecto1_EliasCorderoLeon.Services
 {
@@ -79,6 +81,7 @@ namespace Proyecto1_EliasCorderoLeon.Services
             return await resp.Content.ReadFromJsonAsync<Producto>();
         }
 
+        //Cosultarle a la API si hay una combinación, se obtiene el precio
         public async Task<(bool existe, double? precio)> VerificarCombinacionAsync(Producto producto)
         {
             var resp = await _http.PostAsJsonAsync("api/productos/verificarCombinacion", new
@@ -90,6 +93,7 @@ namespace Proyecto1_EliasCorderoLeon.Services
             var result = await resp.Content.ReadFromJsonAsync<CombinacionResult>();
             return (result?.existe ?? false, result?.precio);
         }
+
         //Clase auxiliar para deserializar la respuesta de la API
         private class CombinacionResult
         {

@@ -1,5 +1,6 @@
 @* Recepcion de json: https://developer.mozilla.org/es/docs/Web/API/Fetch_API/Using_Fetch*@
 @*getElementBy: https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/change_event y https://developer.mozilla.org/es/docs/Web/API/Document/getElementById*@
+@*llenado dinamico con viewbag (para lo que viene desde API): https://gist.github.com/Lvcios/61791cb76ad2d672bd46*@
 
 @model Models.Producto
 
@@ -71,6 +72,16 @@
                <label class="control-label">Existencia minima</label>
                 <input asp-for="existeciaMinima" class="form-control" />
             </div>
+
+                <div class="form-group">
+                    <label asp-for="proveedor">Proveedor</label>
+                    <select asp-for="proveedor" class="form-control">
+                        @foreach (var nombre in (ViewBag.Proveedores as List<string>) ?? new List<string>())
+                        {
+                            <option value="@nombre">@nombre</option>
+                        }
+                    </select>
+                </div>
             <div class="form-group">
                 <input type="submit" value="Registrar producto" class="btn btn-primary" />
             </div>
