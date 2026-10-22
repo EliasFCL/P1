@@ -1,0 +1,65 @@
+﻿@model IEnumerable<Models.Factura>
+
+@{
+    ViewData["Title"] = "IndexEliminar";
+}
+
+<h1>Seleccione la factura a eliminar</h1>
+
+@if (ViewBag.Eliminado != null)
+{
+    <p style="color: green;">@ViewBag.Eliminado</p>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Número de factura</th>
+            <th>Fecha</th>
+            <th>Cliente</th>
+            <th>Empleado responsable</th>
+            <th>Producto</th>
+            <th>Método de pago</th>
+            <th>Descuento (%)</th>
+            <th>Subtotal</th>
+            <th>IVA</th>
+            <th>Total</th>
+            <th>Estado</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(model => item.numeroFactura)</td>
+                <td>@Html.DisplayFor(model => item.fecha)</td>
+                <td>@Html.DisplayFor(model => item.nombreCliente)</td>
+                <td>
+                    @if (item.detalles != null && item.detalles.Any())
+                    {
+                        @string.Join(", ", item.detalles.Select(d => d.producto))
+                    }
+                    else
+                    {
+                        <span>Sin productos</span>
+                    }
+                </td>
+                <td>@Html.DisplayFor(model => item.empleadoResponsable)</td>
+                <td>@Html.DisplayFor(model => item.metodoPago)</td>
+                <td>@Html.DisplayFor(model => item.descuento)</td>
+                <td>@item.subtotal.ToString("N2") CRC</td>
+                <td>@item.iva.ToString("N2") CRC</td>
+                <td>@item.total.ToString("N2") CRC</td>
+                <td>@Html.DisplayFor(model => item.estado)</td>
+                <td>
+                    <a asp-action="Delete" asp-route-numeroFactura="@item.numeroFactura">Seleccionar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div>
+    <a asp-action="Index">Volver</a>
+</div>

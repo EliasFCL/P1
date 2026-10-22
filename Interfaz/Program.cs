@@ -22,6 +22,11 @@ builder.Services.AddHttpClient<IProveedorService, ProveedorService>(client =>
     client.BaseAddress = new Uri("http://localhost:5221/");
 });
 
+builder.Services.AddHttpClient<IFacturaService, FacturaService>(client =>
+{
+    client.BaseAddress = new Uri("http://localhost:5221/");
+});
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 

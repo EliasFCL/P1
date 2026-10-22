@@ -1,0 +1,129 @@
+﻿@model Models.Factura
+
+@{
+    ViewData["Title"] = "Crear Factura";
+    var productos = (List<Models.Producto>)ViewBag.Productos ?? new List<Models.Producto>();
+}
+
+<h1>Registrar factura</h1>
+<hr />
+
+<div class="row">
+    <div class="col-md-9">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            @if (ViewBag.MensajeExito != null)
+            {
+                <p style="color: green;">@ViewBag.MensajeExito</p>
+            }
+
+            <div class="form-group">
+                <label class="control-label">Cliente</label>
+                <select asp-for="nombreCliente" class="form-control">
+                    <option value="">-- Seleccione un cliente --</option>
+                    @foreach (var nombre in (ViewBag.Clientes as List<string>) ?? new List<string>())
+                    {
+                        <option value="@nombre">@nombre</option>
+                    }
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label">Empleado responsable</label>
+                <select asp-for="empleadoResponsable" class="form-control">
+                    <option value="">-- Seleccione un empleado --</option>
+                    @foreach (var nombre in (ViewBag.Empleados as List<string>) ?? new List<string>())
+                    {
+                        <option value="@nombre">@nombre</option>
+                    }
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label">Método de pago</label>
+                <select asp-for="metodoPago" class="form-control">
+                    <option value="Efectivo">Efectivo</option>
+                    <option value="Tarjeta">Tarjeta</option>
+                    <option value="SINPE Móvil">SINPE Móvil</option>
+                    <option value="Transferencia">Transferencia</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label">Porcentaje de descuento (%)</label>
+                <input asp-for="descuento" type="number" min="0" max="100" value="0" class="form-control" />
+            </div>
+
+            <div class="form-group">
+                <label class="control-label">Estado</label>
+                <select asp-for="estado" class="form-control">
+                    <option value="Pendiente">Pendiente</option>
+                    <option value="Pagada">Pagada</option>
+                    <option value="Anulada">Anulada</option>
+                </select>
+            </div>
+
+            <h3>Detalle de factura</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Unidad</th>
+                        <th>Cantidad</th>
+                        <th>Precio unitario</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="cuerpoDetalles"></tbody>
+            </table>
+            <button type="button" class="btn btn-secondary" onclick="agregarFila()">Agregar detalle</button>
+
+            <div class="form-group" style="margin-top: 15px;">
+                <input type="submit" value="Registrar factura" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="FacturaHome">Volver</a>
+</div>
+
+<script>
+    let indice = 0;
+
+    function agregarFila() {
+        const tbody = document.getElementById("cuerpoDetalles");
+        const fila = document.createElement("tr");
+        fila.innerHTML = `
+                <td>
+                    <select name="detalles[${indice}].producto" class="form-control" onchange="copiarProducto(this)">
+                        <option value="">-- Seleccione --</option>
+                        @foreach (var p in productos)
+                        {
+                        <option value="@p.nombre"
+                            data-unidad="@p.unidadMedida"
+                            data-precio="@p.precio.ToString(System.Globalization.CultureInfo.InvariantCulture)">
+                            @p.nombre
+                        </option>
+                        }
+                    </select>
+                </td>
+                <td><input type="text" class="form-control unidad" name="detalles[${indice}].unidadMedida" readonly /></td>
+                <td><input type="number" min="1" value="1" class="form-control" name="detalles[${indice}].cantidad" /></td>
+                <td><input type="number" step="0.01" class="form-control precio" name="detalles[${indice}].precioUnitario" readonly /></td>
+                <td><button type="button" class="btn btn-danger" onclick="this.closest('tr').remove()">X</button></td>
+            `;
+        tbody.appendChild(fila);
+        indice++;
+    }
+
+    function copiarProducto(select) {
+        const fila = select.closest("tr");
+        const opt = select.selectedOptions[0];
+        fila.querySelector(".unidad").value = opt.dataset.unidad || "";
+        fila.querySelector(".precio").value = opt.dataset.precio || "";
+    }
+
+    window.addEventListener("DOMContentLoaded", agregarFila);
+</script>

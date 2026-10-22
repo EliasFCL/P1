@@ -1,0 +1,78 @@
+﻿@model IEnumerable<Models.Factura>
+
+@{
+    ViewData["Title"] = "Buscar factura";
+}
+
+<h1>Buscar factura</h1>
+
+@if (ViewBag.NoEncontrado != null)
+{
+    <p style="color: red;">@ViewBag.NoEncontrado</p>
+}
+@if (ViewBag.Encontrado != null)
+{
+    <p style="color: green;">@ViewBag.Encontrado</p>
+}
+
+<form asp-action="Details" method="get">
+    <div class="form-group">
+        <label for="criterio">Número de factura o identificación del cliente</label>
+        <input type="text" id="criterio" name="criterio" class="form-control"
+               placeholder="Ej. F2026AB12 o 1-1111-1111" />
+        <br />
+        <button type="submit" class="btn btn-primary">Buscar</button>
+    </div>
+</form>
+
+@if (Model != null && Model.Any())
+{
+    <h4>Resultados</h4>
+    <hr />
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Número</th>
+                <th>Fecha</th>
+                <th>Cliente</th>
+                <th>Empleado</th>
+                <th>Producto</th>
+                <th>Método de pago</th>
+                <th>Subtotal</th>
+                <th>IVA</th>
+                <th>Total</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var f in Model)
+            {
+                <tr>
+                    <td>@f.numeroFactura</td>
+                    <td>@f.fecha.ToShortDateString()</td>
+                    <td>@f.nombreCliente</td>
+                    <td>@f.empleadoResponsable</td>
+                    <td>
+                        @if (f.detalles != null && f.detalles.Any())
+                        {
+                            @string.Join(", ", f.detalles.Select(d => d.producto))
+                        }
+                        else
+                        {
+                            <span>Sin productos</span>
+                        }
+                    </td>
+                    <td>@f.metodoPago</td>
+                    <td>@f.subtotal.ToString("N2") CRC</td>
+                    <td>@f.iva.ToString("N2") CRC</td>
+                    <td>@f.total.ToString("N2") CRC</td>
+                    <td>@f.estado</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<div>
+    <a asp-action="Index">Volver</a>
+</div>

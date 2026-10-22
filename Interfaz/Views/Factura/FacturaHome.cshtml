@@ -1,0 +1,109 @@
+﻿@{
+    ViewData["Title"] = "Facturas";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Gestión de Facturas</h1>
+    <p>Seleccione una opción</p>
+</div>
+
+<div class="container mt-5">
+    <div class="row">
+
+        <!-- Registrar factura -->
+        <div class="col-md-4 mb-4">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <h3>Registrar factura</h3>
+                    <p>Registrar una nueva factura</p>
+
+                    <a asp-controller="Factura"
+                       asp-action="Create"
+                       class="btn btn-primary">
+                        Registrar
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Buscar empleado -->
+        <div class="col-md-4 mb-4">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <h3>Buscar factura</h3>
+                    <p>Buscar una factura</p>
+
+                    <a asp-controller="Factura"
+                       asp-action="Details"
+                       class="btn btn-primary">
+                        Buscar
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Consultar lista -->
+        <div class="col-md-4 mb-4">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <h3>Consultar facturas</h3>
+                    <p>Ver la lista de facturas registradas</p>
+
+                    <a asp-controller="Factura"
+                       asp-action="Index"
+                       class="btn btn-primary">
+                        Consultar
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actualizar datos -->
+        <div class="col-md-4 mb-4">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <h3>Actualizar datos</h3>
+                    <p>Modificar los datos de una factura</p>
+
+                    <a asp-controller="Factura"
+                       asp-action="IndexActualizar"
+                       class="btn btn-primary">
+                        Actualizar
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Eliminar empleado -->
+        <div class="col-md-4 mb-4">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <h3>Eliminar factura</h3>
+                    <p>Eliminar una factura registrada</p>
+
+                    <a asp-controller="Factura"
+                       asp-action="IndexEliminar"
+                       class="btn btn-danger">
+                        Eliminar
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Volver a inicio -->
+        <div class="col-md-4 mb-4">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <h3>Volver a inicio</h3>
+                    <p>Regresar a la página principal</p>
+
+                    <a asp-controller="Home"
+                       asp-action="Index"
+                       class="btn btn-secondary">
+                        Volver al inicio
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

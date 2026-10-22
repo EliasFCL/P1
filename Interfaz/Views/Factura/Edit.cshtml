@@ -1,0 +1,159 @@
+﻿@model Models.Factura
+
+@{
+    ViewData["Title"] = "Editar Factura";
+    var productos = (List<Models.Producto>)ViewBag.Productos ?? new List<Models.Producto>();
+}
+
+<h1>Editar factura</h1>
+<hr />
+
+<div class="row">
+    <div class="col-md-9">
+        <form asp-action="Edit" asp-route-numeroFactura="@Model.numeroFactura">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label class="control-label">Número de factura</label>
+                <input value="@Model.numeroFactura" class="form-control" readonly />
+            </div>
+
+            <div class="form-group">
+                <label class="control-label">Fecha</label>
+                <input value="@Model.fecha.ToString("dd/MM/yyyy HH:mm")" class="form-control" readonly />
+            </div>
+
+            <div class="form-group">
+                <label class="control-label">Cliente</label>
+                <select asp-for="nombreCliente" class="form-control">
+                    <option value="">-- Seleccione un cliente --</option>
+                    @foreach (var nombre in (ViewBag.Clientes as List<string>) ?? new List<string>())
+                    {
+                        <option value="@nombre" selected="@(nombre == Model.nombreCliente)">@nombre</option>
+                    }
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label">Empleado responsable</label>
+                <select asp-for="empleadoResponsable" class="form-control">
+                    <option value="">-- Seleccione un empleado --</option>
+                    @foreach (var nombre in (ViewBag.Empleados as List<string>) ?? new List<string>())
+                    {
+                        <option value="@nombre" selected="@(nombre == Model.empleadoResponsable)">@nombre</option>
+                    }
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label">Método de pago</label>
+                <select asp-for="metodoPago" class="form-control">
+                    <option value="Efectivo" selected="@(Model.metodoPago == "Efectivo")">Efectivo</option>
+                    <option value="Tarjeta" selected="@(Model.metodoPago == "Tarjeta")">Tarjeta</option>
+                    <option value="SINPE Móvil" selected="@(Model.metodoPago == "SINPE Móvil")">SINPE Móvil</option>
+                    <option value="Transferencia" selected="@(Model.metodoPago == "Transferencia")">Transferencia</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label">Porcentaje de descuento (%)</label>
+                <input asp-for="descuento" type="number" min="0" max="100" class="form-control" />
+            </div>
+
+            <div class="form-group">
+                <label class="control-label">Estado</label>
+                <select asp-for="estado" class="form-control">
+                    <option value="Pendiente" selected="@(Model.estado == "Pendiente")">Pendiente</option>
+                    <option value="Pagada" selected="@(Model.estado == "Pagada")">Pagada</option>
+                    <option value="Anulada" selected="@(Model.estado == "Anulada")">Anulada</option>
+                </select>
+            </div>
+
+            <h3>Detalle de factura</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Unidad</th>
+                        <th>Cantidad</th>
+                        <th>Precio unitario</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="cuerpoDetalles">
+                    @if (Model.detalles != null)
+                    {
+                        for (int i = 0; i < Model.detalles.Count; i++)
+                        {
+                            var detalle = Model.detalles[i];
+                            <tr>
+                                <td>
+                                    <select name="detalles[@i].producto" class="form-control" onchange="copiarProducto(this)">
+                                        <option value="">-- Seleccione --</option>
+                                        @foreach (var p in productos)
+                                        {
+                                            <option value="@p.nombre" data-unidad="@p.unidadMedida" data-precio="@p.precio.ToString(System.Globalization.CultureInfo.InvariantCulture)" selected="@(p.nombre == detalle.producto)">@p.nombre</option>
+                                        }
+                                    </select>
+                                </td>
+                                <td><input type="text" class="form-control unidad" name="detalles[@i].unidadMedida" value="@detalle.unidadMedida" readonly /></td>
+                                <td><input type="number" min="1" class="form-control" name="detalles[@i].cantidad" value="@detalle.cantidad" /></td>
+                                <td><input type="number" step="0.01" class="form-control precio" name="detalles[@i].precioUnitario" value="@detalle.precioUnitario.ToString(System.Globalization.CultureInfo.InvariantCulture)" readonly /></td>
+                                <td>
+                                    <input type="hidden" name="detalles[@i].Id" value="@detalle.Id" />
+                                    <button type="button" class="btn btn-danger" onclick="this.closest('tr').remove()">X</button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+            <button type="button" class="btn btn-secondary" onclick="agregarFila()">Agregar detalle</button>
+
+            <div class="form-group" style="margin-top: 15px;">
+                <input type="submit" value="Guardar cambios" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="IndexActualizar">Volver a la lista</a>
+</div>
+
+<script>
+    let indice = @(Model.detalles?.Count ?? 0);
+
+    function agregarFila() {
+        const tbody = document.getElementById("cuerpoDetalles");
+        const fila = document.createElement("tr");
+        fila.innerHTML = `
+                <td>
+                    <select name="detalles[${indice}].producto" class="form-control" onchange="copiarProducto(this)">
+                        <option value="">-- Seleccione --</option>
+                        @foreach (var p in productos)
+                        {
+                                <option value="@p.nombre" data-unidad="@p.unidadMedida" 
+                                data-precio="@p.precio.ToString(System.Globalization.CultureInfo.InvariantCulture)">@p.nombre</option>
+                        }
+                    </select>
+                </td>
+                <td><input type="text" class="form-control unidad" name="detalles[${indice}].unidadMedida" readonly /></td>
+                <td><input type="number" min="1" value="1" class="form-control" name="detalles[${indice}].cantidad" /></td>
+                <td><input type="number" step="0.01" class="form-control precio" name="detalles[${indice}].precioUnitario" readonly /></td>
+                <td>
+                    <input type="hidden" name="detalles[${indice}].Id" value="0" />
+                    <button type="button" class="btn btn-danger" onclick="this.closest('tr').remove()">X</button>
+                </td>
+            `;
+        tbody.appendChild(fila);
+        indice++;
+    }
+
+    function copiarProducto(select) {
+        const fila = select.closest("tr");
+        const opt = select.selectedOptions[0];
+        fila.querySelector(".unidad").value = opt.dataset.unidad || "";
+        fila.querySelector(".precio").value = opt.dataset.precio || "";
+    }
+</script>
