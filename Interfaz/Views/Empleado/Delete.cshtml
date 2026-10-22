@@ -5,6 +5,7 @@
 }
 
 <h3>Esta seguro de eliminar a este empleado?</h3>
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />
         <input type="submit" value="Si" class="btn btn-danger" />

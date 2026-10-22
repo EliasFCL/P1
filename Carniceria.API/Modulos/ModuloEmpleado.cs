@@ -23,6 +23,21 @@ namespace Carniceria.API.Modulos
                 areaTrabajo = "Asistente administrativo",
                 turno = "Mañana"
             });
+            listaEmpleados.Add(new Empleado
+            {
+                Id = 2,
+                tipoIdentificacion = "DIMEX",
+                numId = "123456123456",
+                nombre = "John",
+                apellido1 = "Doe",
+                apellido2 = "Smith",
+                fechaNacimiento = new DateTime(2000, 4, 12),
+                cargo = "Ventas y caja",
+                salario = 500000,
+                fechaIngreso = new DateTime(2023, 1, 15),
+                areaTrabajo = "Vendedor",
+                turno = "Tarde"
+            });
         }
         public void RegistrarEmpleado(Empleado empleado)
         {

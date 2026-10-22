@@ -14,19 +14,19 @@ namespace Carniceria.API.Controllers
         [HttpGet("{numero}")]
         public ActionResult<Factura> GetByNumero(string numero)
         {
-            var f = _modulo.BuscarFactura(numero);
-            if (f == null) return NotFound();
-            return f;
+            var factura = _modulo.BuscarFactura(numero);
+            if (factura == null) return NotFound();
+            return factura;
         }
         private readonly FacturaValidador _validador = new FacturaValidador();
         [HttpPost]
         public ActionResult<Factura> Create(Factura factura)
         {
             if (factura == null)
-                return BadRequest(new { errores = new List<string> { "Factura vacía." } });
+                return BadRequest(new { errores = new List<string> { "Factura vacía" } });
 
             if (factura.detalles == null || !factura.detalles.Any())
-                return BadRequest(new { errores = new List<string> { "La factura debe tener al menos un detalle." } });
+                return BadRequest(new { errores = new List<string> { "La factura debe tener al menos un detalle" } });
 
             var errores = _validador.Validar(factura);
             if (errores.Any())
@@ -69,8 +69,13 @@ namespace Carniceria.API.Controllers
         [HttpDelete("{numero}")]
         public IActionResult Delete(string numero)
         {
-            var eliminado = _modulo.eliminarFactura(numero);
-            if (!eliminado) return NotFound();
+            var factura = _modulo.BuscarFactura(numero);
+            if (factura == null) return NotFound();
+
+            if (factura.estado != "Pendiente")
+                return BadRequest(new { errores = new List<string> { "Solo se pueden eliminar facturas en estado Pendiente" } });
+
+            _modulo.eliminarFactura(numero);
             return NoContent();
         }
 
@@ -83,12 +88,23 @@ namespace Carniceria.API.Controllers
             if (existente == null) return NotFound();
 
             if (existente.estado == "Anulada")
-                return BadRequest(new { errores = new List<string> { "Una factura anulada no puede modificarse." } });
+                return BadRequest(new { errores = new List<string> { "Una factura anulada no puede modificarse" } });
 
             var errores = _validador.Validar(factura);
             if (errores.Any())
                 return BadRequest(new { errores });
             if (!_modulo.ActualizarFactura(numero, factura)) return NotFound();
+            return NoContent();
+        }
+
+        [HttpPut("{numero}/anular")]
+        public IActionResult Anular(string numero)
+        {
+            var exito = _modulo.anularFactura(numero);
+
+            if (!exito)
+                return BadRequest(new { errores = new List<string> { "No se puede anular, compruebe que la factura exista y no esté anulada" } });
+
             return NoContent();
         }
     }

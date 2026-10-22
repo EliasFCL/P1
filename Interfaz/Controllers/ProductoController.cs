@@ -133,11 +133,19 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
             return View(producto);
         }
 
-        [HttpPost]
+        [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Delete(int id, Producto producto)
         {
-            await _productoService.EliminarAsync(id);
+            var (ok, errores) = await _productoService.EliminarAsync(id);
+
+            if (!ok)
+            {
+                foreach (var err in errores) ModelState.AddModelError(string.Empty, err);
+                var productoCompleto = await _productoService.BuscarPorIdAsync(id);
+                return View(productoCompleto ?? producto);
+            }
+
             TempData["Eliminado"] = "Producto eliminado correctamente";
             return RedirectToAction(nameof(IndexEliminar));
         }

@@ -112,7 +112,19 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Delete(int id, Empleado empleado)
         {
-            await _empleadoService.EliminarAsync(id);
+            var (ok, errores) = await _empleadoService.EliminarAsync(id);
+
+            if (!ok)
+            {
+                foreach (var err in errores)
+                    ModelState.AddModelError(string.Empty, err);
+
+                //Volver a buscar  datos para que no se vacíe la vista
+                var empleadoCompleto = await _empleadoService.BuscarPorIdAsync(id);
+                return View(empleadoCompleto ?? empleado);
+            }
+
+
             TempData["Eliminado"] = "Empleado eliminado correctamente";
             return RedirectToAction(nameof(IndexEliminar));
         }

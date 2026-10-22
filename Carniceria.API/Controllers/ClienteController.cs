@@ -40,7 +40,7 @@ namespace Carniceria.API.Controllers
             if (cliente == null) return BadRequest("Cliente vacío");
 
             if (_modulo.ListarClientes().Any(c => c.numId == cliente.numId))
-                return BadRequest(new { errores = new List<string> { "Ese identificador ya existe." } });
+                return BadRequest(new { errores = new List<string> { "Ese identificador ya existe" } });
 
             var errores = _validador.Validar(cliente);
             if (errores != null && errores.Any())
@@ -61,7 +61,7 @@ namespace Carniceria.API.Controllers
                 return BadRequest(new { errores });
 
             if (_modulo.ListarClientes().Any(c => c.numId == cliente.numId && c.Id != id))
-                return BadRequest(new { errores = new List<string> { "Ese identificador ya existe." } });
+                return BadRequest(new { errores = new List<string> { "Ese identificador ya existe" } });
 
             if (!_modulo.ActualizarCliente(id.ToString(), cliente)) return NotFound();
             return NoContent();
@@ -70,7 +70,20 @@ namespace Carniceria.API.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            if (!_modulo.EliminarCliente(id.ToString())) return NotFound();
+            var cliente = _modulo.ListarClientes().FirstOrDefault(c => c.Id == id);
+            if (cliente == null) return NotFound();
+
+            // No se puede borrar a un cliente con una o más facturas
+            var moduloFactura = new ModuloFactura();
+            bool tieneFacturas = moduloFactura.ListarFacturas()
+                .Any(f => string.Equals(f.nombreCliente, cliente.nombre, StringComparison.OrdinalIgnoreCase));
+
+            if (tieneFacturas)
+            {
+                return BadRequest(new { errores = new List<string> { "No se puede eliminar el cliente porque tiene facturas asociadas" } });
+            }
+
+            _modulo.EliminarCliente(id.ToString());
             return NoContent();
         }
     }

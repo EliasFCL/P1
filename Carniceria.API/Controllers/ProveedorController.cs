@@ -61,7 +61,7 @@ namespace Carniceria.API.Controllers
                 return BadRequest(new { errores });
 
             if (_modulo.ListarProveedores().Any(p => p.numId == proveedor.numId))
-                return BadRequest(new { errores = new List<string> { "Ese ID de proveedor ya existe." } });
+                return BadRequest(new { errores = new List<string> { "Ese ID de proveedor ya existe" } });
 
             _modulo.RegistrarProveedor(proveedor);
             return CreatedAtAction(nameof(GetById), new { id = proveedor.Id }, proveedor);
@@ -81,7 +81,7 @@ namespace Carniceria.API.Controllers
                 return BadRequest(new { errores });
 
             if (_modulo.ListarProveedores().Any(p => p.numId == proveedor.numId && p.Id != id))
-                return BadRequest(new { errores = new List<string> { "Ese ID de proveedor ya existe." } });
+                return BadRequest(new { errores = new List<string> { "Ese ID de proveedor ya existe" } });
 
             if (!_modulo.ActualizarProveedor(id.ToString(), proveedor)) return NotFound();
             return NoContent();
@@ -91,7 +91,20 @@ namespace Carniceria.API.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            if (!_modulo.EliminarProveedor(id.ToString())) return NotFound();
+            var proveedor = _modulo.ListarProveedores().FirstOrDefault(p => p.Id == id);
+            if (proveedor == null) return NotFound();
+
+            //No se puede eliminar un proveedor que esté asociado como proveedor principal de uno o más productos
+            var moduloProd = new ModuloProducto();
+            bool esProveedorPrincipal = moduloProd.ListarProductos()
+                .Any(p => string.Equals(p.proveedor, proveedor.nombre, StringComparison.OrdinalIgnoreCase));
+
+            if (esProveedorPrincipal)
+            {
+                return BadRequest(new { errores = new List<string> { "No se puede eliminar el proveedor porque es proveedor principal de uno o más productos" } });
+            }
+
+            _modulo.EliminarProveedor(id.ToString());
             return NoContent();
         }
     }

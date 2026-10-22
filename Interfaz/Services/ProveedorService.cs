@@ -1,4 +1,5 @@
 ﻿using Models;
+using System.Text.Json;
 
 namespace Proyecto1_EliasCorderoLeon.Services
 {
@@ -9,7 +10,7 @@ namespace Proyecto1_EliasCorderoLeon.Services
         Task<Proveedor?> BuscarPorIdAsync(int id);
         Task<(bool ok, List<string> errores)> CrearAsync(Proveedor proveedor);
         Task<(bool ok, List<string> errores)> ActualizarAsync(int id, Proveedor proveedor);
-        Task<bool> EliminarAsync(int id);
+        Task<(bool ok, List<string> errores)> EliminarAsync(int id);
         Task<Proveedor?> BuscarAsync(string busqueda);
         Task<List<string>> ListarNombresAsync();
     }
@@ -63,24 +64,69 @@ namespace Proyecto1_EliasCorderoLeon.Services
             return (false, await LeerErrores(resp));
         }
 
-        public async Task<bool> EliminarAsync(int id)
+        public async Task<(bool ok, List<string> errores)> EliminarAsync(int id)
         {
             var resp = await _http.DeleteAsync($"api/proveedores/{id}");
-            return resp.IsSuccessStatusCode;
+            if (resp.IsSuccessStatusCode) return (true, new());
+            return (false, await LeerErrores(resp));
         }
 
-        private static async Task<List<string>> LeerErrores(HttpResponseMessage resp)
+        private static async Task<List<string>> LeerErrores(HttpResponseMessage response)
         {
+            if (response.Content is null)
+            {
+                return new List<string> { response.ReasonPhrase ?? "Request fallido" };
+            }
+
+            var payload = await response.Content.ReadAsStringAsync();
+
+            if (string.IsNullOrWhiteSpace(payload))
+            {
+                return new List<string> { "Empty response from server" };
+            }
+
             try
             {
-                var payload = await resp.Content.ReadFromJsonAsync<ErrorPayload>();
-                return payload?.errores ?? new List<string> { "Error desconocido" };
+                using var document = JsonDocument.Parse(payload);
+                var root = document.RootElement;
+
+                //Formato: {"errores": ["Mensaje 1", "Mensaje 2"]}
+                if (root.TryGetProperty("errores", out var erroresArray) && erroresArray.ValueKind == JsonValueKind.Array)
+                {
+                    var errores = new List<string>();
+                    foreach (var item in erroresArray.EnumerateArray())
+                    {
+                        errores.Add(item.GetString() ?? "Unknown error");
+                    }
+                    return errores;
+                }
+
+                //Formato: {"errors": {"Campo": ["Mensaje"]}}
+                if (root.TryGetProperty("errors", out var errorsObject) && errorsObject.ValueKind == JsonValueKind.Object)
+                {
+                    var errores = new List<string>();
+                    foreach (var prop in errorsObject.EnumerateObject())
+                    {
+                        if (prop.Value.ValueKind == JsonValueKind.Array)
+                        {
+                            foreach (var item in prop.Value.EnumerateArray())
+                            {
+                                errores.Add(item.GetString() ?? "Unknown error");
+                            }
+                        }
+                    }
+                    return errores;
+                }
             }
-            catch
+            catch (JsonException)
             {
-                return new List<string> { $"Error {(int)resp.StatusCode}" };
+                //Ignoramos si el JSON está mal formado
             }
+
+            //Fallback si no encontró las claves o falló el parseo
+            return new List<string> { payload };
         }
+
 
         private class ErrorPayload
         {

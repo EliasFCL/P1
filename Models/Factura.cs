@@ -7,12 +7,12 @@ namespace Models
 {
     public class Factura
     {
-        public string? numeroFactura { get; set; }     // automatico
+        public string? numeroFactura { get; set; }// automatico
         public DateTime fecha { get; set; }
         public string nombreCliente { get; set; }
         public string empleadoResponsable { get; set; }
         public string metodoPago { get; set; }
-        public int descuento { get; set; }            // porcentaje 
+        public int descuento { get; set; } // porcentaje 
         public string estado { get; set; }
 
         // Calculados por el sistema (el usuario no debe verlos)
@@ -32,6 +32,6 @@ namespace Models
         public string unidadMedida { get; set; }
         public int cantidad { get; set; }
         public double precioUnitario { get; set; }
-        public double subtotal { get; set; }          // cantidad × precioUnitario
+        public double subtotal { get; set; }//cantidad × precioUnitario
     }
 }

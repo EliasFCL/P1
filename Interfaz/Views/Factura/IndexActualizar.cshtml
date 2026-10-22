@@ -55,6 +55,16 @@
                 <td>
                     <a asp-action="Edit" asp-route-numeroFactura="@item.numeroFactura">Seleccionar</a>
                 </td>
+                <td>
+                    @if (item.estado == "Pagada")
+                    {
+                        <form asp-action="Anular" asp-route-numeroFactura="@item.numeroFactura" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-warning btn-sm" onclick="return confirm('¿Seguro que desea anular esta factura? El inventario será devuelto.');">
+                                Anular
+                            </button>
+                        </form>
+                    }
+                </td>
             </tr>
         }
     </tbody>

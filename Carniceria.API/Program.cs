@@ -1,10 +1,15 @@
-// Repositorio consultado para adaptar el MVC al RESTful: https://github.com/AlanRacic/MovieManagementAPI#1
+//Repositorio consultado para adaptar el MVC al RESTful: https://github.com/AlanRacic/MovieManagementAPI#1
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .ConfigureApiBehaviorOptions(options =>
+    {
+        //Desactiva la validación automática en inglés
+        options.SuppressModelStateInvalidFilter = true;
+    });
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 

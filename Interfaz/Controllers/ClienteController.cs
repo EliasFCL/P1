@@ -106,11 +106,22 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
             return View(cliente);
         }
 
-        [HttpPost]
+        [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Delete(int id, Cliente cliente)
         {
-            await _clienteService.EliminarAsync(id);
+            var (ok, errores) = await _clienteService.EliminarAsync(id);
+
+            if (!ok)
+            {
+                //En vez de redirigir, se agrega el error 
+                foreach (var err in errores)
+                    ModelState.AddModelError(string.Empty, err);
+                //Evitar que la vista se limpie
+                var clienteCompleto = await _clienteService.BuscarPorIdAsync(id);
+                return View(clienteCompleto ?? cliente);
+            }
+
             TempData["Eliminado"] = "Cliente eliminado correctamente";
             return RedirectToAction(nameof(IndexEliminar));
         }

@@ -122,38 +122,58 @@
 </div>
 
 <script>
-    let indice = @(Model.detalles?.Count ?? 0);
+    let indice = 0;
 
     function agregarFila() {
-        const tbody = document.getElementById("cuerpoDetalles");
-        const fila = document.createElement("tr");
-        fila.innerHTML = `
-                <td>
+        //Apuntar al cuerpo de la tabla
+        var tbody = document.getElementById("cuerpoDetalles");
+
+        //Insertar fila en última posición
+        var fila = tbody.insertRow(-1);
+
+        //Celda 1: Producto
+        var celda1 = fila.insertCell(0);
+        celda1.innerHTML = `
                     <select name="detalles[${indice}].producto" class="form-control" onchange="copiarProducto(this)">
                         <option value="">-- Seleccione --</option>
                         @foreach (var p in productos)
                         {
-                                <option value="@p.nombre" data-unidad="@p.unidadMedida" 
-                                data-precio="@p.precio.ToString(System.Globalization.CultureInfo.InvariantCulture)">@p.nombre</option>
+                                    <option value="@p.nombre"
+                data-unidad="@p.unidadMedida"
+                data-precio="@p.precio.ToString(System.Globalization.CultureInfo.InvariantCulture)">
+                                                @p.nombre
+                                    </option>
                         }
                     </select>
-                </td>
-                <td><input type="text" class="form-control unidad" name="detalles[${indice}].unidadMedida" readonly /></td>
-                <td><input type="number" min="1" value="1" class="form-control" name="detalles[${indice}].cantidad" /></td>
-                <td><input type="number" step="0.01" class="form-control precio" name="detalles[${indice}].precioUnitario" readonly /></td>
-                <td>
-                    <input type="hidden" name="detalles[${indice}].Id" value="0" />
-                    <button type="button" class="btn btn-danger" onclick="this.closest('tr').remove()">X</button>
-                </td>
-            `;
-        tbody.appendChild(fila);
+                `;
+
+        //Celda 2: Unidad de medida
+        var celda2 = fila.insertCell(1);
+        celda2.innerHTML = `<input type="text" class="form-control unidad" name="detalles[${indice}].unidadMedida" readonly />`;
+
+        //Celda 3: Cantidad
+        var celda3 = fila.insertCell(2);
+        celda3.innerHTML = `<input type="number" min="1" value="1" class="form-control" name="detalles[${indice}].cantidad" />`;
+
+        //Celda 4: Precio Unitario
+        var celda4 = fila.insertCell(3);
+        celda4.innerHTML = `<input type="number" step="0.01" class="form-control precio" name="detalles[${indice}].precioUnitario" readonly />`;
+
+        //Boton para eliminar fila
+        var celda5 = fila.insertCell(4);
+        celda5.innerHTML = `<button type="button" class="btn btn-danger" onclick="this.closest('tr').remove()">X</button>`;
+
+        //Aumentar indice para la siguiente fila
         indice++;
     }
 
+    //Autocompletar datos
     function copiarProducto(select) {
         const fila = select.closest("tr");
         const opt = select.selectedOptions[0];
         fila.querySelector(".unidad").value = opt.dataset.unidad || "";
         fila.querySelector(".precio").value = opt.dataset.precio || "";
     }
+
+    window.addEventListener("DOMContentLoaded", agregarFila);//Fila por defecto al cargar la página
 </script>

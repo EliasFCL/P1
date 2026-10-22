@@ -92,21 +92,20 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
             if (factura == null) return NotFound();
             return View(factura);
         }
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> DeletePost(string numeroFactura)
+        {
+            await _facturaService.EliminarAsync(numeroFactura);
+            TempData["Eliminado"] = "Factura eliminada correctamente";
+            return RedirectToAction(nameof(IndexEliminar));
+        }
 
         public async Task<ActionResult> IndexEliminar()
         {
             ViewBag.Eliminado = TempData["Eliminado"];
             var facturas = await _facturaService.ListarAsync();
             return View(facturas);
-        }
-
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> DeleteConfirmed(string numeroFactura)
-        {
-            await _facturaService.EliminarAsync(numeroFactura);
-            TempData["Eliminado"] = "Factura eliminada correctamente";
-            return RedirectToAction(nameof(IndexEliminar));
         }
 
         public async Task<ActionResult> IndexActualizar()
@@ -146,6 +145,24 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
             }
 
             TempData["Actualizado"] = "Factura " + numeroFactura + " actualizada";
+            return RedirectToAction(nameof(IndexActualizar));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Anular(string numeroFactura)
+        {
+            var (ok, errores) = await _facturaService.AnularAsync(numeroFactura);
+
+            if (!ok)
+            {
+                TempData["Error"] = string.Join(" ", errores);
+            }
+            else
+            {
+                TempData["Actualizado"] = "Factura anulada correctamente, el inventario ha sido restaurado";
+            }
+
             return RedirectToAction(nameof(IndexActualizar));
         }
     }

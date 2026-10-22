@@ -1,4 +1,4 @@
-// devolver un pdf: https://learn.microsoft.com/es-es/dotnet/api/microsoft.aspnetcore.mvc.controllerbase.physicalfile?view=aspnetcore-8.0#microsoft-aspnetcore-mvc-controllerbase-physicalfile(system-string-system-string)
+//Devolver un pdf: https://learn.microsoft.com/es-es/dotnet/api/microsoft.aspnetcore.mvc.controllerbase.physicalfile?view=aspnetcore-8.0#microsoft-aspnetcore-mvc-controllerbase-physicalfile(system-string-system-string)
 
 using Microsoft.AspNetCore.Mvc;
 using Models;

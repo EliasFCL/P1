@@ -39,7 +39,7 @@ namespace Carniceria.API.Controllers
             if (empleado == null) return BadRequest("Empleado vacío");
 
             if (_modulo.ListarEmpleados().Any(e => e.numId == empleado.numId))
-                return BadRequest(new { errores = new List<string> { "Ese identificador ya existe." } });
+                return BadRequest(new { errores = new List<string> { "Ese identificador ya existe" } });
 
             var errores = _validador.Validar(empleado);
             if (errores != null && errores.Any())
@@ -60,7 +60,7 @@ namespace Carniceria.API.Controllers
                 return BadRequest(new { errores });
 
             if (_modulo.ListarEmpleados().Any(e => e.numId == empleado.numId && e.Id != id))
-                return BadRequest(new { errores = new List<string> { "Ese identificador ya existe." } });
+                return BadRequest(new { errores = new List<string> { "Ese identificador ya existe" } });
 
             if (!_modulo.ActualizarEmpleado(id.ToString(), empleado)) return NotFound();
             return NoContent();
@@ -69,7 +69,21 @@ namespace Carniceria.API.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            if (!_modulo.EliminarEmpleado(id.ToString())) return NotFound();
+            var empleado = _modulo.ListarEmpleados().FirstOrDefault(e => e.Id == id);
+            if (empleado == null) return NotFound();
+
+            //No se puede eliminar un empleado con una o más facturas.
+            var moduloFactura = new ModuloFactura();
+            //Usar string.Equals para evitar NullReferenceException
+            bool tieneFacturas = moduloFactura.ListarFacturas()
+                .Any(f => string.Equals(f.empleadoResponsable, empleado.nombre, StringComparison.OrdinalIgnoreCase));
+
+            if (tieneFacturas)
+            {
+                return BadRequest(new { errores = new List<string> { "No se puede eliminar el empleado porque tiene facturas asociadas" } });
+            }
+
+            _modulo.EliminarEmpleado(id.ToString());
             return NoContent();
         }
     }

@@ -2,7 +2,6 @@
 using Carniceria.API.Validadores;
 using Microsoft.AspNetCore.Mvc;
 using Models;
-using Carniceria.API.Modulos;
 
 namespace Carniceria.API.Controllers
 {
@@ -49,7 +48,7 @@ namespace Carniceria.API.Controllers
                 return BadRequest(new { errores });
 
             if (_modulo.ListarProductos().Any(p => p.codigo == producto.codigo))
-                return BadRequest(new { errores = new List<string> { "Ese código de producto ya existe." } });
+                return BadRequest(new { errores = new List<string> { "Ese código de producto ya existe" } });
 
             _modulo.RegistrarProducto(producto);
             return CreatedAtAction(nameof(GetById), new { id = producto.Id }, producto);
@@ -67,7 +66,7 @@ namespace Carniceria.API.Controllers
                 return BadRequest(new { errores });
 
             if (_modulo.ListarProductos().Any(p => p.codigo == producto.codigo && p.Id != id))
-                return BadRequest(new { errores = new List<string> { "Ese código de producto ya existe." } });
+                return BadRequest(new { errores = new List<string> { "Ese código de producto ya existe" } });
 
             if (!_modulo.ActualizarProducto(id.ToString(), producto)) return NotFound();
             return NoContent();
@@ -77,10 +76,23 @@ namespace Carniceria.API.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            if (!_modulo.EliminarProducto(id.ToString())) return NotFound();
+            var producto = _modulo.ListarProductos().FirstOrDefault(p => p.Id == id);
+            if (producto == null) return NotFound();
+
+            //No se puede eliminar un producto que forme parte de un detalle de factura
+            var moduloFactura = new ModuloFactura();
+            bool enFactura = moduloFactura.ListarFacturas()
+                .SelectMany(f => f.detalles ?? new List<DetalleFactura>())
+                .Any(d => string.Equals(d.producto, producto.nombre, StringComparison.OrdinalIgnoreCase));
+
+            if (enFactura)
+            {
+                return BadRequest(new { errores = new List<string> { "No se puede eliminar el producto porque está en el detalle de una factura" } });
+            }
+
+            _modulo.EliminarProducto(id.ToString());
             return NoContent();
         }
-
         // Clase auxiliar para recibir la solicitud de verificación de combinación
         public class CombinacionRequest
         {

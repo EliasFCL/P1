@@ -1,8 +1,9 @@
-﻿//Crear Async: https://learn.microsoft.com/en-us/aspnet/core/blazor/call-web-api?view=aspnetcore-10.0
-//Comprender como adaptar LeerErrores: https://learn.microsoft.com/en-us/dotnet/standard/serialization/system-text-json/use-dom
+﻿//Comprender como adaptar LeerErrores: https://learn.microsoft.com/en-us/dotnet/standard/serialization/system-text-json/use-dom
+// y https://blog.devgenius.io/speech-transcription-using-azure-speech-services-and-c-9811708ae209
 
 using Microsoft.AspNetCore.Mvc;
 using Models;
+using System.Text.Json;
 
 namespace Proyecto1_EliasCorderoLeon.Services
 {
@@ -14,6 +15,7 @@ namespace Proyecto1_EliasCorderoLeon.Services
         Task<List<Factura>> BuscarAsync(string criterio);
         Task<bool> EliminarAsync(string numero);
         Task<(bool ok, List<string> errores)> ActualizarAsync(string numero, Factura factura);
+        Task<(bool ok, List<string> errores)> AnularAsync(string numero);
     }
     public class FacturaService : IFacturaService
     {
@@ -50,28 +52,62 @@ namespace Proyecto1_EliasCorderoLeon.Services
         }
 
         //Mostrar el error real 
-        private static async Task<List<string>> LeerErrores(HttpResponseMessage resp)
+        private static async Task<List<string>> LeerErrores(HttpResponseMessage response)
         {
-            var body = await resp.Content.ReadAsStringAsync();
+            if (response.Content is null)
+            {
+                return new List<string> { response.ReasonPhrase ?? "Request fallido" };
+            }
+
+            var payload = await response.Content.ReadAsStringAsync();
+
+            if (string.IsNullOrWhiteSpace(payload))
+            {
+                return new List<string> { "Empty response from server" };
+            }
+
             try
             {
-                using var doc = System.Text.Json.JsonDocument.Parse(body);
-                foreach (var key in new[] { "errores", "errors" })
+                using var document = JsonDocument.Parse(payload);
+                var root = document.RootElement;
+
+                //Formato: {"errores": ["Mensaje 1", "Mensaje 2"]}
+                if (root.TryGetProperty("errores", out var erroresArray) && erroresArray.ValueKind == JsonValueKind.Array)
                 {
-                    if (doc.RootElement.TryGetProperty(key, out var el))
+                    var errores = new List<string>();
+                    foreach (var item in erroresArray.EnumerateArray())
                     {
-                        if (el.ValueKind == System.Text.Json.JsonValueKind.Array)
-                            return el.EnumerateArray().Select(x => x.GetString() ?? "").ToList();
-                        if (el.ValueKind == System.Text.Json.JsonValueKind.Object)
-                            return el.EnumerateObject()
-                                     .SelectMany(p => p.Value.EnumerateArray().Select(v => v.GetString() ?? ""))
-                                     .ToList();
+                        errores.Add(item.GetString() ?? "Unknown error");
                     }
+                    return errores;
+                }
+
+                //Formato: {"errors": {"Campo": ["Mensaje"]}}
+                if (root.TryGetProperty("errors", out var errorsObject) && errorsObject.ValueKind == JsonValueKind.Object)
+                {
+                    var errores = new List<string>();
+                    foreach (var prop in errorsObject.EnumerateObject())
+                    {
+                        if (prop.Value.ValueKind == JsonValueKind.Array)
+                        {
+                            foreach (var item in prop.Value.EnumerateArray())
+                            {
+                                errores.Add(item.GetString() ?? "Unknown error");
+                            }
+                        }
+                    }
+                    return errores;
                 }
             }
-            catch { }
-            return new List<string> { $"HTTP {(int)resp.StatusCode}: {body}" };
+            catch (JsonException)
+            {
+                //Ignoramos si el JSON está mal formado
+            }
+
+            //Fallback si no encontró las claves o falló el parseo
+            return new List<string> { payload };
         }
+
 
         private class ErrorPayload
         {
@@ -94,6 +130,13 @@ namespace Proyecto1_EliasCorderoLeon.Services
         public async Task<(bool ok, List<string> errores)> ActualizarAsync(string numero, Factura factura)
         {
             var resp = await _http.PutAsJsonAsync($"api/facturas/{numero}", factura);
+            if (resp.IsSuccessStatusCode) return (true, new());
+            return (false, await LeerErrores(resp));
+        }
+
+        public async Task<(bool ok, List<string> errores)> AnularAsync(string numero)
+        {
+            var resp = await _http.PutAsync($"api/facturas/{numero}/anular", null);
             if (resp.IsSuccessStatusCode) return (true, new());
             return (false, await LeerErrores(resp));
         }

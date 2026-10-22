@@ -16,8 +16,20 @@ namespace Carniceria.API.Modulos
                 nombre = "Arthur Morgan",
                 Telefono = 12341234,
                 CorreoElectronico = "arMorgan@gmail.com",
-                TipoSuministro = "Embutidos",
+                TipoSuministro = "Carne de res",
                 FrecuenciaEntrega = "Semanal"
+            });
+            listaProveedores.Add(new Proveedor
+            {
+                Id = 2,
+                tipoIdentificacion = "DIMEX",
+                numId = "123412101010",
+                RazonSocial = "Proveedor de pollo",
+                nombre = "Peter Parker",
+                Telefono = 11112222,
+                CorreoElectronico = "petparker@gmail.com",
+                TipoSuministro = "Paquete",
+                FrecuenciaEntrega = "Quincenal"
             });
         }
         public void RegistrarProveedor(Proveedor proveedor)

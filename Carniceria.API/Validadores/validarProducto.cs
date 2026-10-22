@@ -64,6 +64,11 @@ namespace Carniceria.API.Validadores
                 errores.Add("La existencia actual del producto no puede ser menor o igual a la existencia mínima.");
             }
 
+            if (producto.proveedor == null)
+            {
+                errores.Add("Seleccione un proveedor, verifique que haya al menos uno registrado");
+            }
+
             return errores;
         }
     }

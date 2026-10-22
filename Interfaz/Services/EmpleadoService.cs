@@ -1,4 +1,5 @@
 ﻿using Models;
+using System.Text.Json;
 
 namespace Proyecto1_EliasCorderoLeon.Services
 {
@@ -9,8 +10,8 @@ namespace Proyecto1_EliasCorderoLeon.Services
             Task<Empleado?> BuscarPorIdAsync(int id);
             Task<(bool ok, List<string> errores)> CrearAsync(Empleado empleado);
             Task<(bool ok, List<string> errores)> ActualizarAsync(int id, Empleado empleado);
-            Task<bool> EliminarAsync(int id);
-        }
+            Task<(bool ok, List<string> errores)> EliminarAsync(int id);
+    }
 
         public class EmpleadoService : IEmpleadoService
         {
@@ -54,26 +55,71 @@ namespace Proyecto1_EliasCorderoLeon.Services
                 return (false, await LeerErrores(resp));
             }
 
-            public async Task<bool> EliminarAsync(int id)
+        public async Task<(bool ok, List<string> errores)> EliminarAsync(int id)
+        {
+            var resp = await _http.DeleteAsync($"api/empleados/{id}");
+            if (resp.IsSuccessStatusCode) return (true, new());
+            return (false, await LeerErrores(resp));
+        }
+
+        private static async Task<List<string>> LeerErrores(HttpResponseMessage response)
+        {
+            if (response.Content is null)
             {
-                var resp = await _http.DeleteAsync($"api/empleados/{id}");
-                return resp.IsSuccessStatusCode;
+                return new List<string> { response.ReasonPhrase ?? "Request fallido" };
             }
 
-            private static async Task<List<string>> LeerErrores(HttpResponseMessage resp)
+            var payload = await response.Content.ReadAsStringAsync();
+
+            if (string.IsNullOrWhiteSpace(payload))
             {
-                try
-                {
-                    var payload = await resp.Content.ReadFromJsonAsync<ErrorPayload>();
-                    return payload?.errores ?? new List<string> { "Error desconocido" };
-                }
-                catch
-                {
-                    return new List<string> { $"Error {(int)resp.StatusCode}" };
-                }
+                return new List<string> { "Empty response from server" };
             }
 
-            private class ErrorPayload
+            try
+            {
+                using var document = JsonDocument.Parse(payload);
+                var root = document.RootElement;
+
+                //Formato: {"errores": ["Mensaje 1", "Mensaje 2"]}
+                if (root.TryGetProperty("errores", out var erroresArray) && erroresArray.ValueKind == JsonValueKind.Array)
+                {
+                    var errores = new List<string>();
+                    foreach (var item in erroresArray.EnumerateArray())
+                    {
+                        errores.Add(item.GetString() ?? "Unknown error");
+                    }
+                    return errores;
+                }
+
+                //Formato: {"errors": {"Campo": ["Mensaje"]}}
+                if (root.TryGetProperty("errors", out var errorsObject) && errorsObject.ValueKind == JsonValueKind.Object)
+                {
+                    var errores = new List<string>();
+                    foreach (var prop in errorsObject.EnumerateObject())
+                    {
+                        if (prop.Value.ValueKind == JsonValueKind.Array)
+                        {
+                            foreach (var item in prop.Value.EnumerateArray())
+                            {
+                                errores.Add(item.GetString() ?? "Unknown error");
+                            }
+                        }
+                    }
+                    return errores;
+                }
+            }
+            catch (JsonException)
+            {
+                //Ignoramos si el JSON está mal formado
+            }
+
+            //Fallback si no encontró las claves o falló el parseo
+            return new List<string> { payload };
+        }
+
+
+        private class ErrorPayload
             {
                 public List<string>? errores { get; set; }
             }
