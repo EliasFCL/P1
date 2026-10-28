@@ -1,4 +1,4 @@
-﻿//Servicios: https://learn.microsoft.com/ca-es/aspnet/core/fundamentals/http-requests?view=aspnetcore-3.0#7
+﻿//Servicios: https://learn.microsoft.com/ca-es/aspnet/core/fundamentals/http-requests?view=aspnetcore-3.0#7 y Guía para la creación de un web api: 28:18, 1:06:02
 //Crear Async: https://learn.microsoft.com/en-us/aspnet/core/blazor/call-web-api?view=aspnetcore-10.0
 //Convertir JSON a un objeto: https://learn.microsoft.com/id-id/dotnet/csharp/tutorials/console-webapiclient#1
 //Leer errores: https://github.com/honua-io/honua-server/pull/257/changes/7433aa52cfc052fba78733f4abf4d6665ad700d8#3

@@ -1,5 +1,7 @@
 ﻿@*Entender margenes: https://www.syncfusion.com/faq/blazo/general*@
 @*agregar filas dinamicamente: https://stackoverflow.com/questions/60497876/how-to-add-items-entered-in-a-dynamic-html-table-to-a-model-bound-list*@
+@*Evitar que la vista se recargue para evitar que se borren las líneas de detalles: https://www.mediaevent.de/javascript/submit.html y
+https://github.com/search?q=%22fetch%28this.action%22+%22new+FormData%28this%29%22&type=code*@
 
 @model Models.Factura
 
@@ -147,4 +149,19 @@
     }
 
     window.addEventListener("DOMContentLoaded", agregarFila);//Fila por defecto al cargar la página
+
+    document.querySelector("form").addEventListener("submit", async function (e) {
+        e.preventDefault(); //La página no recarga (Evitar que se borren las líneas de detalle cuando hay un error)
+
+        let mantener = await fetch(this.action, { method: 'POST', body: new FormData(this) });
+        let datos = await mantener.json();
+
+        if (!datos.ok) {
+            //Mostrar una alerta
+            alert(datos.errores.join("\n"));
+        } else {
+            alert("Factura " + datos.numero + " guardada con éxito");
+            window.location.href = "/Factura/Index";
+        }
+    });
 </script>

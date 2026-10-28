@@ -70,10 +70,13 @@ namespace Carniceria.API.Controllers
         public IActionResult Delete(string numero)
         {
             var factura = _modulo.BuscarFactura(numero);
-            if (factura == null) return NotFound();
+            if (factura == null) return NotFound(new { errores = new List<string> { "Factura no encontrada." } });
 
+            //Validar estado antes de intentar borrar
             if (factura.estado != "Pendiente")
-                return BadRequest(new { errores = new List<string> { "Solo se pueden eliminar facturas en estado Pendiente" } });
+            {
+                return BadRequest(new { errores = new List<string> { "No se puede eliminar una factura pagada o anulada." } });
+            }
 
             _modulo.eliminarFactura(numero);
             return NoContent();

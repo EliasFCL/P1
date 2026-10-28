@@ -43,7 +43,7 @@ namespace Carniceria.API.Modulos
                 detalle.Id = DetalleCounter;
                 detalle.subtotal = detalle.cantidad * detalle.precioUnitario;
             }
-            factura.descuento = 14;
+            factura.descuento = factura.descuento;
             factura.subtotal = factura.detalles.Sum(d => d.subtotal);
             factura.montoDescuento = (factura.subtotal * factura.descuento) / 100;
             factura.baseGravable = factura.subtotal - factura.montoDescuento;
@@ -86,7 +86,6 @@ namespace Carniceria.API.Modulos
         }
 
         public List<Factura> ListarFacturas() => facturas;
-
 
 
         public bool ActualizarFactura(string numero, Factura facturaActualizada)
@@ -133,7 +132,7 @@ namespace Carniceria.API.Modulos
 
         private void AjustarInventario(string nombreProducto, int cantidadCambio)
         {
-            // Instanciamos el módulo de productos para buscar el producto
+            // Instanciar el módulo de productos para buscar el producto
             var moduloProd = new ModuloProducto();
             var producto = moduloProd.ListarProductos().FirstOrDefault(p => p.nombre.Equals(nombreProducto, StringComparison.OrdinalIgnoreCase));
 
@@ -176,7 +175,7 @@ namespace Carniceria.API.Modulos
                     nombreCliente = cliente.nombre,
                     empleadoResponsable = empleado.nombre,
                     metodoPago = "Efectivo",
-                    descuento = 0,
+                    descuento = 12,
                     estado = "Pendiente",
                     detalles = new List<DetalleFactura>
         {
@@ -184,15 +183,15 @@ namespace Carniceria.API.Modulos
             new DetalleFactura {
                 producto = productos[0].nombre,
                 unidadMedida = productos[0].unidadMedida,
-                cantidad = 1,
+                cantidad = 3,
                 precioUnitario = productos[0].precio
             },
             //Usar el mismo producto para el minimo de 2 líneas de detalle
             new DetalleFactura {
-                producto = productos[0].nombre,
-                unidadMedida = productos[0].unidadMedida,
-                cantidad = 2,
-                precioUnitario = productos[0].precio
+                producto = productos[1].nombre,
+                unidadMedida = productos[1].unidadMedida,
+                cantidad = 5,
+                precioUnitario = productos[1].precio
             }
         }
                 };

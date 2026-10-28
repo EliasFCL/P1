@@ -30,6 +30,12 @@ builder.Services.AddHttpClient<IFacturaService, FacturaService>(client =>
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+//Se le dice a c# que use la cultura de Costa Rica para la aplicación
+System.Globalization.CultureInfo.DefaultThreadCurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
+
+//Pero que mantenga los textos, fechas y demás en español de Costa Rica (esto para evitar problemas en el formato del subtotal)
+System.Globalization.CultureInfo.DefaultThreadCurrentUICulture = new System.Globalization.CultureInfo("es-CR");
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

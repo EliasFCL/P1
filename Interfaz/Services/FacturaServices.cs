@@ -13,9 +13,10 @@ namespace Proyecto1_EliasCorderoLeon.Services
         Task<(bool ok, List<string> errores, Factura? factura)> CrearAsync(Factura factura);
         Task<Factura?> BuscarPorNumeroAsync(string numero);
         Task<List<Factura>> BuscarAsync(string criterio);
-        Task<bool> EliminarAsync(string numero);
+        Task<(bool ok, List<string> errores)> EliminarAsync(string numero);
         Task<(bool ok, List<string> errores)> ActualizarAsync(string numero, Factura factura);
         Task<(bool ok, List<string> errores)> AnularAsync(string numero);
+
     }
     public class FacturaService : IFacturaService
     {
@@ -101,7 +102,7 @@ namespace Proyecto1_EliasCorderoLeon.Services
             }
             catch (JsonException)
             {
-                //Ignoramos si el JSON está mal formado
+                //Ignorar si el JSON está mal formado
             }
 
             //Fallback si no encontró las claves o falló el parseo
@@ -121,10 +122,11 @@ namespace Proyecto1_EliasCorderoLeon.Services
             return await resp.Content.ReadFromJsonAsync<List<Factura>>() ?? new();
         }
 
-        public async Task<bool> EliminarAsync(string numero)
+        public async Task<(bool ok, List<string> errores)> EliminarAsync(string numero)
         {
             var resp = await _http.DeleteAsync($"api/facturas/{numero}");
-            return resp.IsSuccessStatusCode;
+            if (resp.IsSuccessStatusCode) return (true, new());
+            return (false, await LeerErrores(resp));
         }
 
         public async Task<(bool ok, List<string> errores)> ActualizarAsync(string numero, Factura factura)

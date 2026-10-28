@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿//Create modificado: https://msprogrammer.serviciipeweb.ro/jquery-ajax-request-and-mvcdetailed/
+
+using Microsoft.AspNetCore.Mvc;
 using Models;
 using Proyecto1_EliasCorderoLeon.Services;
 
@@ -26,7 +28,7 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
         public async Task<ActionResult> Create()
         {
             await CargarCombosAsync();
-            return View();
+            return View(new Factura());
         }
 
         public async Task<ActionResult> FacturaHome()
@@ -45,19 +47,19 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(Factura factura)
         {
-            if (factura == null) return View();
+            if (factura == null)
+                return Json(new { ok = false, errores = new List<string> { "Factura vacía" } });
 
             var (ok, errores, creada) = await _facturaService.CrearAsync(factura);
+
             if (!ok)
             {
-                foreach (var err in errores) ModelState.AddModelError(string.Empty, err);
-                await CargarCombosAsync();
-                return View(factura);
+                //Devolver errores en forato JSON
+                return Json(new { ok = false, errores = errores });
             }
 
-            ModelState.Clear();
-            ViewBag.MensajeExito = "Factura registrada exitosamente. Número: " + creada!.numeroFactura;
-            return View(new Factura());
+            //Devolver el número
+            return Json(new { ok = true, numero = creada!.numeroFactura });
         }
 
         private async Task CargarCombosAsync()
@@ -94,9 +96,19 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
         }
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> DeletePost(string numeroFactura)
+        public async Task<ActionResult> DeleteConfirmed(string numeroFactura)
         {
-            await _facturaService.EliminarAsync(numeroFactura);
+            //Recibir el ok y errores
+            var (ok, errores) = await _facturaService.EliminarAsync(numeroFactura);
+
+            //Si no se puede borrar
+            if (!ok)
+            {
+                TempData["NoEliminado"] = "Solo las facturas pendientes pueden eliminarse";
+                return RedirectToAction(nameof(IndexEliminar));
+            }
+
+            //Si todo salió bien
             TempData["Eliminado"] = "Factura eliminada correctamente";
             return RedirectToAction(nameof(IndexEliminar));
         }
@@ -104,6 +116,7 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
         public async Task<ActionResult> IndexEliminar()
         {
             ViewBag.Eliminado = TempData["Eliminado"];
+            ViewBag.NoEliminado = TempData["NoEliminado"];
             var facturas = await _facturaService.ListarAsync();
             return View(facturas);
         }

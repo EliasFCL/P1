@@ -10,6 +10,11 @@
 {
     <p style="color: green;">@ViewBag.Eliminado</p>
 }
+@if (ViewBag.NoEliminado != null)
+{
+    <p style="color: red;">@ViewBag.NoEliminado</p>
+}
+
 
 <table class="table">
     <thead>

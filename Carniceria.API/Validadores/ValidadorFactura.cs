@@ -7,6 +7,14 @@ namespace Carniceria.API.Validadores
     {
         public List<string> Validar(Factura factura)
         {
+            try
+            {
+
+            }
+            catch (Exception ex)
+            {
+                return new List<string> { $"Error al validar la factura: {ex.Message}" };
+            }
             List<string> errores = new List<string>();
 
             if (string.IsNullOrWhiteSpace(factura.nombreCliente))
@@ -36,23 +44,37 @@ namespace Carniceria.API.Validadores
             else
             {
                 var moduloProducto = new ModuloProducto();
-                
-                // Validar que los detalles no vengan con datos vacíos
+
                 foreach (var detalle in factura.detalles)
                 {
+                    //Validar que se haya seleccionado un producto
                     if (string.IsNullOrWhiteSpace(detalle.producto))
                     {
                         errores.Add("Hay una línea de detalle sin producto seleccionado");
+                        continue; //Si no hay producto, saltarse la validación de la línea
                     }
+
                     if (detalle.cantidad <= 0)
                     {
                         errores.Add($"La cantidad para el producto '{detalle.producto}' debe ser mayor a 0");
                     }
 
-                    var cantidad = moduloProducto.ListarProductos().FirstOrDefault(p => p.nombre == detalle.producto);
-                    if (cantidad.existenciaActual < detalle.cantidad)
+                    //Buscar el producto 
+                    var productoEncontrado = moduloProducto.ListarProductos()
+                        .FirstOrDefault(p => p.nombre.Equals(detalle.producto, StringComparison.OrdinalIgnoreCase));
+
+                    //Validar la existencia
+                    if (productoEncontrado != null)
                     {
-                        errores.Add($"La cantidad para el producto '{detalle.producto}' excede la existencia disponible de {cantidad.existenciaActual}");
+                        //?? 0 por si la existencia del producto es nula
+                        if ((productoEncontrado.existenciaActual ?? 0) < detalle.cantidad)
+                        {
+                            errores.Add($"La cantidad para el producto '{detalle.producto}' excede la existencia disponible de {productoEncontrado.existenciaActual}");
+                        }
+                    }
+                    else
+                    {
+                        errores.Add($"El producto '{detalle.producto}' no existe en el inventario");
                     }
                 }
             }

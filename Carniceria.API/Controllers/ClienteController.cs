@@ -1,4 +1,4 @@
-﻿//Estructura de los nuevos controllers: https://learn.microsoft.com/is-is/aspnet/core/web-api/?view=aspnetcore-7.0#1 y
+﻿//Estructura de los nuevos controllers: Guía para la creación de una web API 14:14 y
 //https://learn.microsoft.com/lb-lu/aspnet/core/tutorials/first-web-api?view=aspnetcore-10.0&preserve-view=true&tabs=visual-studio
 
 using Microsoft.AspNetCore.Mvc;
