@@ -9,7 +9,7 @@ namespace Carniceria.API.Modulos
         {
             listaProveedores.Add(new Proveedor
             {
-                Id = 1,
+                Id = Guid.NewGuid(),
                 tipoIdentificacion = "DIMEX",
                 numId = "111111222222",
                 RazonSocial = "Proveedor de carne",
@@ -21,7 +21,7 @@ namespace Carniceria.API.Modulos
             });
             listaProveedores.Add(new Proveedor
             {
-                Id = 2,
+                Id = Guid.NewGuid(),
                 tipoIdentificacion = "DIMEX",
                 numId = "123412101010",
                 RazonSocial = "Proveedor de pollo",
@@ -34,7 +34,10 @@ namespace Carniceria.API.Modulos
         }
         public void RegistrarProveedor(Proveedor proveedor)
         {
-            proveedor.Id = listaProveedores.Any() ? listaProveedores.Max(p => p.Id) + 1 : 1;
+            if (proveedor.Id == Guid.Empty)
+            {
+                proveedor.Id = Guid.NewGuid();
+            }
             listaProveedores.Add(proveedor);
         }
 

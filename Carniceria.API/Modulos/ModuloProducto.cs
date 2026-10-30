@@ -8,7 +8,7 @@ namespace Carniceria.API.Modulos
     {
         new Producto
         {
-            Id = 1,
+            Id = Guid.NewGuid(),
             codigo = "P001",
             nombre = "Lomo de vaca",
             categoria = "Carne de Res",
@@ -20,7 +20,7 @@ namespace Carniceria.API.Modulos
         },
         new Producto
         {
-            Id = 2,
+            Id = Guid.NewGuid(),
             codigo = "P002",
             nombre = "Mollehas",
             categoria = "Pollo",
@@ -33,7 +33,10 @@ namespace Carniceria.API.Modulos
     };
         public void RegistrarProducto(Producto producto)
         {
-            producto.Id = listaProductos.Any() ? listaProductos.Max(p => p.Id) + 1 : 1;
+            if (producto.Id == Guid.Empty)
+            {
+                producto.Id = Guid.NewGuid();
+            }
             listaProductos.Add(producto);
         }
 

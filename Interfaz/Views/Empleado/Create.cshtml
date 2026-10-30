@@ -24,6 +24,11 @@
                 </p>
             }
             <div class="form-group">
+                <label class="control-label">Identificador único</label>
+                <input type="text" class="form-control" value="@Model.Id" readonly />
+                <input type="hidden" asp-for="Id" />
+            </div>
+            <div class="form-group">
                 @* Drop box para el tipo de identificación *@
                 <label class="control-label">Tipo de indetificación</label>
 

@@ -7,10 +7,10 @@ namespace Proyecto1_EliasCorderoLeon.Services
     {
         Task<List<Proveedor>> ListarAsync();
         Task<Proveedor?> BuscarPorNumIdAsync(string numId);
-        Task<Proveedor?> BuscarPorIdAsync(int id);
+        Task<Proveedor?> BuscarPorIdAsync(Guid id);
         Task<(bool ok, List<string> errores)> CrearAsync(Proveedor proveedor);
-        Task<(bool ok, List<string> errores)> ActualizarAsync(int id, Proveedor proveedor);
-        Task<(bool ok, List<string> errores)> EliminarAsync(int id);
+        Task<(bool ok, List<string> errores)> ActualizarAsync(Guid id, Proveedor proveedor);
+        Task<(bool ok, List<string> errores)> EliminarAsync(Guid id);
         Task<Proveedor?> BuscarAsync(string busqueda);
         Task<List<string>> ListarNombresAsync();
     }
@@ -37,7 +37,7 @@ namespace Proyecto1_EliasCorderoLeon.Services
             return await resp.Content.ReadFromJsonAsync<Proveedor>();
         }
 
-        public async Task<Proveedor?> BuscarPorIdAsync(int id)
+        public async Task<Proveedor?> BuscarPorIdAsync(Guid id)
         {
             var resp = await _http.GetAsync($"api/proveedores/{id}");
             if (!resp.IsSuccessStatusCode) return null;
@@ -54,7 +54,7 @@ namespace Proyecto1_EliasCorderoLeon.Services
             return (false, await LeerErrores(resp));
         }
 
-        public async Task<(bool ok, List<string> errores)> ActualizarAsync(int id, Proveedor proveedor)
+        public async Task<(bool ok, List<string> errores)> ActualizarAsync(Guid id, Proveedor proveedor)
         {
             proveedor.apellido1 = "ABC";
             proveedor.apellido2 = "ABC";
@@ -64,7 +64,7 @@ namespace Proyecto1_EliasCorderoLeon.Services
             return (false, await LeerErrores(resp));
         }
 
-        public async Task<(bool ok, List<string> errores)> EliminarAsync(int id)
+        public async Task<(bool ok, List<string> errores)> EliminarAsync(Guid id)
         {
             var resp = await _http.DeleteAsync($"api/proveedores/{id}");
             if (resp.IsSuccessStatusCode) return (true, new());
@@ -90,7 +90,6 @@ namespace Proyecto1_EliasCorderoLeon.Services
                 using var document = JsonDocument.Parse(payload);
                 var root = document.RootElement;
 
-                //Formato: {"errores": ["Mensaje 1", "Mensaje 2"]}
                 if (root.TryGetProperty("errores", out var erroresArray) && erroresArray.ValueKind == JsonValueKind.Array)
                 {
                     var errores = new List<string>();
@@ -101,7 +100,6 @@ namespace Proyecto1_EliasCorderoLeon.Services
                     return errores;
                 }
 
-                //Formato: {"errors": {"Campo": ["Mensaje"]}}
                 if (root.TryGetProperty("errors", out var errorsObject) && errorsObject.ValueKind == JsonValueKind.Object)
                 {
                     var errores = new List<string>();
@@ -120,10 +118,8 @@ namespace Proyecto1_EliasCorderoLeon.Services
             }
             catch (JsonException)
             {
-                //Ignoramos si el JSON está mal formado
             }
 
-            //Fallback si no encontró las claves o falló el parseo
             return new List<string> { payload };
         }
 

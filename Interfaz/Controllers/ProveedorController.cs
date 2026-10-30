@@ -75,7 +75,8 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
 
         public ActionResult Create()
         {
-            return View();
+            var nuevoGuid = new Proveedor { Id = Guid.NewGuid() };
+            return View(nuevoGuid);
         }
 
         [HttpPost]
@@ -93,10 +94,10 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
 
             ModelState.Clear();
             ViewBag.MensajeExito = "Proveedor registrado exitosamente.";
-            return View(new Proveedor());
+            return View(new Proveedor() { Id = Guid.NewGuid() });
         }
 
-        public async Task<ActionResult> Edit(int id)
+        public async Task<ActionResult> Edit(Guid id)
         {
             var proveedor = await _proveedorService.BuscarPorIdAsync(id);
             if (proveedor == null) return NotFound();
@@ -105,7 +106,7 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(int id, Proveedor proveedor)
+        public async Task<ActionResult> Edit(Guid id, Proveedor proveedor)
         {
             proveedor.Id = id;
             var (ok, errores) = await _proveedorService.ActualizarAsync(id, proveedor);
@@ -119,7 +120,7 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
             return RedirectToAction(nameof(IndexActualizar));
         }
 
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> Delete(Guid id)
         {
             var proveedor = await _proveedorService.BuscarPorIdAsync(id);
             if (proveedor == null) return NotFound();
@@ -128,7 +129,7 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Delete(int id, Proveedor proveedor)
+        public async Task<ActionResult> Delete(Guid id, Proveedor proveedor)
         {
             var (ok, errores) = await _proveedorService.EliminarAsync(id);
 

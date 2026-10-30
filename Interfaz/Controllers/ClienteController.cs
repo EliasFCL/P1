@@ -55,7 +55,8 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
 
         public ActionResult Create()
         {
-            return View();
+            var nuevoGuid = new Cliente { Id = Guid.NewGuid() };
+            return View(nuevoGuid);
         }
 
         [HttpPost]
@@ -73,10 +74,10 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
 
             ModelState.Clear();
             ViewBag.MensajeExito = "Cliente registrado exitosamente.";
-            return View(new Cliente());
+            return View(new Cliente() { Id = Guid.NewGuid()});//Recargar el campo del Guid
         }
 
-        public async Task<ActionResult> Edit(int id)
+        public async Task<ActionResult> Edit(Guid id)
         {
             var cliente = await _clienteService.BuscarPorIdAsync(id);
             if (cliente == null) return NotFound();
@@ -85,7 +86,7 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(int id, Cliente cliente)
+        public async Task<ActionResult> Edit(Guid id, Cliente cliente)
         {
             cliente.Id = id;
             var (ok, errores) = await _clienteService.ActualizarAsync(id, cliente);
@@ -99,7 +100,7 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
             return RedirectToAction(nameof(IndexActualizar));
         }
 
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> Delete(Guid id)
         {
             var cliente = await _clienteService.BuscarPorIdAsync(id);
             if (cliente == null) return NotFound();
@@ -108,7 +109,7 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Delete(int id, Cliente cliente)
+        public async Task<ActionResult> Delete(Guid id, Cliente cliente)
         {
             var (ok, errores) = await _clienteService.EliminarAsync(id);
 

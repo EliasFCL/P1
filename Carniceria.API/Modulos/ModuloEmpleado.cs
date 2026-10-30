@@ -10,7 +10,7 @@ namespace Carniceria.API.Modulos
         {
             listaEmpleados.Add(new Empleado
             {
-                Id = 1,
+                Id = Guid.NewGuid(),
                 tipoIdentificacion = "DIMEX",
                 numId = "101010121212",
                 nombre = "Ellie",
@@ -25,7 +25,7 @@ namespace Carniceria.API.Modulos
             });
             listaEmpleados.Add(new Empleado
             {
-                Id = 2,
+                Id = Guid.NewGuid(),
                 tipoIdentificacion = "DIMEX",
                 numId = "123456123456",
                 nombre = "John",
@@ -41,7 +41,10 @@ namespace Carniceria.API.Modulos
         }
         public void RegistrarEmpleado(Empleado empleado)
         {
-            empleado.Id = listaEmpleados.Any() ? listaEmpleados.Max(e => e.Id) + 1 : 1;
+            if (empleado.Id == Guid.Empty)
+            {
+                empleado.Id = Guid.NewGuid();
+            }
             listaEmpleados.Add(empleado);
         }
 

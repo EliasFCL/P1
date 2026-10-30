@@ -11,7 +11,7 @@ namespace Carniceria.API.Validadores
             //Validar código
             if (string.IsNullOrWhiteSpace(producto.codigo))
             {
-                errores.Add("El código del producto es obligatorio.");
+                errores.Add("El código del producto es obligatorio");
             } else if (producto.codigo.Length > 20 || producto.codigo.Length < 1)
             {
                 errores.Add("El código del producto no puede tener más de 20 caracteres y menos de 1");
@@ -61,7 +61,11 @@ namespace Carniceria.API.Validadores
             }
             if (producto.existenciaActual <= producto.existeciaMinima)
             {
-                errores.Add("La existencia actual del producto no puede ser menor o igual a la existencia mínima.");
+                errores.Add("Existencias insuficientes: la cantidad actual del producto es menor que la existencia minima permitida");
+            }
+            if (producto.existeciaMinima.ToString().StartsWith("-") || producto.existenciaActual.ToString().StartsWith("-"))
+            {
+                errores.Add("Ninguna existencia puede tener un valor negativo");
             }
 
             if (producto.proveedor == null)

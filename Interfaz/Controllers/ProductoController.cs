@@ -78,9 +78,12 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
         }
         public async Task<ActionResult> Create()
         {
+            var nuevoGuid = new Producto { Id = Guid.NewGuid() };
             ViewBag.Proveedores = await _proveedorService.ListarNombresAsync();
-            return View();
+            
+            return View(nuevoGuid);
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -98,10 +101,10 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
 
             ModelState.Clear();
             ViewBag.MensajeExito = "Producto registrado exitosamente.";
-            return View(new Producto());
+            return View(new Producto() { Id = Guid.NewGuid() });
         }
 
-        public async Task<ActionResult> Edit(int id)
+        public async Task<ActionResult> Edit(Guid id)
         {
             var producto = await _productoService.BuscarPorIdAsync(id);
             ViewBag.Proveedores = await _proveedorService.ListarNombresAsync();
@@ -111,7 +114,7 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(int id, Producto producto)
+        public async Task<ActionResult> Edit(Guid id, Producto producto)
         {
             producto.Id = id;
             var (ok, errores) = await _productoService.ActualizarAsync(id, producto);
@@ -126,7 +129,7 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
             return RedirectToAction(nameof(IndexActualizar));
         }
 
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> Delete(Guid id)
         {
             var producto = await _productoService.BuscarPorIdAsync(id);
             if (producto == null) return NotFound();
@@ -135,7 +138,7 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Delete(int id, Producto producto)
+        public async Task<ActionResult> Delete(Guid id, Producto producto)
         {
             var (ok, errores) = await _productoService.EliminarAsync(id);
 

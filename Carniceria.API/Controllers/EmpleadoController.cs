@@ -18,7 +18,7 @@ namespace Carniceria.API.Controllers
         public ActionResult<List<Empleado>> GetAll() => _modulo.ListarEmpleados();
 
         [HttpGet("{id}")]
-        public ActionResult<Empleado> GetById(int id)
+        public ActionResult<Empleado> GetById(Guid id)
         {
             var e = _modulo.ListarEmpleados().FirstOrDefault(x => x.Id == id);
             if (e == null) return NotFound();
@@ -50,7 +50,7 @@ namespace Carniceria.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(int id, Empleado empleado)
+        public IActionResult Update(Guid id, Empleado empleado)
         {
             if (empleado == null) return BadRequest();
             empleado.Id = id;
@@ -67,7 +67,7 @@ namespace Carniceria.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public IActionResult Delete(Guid id)
         {
             var empleado = _modulo.ListarEmpleados().FirstOrDefault(e => e.Id == id);
             if (empleado == null) return NotFound();

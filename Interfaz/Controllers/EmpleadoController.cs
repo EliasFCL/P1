@@ -57,7 +57,8 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
 
         public ActionResult Create()
         {
-            return View();
+            var nuevoGuid = new Empleado { Id = Guid.NewGuid() };
+            return View(nuevoGuid);
         }
 
         [HttpPost]
@@ -75,10 +76,10 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
 
             ModelState.Clear();
             ViewBag.MensajeExito = "Empleado registrado exitosamente.";
-            return View(new Empleado());
+            return View(new Empleado() { Id = Guid.NewGuid() });
         }
 
-        public async Task<ActionResult> Edit(int id)
+        public async Task<ActionResult> Edit(Guid id)
         {
             var empleado = await _empleadoService.BuscarPorIdAsync(id);
             if (empleado == null) return NotFound();
@@ -87,7 +88,7 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(int id, Empleado empleado)
+        public async Task<ActionResult> Edit(Guid id, Empleado empleado)
         {
             empleado.Id = id;
             var (ok, errores) = await _empleadoService.ActualizarAsync(id, empleado);
@@ -101,7 +102,7 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
             return RedirectToAction(nameof(IndexActualizar));
         }
 
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> Delete(Guid id)
         {
             var empleado = await _empleadoService.BuscarPorIdAsync(id);
             if (empleado == null) return NotFound();
@@ -110,7 +111,7 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Delete(int id, Empleado empleado)
+        public async Task<ActionResult> Delete(Guid id, Empleado empleado)
         {
             var (ok, errores) = await _empleadoService.EliminarAsync(id);
 

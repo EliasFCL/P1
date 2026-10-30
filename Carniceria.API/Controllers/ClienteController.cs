@@ -19,7 +19,7 @@ namespace Carniceria.API.Controllers
         public ActionResult<List<Cliente>> GetAll() => _modulo.ListarClientes();
 
         [HttpGet("{id}")]
-        public ActionResult<Cliente> GetById(int id)
+        public ActionResult<Cliente> GetById(Guid id)
         {
             var c = _modulo.ListarClientes().FirstOrDefault(x => x.Id == id);
             if (c == null) return NotFound();
@@ -51,7 +51,7 @@ namespace Carniceria.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(int id, Cliente cliente)
+        public IActionResult Update(Guid id, Cliente cliente)
         {
             if (cliente == null) return BadRequest();
             cliente.Id = id;
@@ -63,17 +63,16 @@ namespace Carniceria.API.Controllers
             if (_modulo.ListarClientes().Any(c => c.numId == cliente.numId && c.Id != id))
                 return BadRequest(new { errores = new List<string> { "Ese identificador ya existe" } });
 
-            if (!_modulo.ActualizarCliente(id.ToString(), cliente)) return NotFound();
+            if (!_modulo.ActualizarCliente(id, cliente)) return NotFound();
             return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public IActionResult Delete(Guid id)
         {
             var cliente = _modulo.ListarClientes().FirstOrDefault(c => c.Id == id);
             if (cliente == null) return NotFound();
 
-            // No se puede borrar a un cliente con una o más facturas
             var moduloFactura = new ModuloFactura();
             bool tieneFacturas = moduloFactura.ListarFacturas()
                 .Any(f => string.Equals(f.nombreCliente, cliente.nombre, StringComparison.OrdinalIgnoreCase));
@@ -83,7 +82,7 @@ namespace Carniceria.API.Controllers
                 return BadRequest(new { errores = new List<string> { "No se puede eliminar el cliente porque tiene facturas asociadas" } });
             }
 
-            _modulo.EliminarCliente(id.ToString());
+            _modulo.EliminarCliente(id);
             return NoContent();
         }
     }

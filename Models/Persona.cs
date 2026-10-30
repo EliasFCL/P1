@@ -4,7 +4,7 @@ namespace Models
 {
     public class Persona
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string tipoIdentificacion { get; set; }
         [Required(ErrorMessage = "La identificación no puede estar vacia")]
         public string numId { get; set; }

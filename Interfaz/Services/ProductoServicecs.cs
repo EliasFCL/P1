@@ -8,10 +8,10 @@ namespace Proyecto1_EliasCorderoLeon.Services
     public interface IProductoService
     {
         Task<List<Producto>> ListarAsync();
-        Task<Producto?> BuscarPorIdAsync(int id);
+        Task<Producto?> BuscarPorIdAsync(Guid id);
         Task<(bool ok, List<string> errores)> CrearAsync(Producto producto);
-        Task<(bool ok, List<string> errores)> ActualizarAsync(int id, Producto producto);
-        Task<(bool ok, List<string> errores)> EliminarAsync(int id);
+        Task<(bool ok, List<string> errores)> ActualizarAsync(Guid id, Producto producto);
+        Task<(bool ok, List<string> errores)> EliminarAsync(Guid id);
         Task<Producto?> BuscarAsync(string busqueda);
         Task<(bool existe, double? precio)> VerificarCombinacionAsync(Producto producto);
     }
@@ -30,7 +30,7 @@ namespace Proyecto1_EliasCorderoLeon.Services
             return await _http.GetFromJsonAsync<List<Producto>>("api/productos") ?? new();
         }
 
-        public async Task<Producto?> BuscarPorIdAsync(int id)
+        public async Task<Producto?> BuscarPorIdAsync(Guid id)
         {
             var resp = await _http.GetAsync($"api/productos/{id}");
             if (!resp.IsSuccessStatusCode) return null;
@@ -44,14 +44,14 @@ namespace Proyecto1_EliasCorderoLeon.Services
             return (false, await LeerErrores(resp));
         }
 
-        public async Task<(bool ok, List<string> errores)> ActualizarAsync(int id, Producto producto)
+        public async Task<(bool ok, List<string> errores)> ActualizarAsync(Guid id, Producto producto)
         {
             var resp = await _http.PutAsJsonAsync($"api/productos/{id}", producto);
             if (resp.IsSuccessStatusCode) return (true, new());
             return (false, await LeerErrores(resp));
         }
 
-        public async Task<(bool ok, List<string> errores)> EliminarAsync(int id)
+        public async Task<(bool ok, List<string> errores)> EliminarAsync(Guid id)
         {
             var resp = await _http.DeleteAsync($"api/productos/{id}");
             if (resp.IsSuccessStatusCode) return (true, new());
@@ -77,7 +77,6 @@ namespace Proyecto1_EliasCorderoLeon.Services
                 using var document = JsonDocument.Parse(payload);
                 var root = document.RootElement;
 
-                //Formato: {"errores": ["Mensaje 1", "Mensaje 2"]}
                 if (root.TryGetProperty("errores", out var erroresArray) && erroresArray.ValueKind == JsonValueKind.Array)
                 {
                     var errores = new List<string>();
@@ -88,7 +87,6 @@ namespace Proyecto1_EliasCorderoLeon.Services
                     return errores;
                 }
 
-                //Formato: {"errors": {"Campo": ["Mensaje"]}}
                 if (root.TryGetProperty("errors", out var errorsObject) && errorsObject.ValueKind == JsonValueKind.Object)
                 {
                     var errores = new List<string>();
@@ -107,10 +105,8 @@ namespace Proyecto1_EliasCorderoLeon.Services
             }
             catch (JsonException)
             {
-                //Ignoramos si el JSON está mal formado
             }
 
-            //Fallback si no encontró las claves o falló el parseo
             return new List<string> { payload };
         }
 
@@ -127,7 +123,6 @@ namespace Proyecto1_EliasCorderoLeon.Services
             return await resp.Content.ReadFromJsonAsync<Producto>();
         }
 
-        //Cosultarle a la API si hay una combinación, se obtiene el precio
         public async Task<(bool existe, double? precio)> VerificarCombinacionAsync(Producto producto)
         {
             var resp = await _http.PostAsJsonAsync("api/productos/verificarCombinacion", new
@@ -140,7 +135,6 @@ namespace Proyecto1_EliasCorderoLeon.Services
             return (result?.existe ?? false, result?.precio);
         }
 
-        //Clase auxiliar para deserializar la respuesta de la API
         private class CombinacionResult
         {
             public bool existe { get; set; }

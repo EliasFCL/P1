@@ -3,59 +3,59 @@ using System.Text.Json;
 
 namespace Proyecto1_EliasCorderoLeon.Services
 {
-        public interface IEmpleadoService
-        {
-            Task<List<Empleado>> ListarAsync();
-            Task<Empleado?> BuscarPorNumIdAsync(string numId);
-            Task<Empleado?> BuscarPorIdAsync(int id);
-            Task<(bool ok, List<string> errores)> CrearAsync(Empleado empleado);
-            Task<(bool ok, List<string> errores)> ActualizarAsync(int id, Empleado empleado);
-            Task<(bool ok, List<string> errores)> EliminarAsync(int id);
+    public interface IEmpleadoService
+    {
+        Task<List<Empleado>> ListarAsync();
+        Task<Empleado?> BuscarPorNumIdAsync(string numId);
+        Task<Empleado?> BuscarPorIdAsync(Guid id);
+        Task<(bool ok, List<string> errores)> CrearAsync(Empleado empleado);
+        Task<(bool ok, List<string> errores)> ActualizarAsync(Guid id, Empleado empleado);
+        Task<(bool ok, List<string> errores)> EliminarAsync(Guid id);
     }
 
-        public class EmpleadoService : IEmpleadoService
+    public class EmpleadoService : IEmpleadoService
+    {
+        private readonly HttpClient _http;
+
+        public EmpleadoService(HttpClient http)
         {
-            private readonly HttpClient _http;
+            _http = http;
+        }
 
-            public EmpleadoService(HttpClient http)
-            {
-                _http = http;
-            }
+        public async Task<List<Empleado>> ListarAsync()
+        {
+            return await _http.GetFromJsonAsync<List<Empleado>>("api/empleados") ?? new();
+        }
 
-            public async Task<List<Empleado>> ListarAsync()
-            {
-                return await _http.GetFromJsonAsync<List<Empleado>>("api/empleados") ?? new();
-            }
+        public async Task<Empleado?> BuscarPorNumIdAsync(string numId)
+        {
+            var resp = await _http.GetAsync($"api/empleados/porNumId/{numId}");
+            if (!resp.IsSuccessStatusCode) return null;
+            return await resp.Content.ReadFromJsonAsync<Empleado>();
+        }
 
-            public async Task<Empleado?> BuscarPorNumIdAsync(string numId)
-            {
-                var resp = await _http.GetAsync($"api/empleados/porNumId/{numId}");
-                if (!resp.IsSuccessStatusCode) return null;
-                return await resp.Content.ReadFromJsonAsync<Empleado>();
-            }
+        public async Task<Empleado?> BuscarPorIdAsync(Guid id)
+        {
+            var resp = await _http.GetAsync($"api/empleados/{id}");
+            if (!resp.IsSuccessStatusCode) return null;
+            return await resp.Content.ReadFromJsonAsync<Empleado>();
+        }
 
-            public async Task<Empleado?> BuscarPorIdAsync(int id)
-            {
-                var resp = await _http.GetAsync($"api/empleados/{id}");
-                if (!resp.IsSuccessStatusCode) return null;
-                return await resp.Content.ReadFromJsonAsync<Empleado>();
-            }
+        public async Task<(bool ok, List<string> errores)> CrearAsync(Empleado empleado)
+        {
+            var resp = await _http.PostAsJsonAsync("api/empleados", empleado);
+            if (resp.IsSuccessStatusCode) return (true, new());
+            return (false, await LeerErrores(resp));
+        }
 
-            public async Task<(bool ok, List<string> errores)> CrearAsync(Empleado empleado)
-            {
-                var resp = await _http.PostAsJsonAsync("api/empleados", empleado);
-                if (resp.IsSuccessStatusCode) return (true, new());
-                return (false, await LeerErrores(resp));
-            }
+        public async Task<(bool ok, List<string> errores)> ActualizarAsync(Guid id, Empleado empleado)
+        {
+            var resp = await _http.PutAsJsonAsync($"api/empleados/{id}", empleado);
+            if (resp.IsSuccessStatusCode) return (true, new());
+            return (false, await LeerErrores(resp));
+        }
 
-            public async Task<(bool ok, List<string> errores)> ActualizarAsync(int id, Empleado empleado)
-            {
-                var resp = await _http.PutAsJsonAsync($"api/empleados/{id}", empleado);
-                if (resp.IsSuccessStatusCode) return (true, new());
-                return (false, await LeerErrores(resp));
-            }
-
-        public async Task<(bool ok, List<string> errores)> EliminarAsync(int id)
+        public async Task<(bool ok, List<string> errores)> EliminarAsync(Guid id)
         {
             var resp = await _http.DeleteAsync($"api/empleados/{id}");
             if (resp.IsSuccessStatusCode) return (true, new());
@@ -81,7 +81,6 @@ namespace Proyecto1_EliasCorderoLeon.Services
                 using var document = JsonDocument.Parse(payload);
                 var root = document.RootElement;
 
-                //Formato: {"errores": ["Mensaje 1", "Mensaje 2"]}
                 if (root.TryGetProperty("errores", out var erroresArray) && erroresArray.ValueKind == JsonValueKind.Array)
                 {
                     var errores = new List<string>();
@@ -92,7 +91,6 @@ namespace Proyecto1_EliasCorderoLeon.Services
                     return errores;
                 }
 
-                //Formato: {"errors": {"Campo": ["Mensaje"]}}
                 if (root.TryGetProperty("errors", out var errorsObject) && errorsObject.ValueKind == JsonValueKind.Object)
                 {
                     var errores = new List<string>();
@@ -111,17 +109,15 @@ namespace Proyecto1_EliasCorderoLeon.Services
             }
             catch (JsonException)
             {
-                //Ignoramos si el JSON está mal formado
             }
 
-            //Fallback si no encontró las claves o falló el parseo
             return new List<string> { payload };
         }
 
 
         private class ErrorPayload
-            {
-                public List<string>? errores { get; set; }
-            }
+        {
+            public List<string>? errores { get; set; }
         }
     }
+}

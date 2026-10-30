@@ -4,7 +4,7 @@ namespace Models
 {
     public class Producto
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         [Required(ErrorMessage = "El código no puede estar vacio")]
         public string codigo { get; set; }
         [Required(ErrorMessage = "El nombre no puede estar vacio")]

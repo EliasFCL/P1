@@ -2,7 +2,6 @@
 //Crear Async: https://learn.microsoft.com/en-us/aspnet/core/blazor/call-web-api?view=aspnetcore-10.0
 //Convertir JSON a un objeto: https://learn.microsoft.com/id-id/dotnet/csharp/tutorials/console-webapiclient#1
 //Leer errores: https://github.com/honua-io/honua-server/pull/257/changes/7433aa52cfc052fba78733f4abf4d6665ad700d8#3
-
 using Models;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -13,10 +12,10 @@ namespace Proyecto1_EliasCorderoLeon.Services
     {
         Task<List<Cliente>> ListarAsync();
         Task<Cliente?> BuscarPorNumIdAsync(string numId);
-        Task<Cliente?> BuscarPorIdAsync(int id);
+        Task<Cliente?> BuscarPorIdAsync(Guid id);
         Task<(bool ok, List<string> errores)> CrearAsync(Cliente cliente);
-        Task<(bool ok, List<string> errores)> ActualizarAsync(int id, Cliente cliente);
-        Task<(bool ok, List<string> errores)> EliminarAsync(int id);
+        Task<(bool ok, List<string> errores)> ActualizarAsync(Guid id, Cliente cliente);
+        Task<(bool ok, List<string> errores)> EliminarAsync(Guid id);
     }
 
     public class ClienteService : IClienteService
@@ -40,7 +39,7 @@ namespace Proyecto1_EliasCorderoLeon.Services
             return await resp.Content.ReadFromJsonAsync<Cliente>();
         }
 
-        public async Task<Cliente?> BuscarPorIdAsync(int id)
+        public async Task<Cliente?> BuscarPorIdAsync(Guid id)
         {
             var resp = await _http.GetAsync($"api/clientes/{id}");
             if (!resp.IsSuccessStatusCode) return null;
@@ -54,14 +53,14 @@ namespace Proyecto1_EliasCorderoLeon.Services
             return (false, await LeerErrores(resp));
         }
 
-        public async Task<(bool ok, List<string> errores)> ActualizarAsync(int id, Cliente cliente)
+        public async Task<(bool ok, List<string> errores)> ActualizarAsync(Guid id, Cliente cliente)
         {
             var resp = await _http.PutAsJsonAsync($"api/clientes/{id}", cliente);
             if (resp.IsSuccessStatusCode) return (true, new());
             return (false, await LeerErrores(resp));
         }
 
-        public async Task<(bool ok, List<string> errores)> EliminarAsync(int id)
+        public async Task<(bool ok, List<string> errores)> EliminarAsync(Guid id)
         {
             var resp = await _http.DeleteAsync($"api/clientes/{id}");
             if (resp.IsSuccessStatusCode) return (true, new());
@@ -87,7 +86,6 @@ namespace Proyecto1_EliasCorderoLeon.Services
                 using var document = JsonDocument.Parse(payload);
                 var root = document.RootElement;
 
-                //Formato: {"errores": ["Mensaje 1", "Mensaje 2"]}
                 if (root.TryGetProperty("errores", out var erroresArray) && erroresArray.ValueKind == JsonValueKind.Array)
                 {
                     var errores = new List<string>();
@@ -98,7 +96,6 @@ namespace Proyecto1_EliasCorderoLeon.Services
                     return errores;
                 }
 
-                //Formato: {"errors": {"Campo": ["Mensaje"]}}
                 if (root.TryGetProperty("errors", out var errorsObject) && errorsObject.ValueKind == JsonValueKind.Object)
                 {
                     var errores = new List<string>();
@@ -117,10 +114,8 @@ namespace Proyecto1_EliasCorderoLeon.Services
             }
             catch (JsonException)
             {
-                //Ignoramos si el JSON está mal formado
             }
 
-            //Fallback si no encontró las claves o falló el parseo
             return new List<string> { payload };
         }
 

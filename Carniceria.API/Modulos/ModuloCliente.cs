@@ -5,12 +5,11 @@ namespace Carniceria.API.Modulos
 {
     public class ModuloCliente
     {
-
         private static List<Cliente> listaClientes = new List<Cliente>
         {
             new Cliente
             {
-                Id = 1,
+                Id = Guid.NewGuid(),
                 tipoIdentificacion = "Cédula",
                 numId = "2-0851-0970",
                 nombre = "Elias",
@@ -20,7 +19,7 @@ namespace Carniceria.API.Modulos
             },
             new Cliente
             {
-                Id = 2,
+                Id = Guid.NewGuid(),
                 tipoIdentificacion = "Cédula",
                 numId = "7-0801-1112",
                 nombre = "Jessica",
@@ -29,17 +28,24 @@ namespace Carniceria.API.Modulos
                 fechaNacimiento = new DateTime(2004, 6, 14)
             }
         };
+
         public void RegistrarCliente(Cliente cliente)
-        { 
-            cliente.Id = listaClientes.Any() ? listaClientes.Max(c => c.Id) + 1 : 1;
+        {
+            if (cliente.Id == Guid.Empty) 
+            { 
+            cliente.Id = Guid.NewGuid();
+            }
             listaClientes.Add(cliente);
         }
 
         public Cliente BuscarCliente(string numId)
         {
-            var cliente = listaClientes.FirstOrDefault(c => c.numId == numId);
+            return listaClientes.FirstOrDefault(c => c.numId == numId);
+        }
 
-            return cliente;
+        public Cliente BuscarClientePorId(Guid id)
+        {
+            return listaClientes.FirstOrDefault(c => c.Id == id);
         }
 
         public List<Cliente> ListarClientes()
@@ -47,9 +53,9 @@ namespace Carniceria.API.Modulos
             return listaClientes;
         }
 
-        public bool ActualizarCliente(string Id, Cliente clienteActualizado)
+        public bool ActualizarCliente(Guid id, Cliente clienteActualizado)
         {
-            var cliente = listaClientes.FirstOrDefault(c => c.Id == int.Parse(Id));
+            var cliente = listaClientes.FirstOrDefault(c => c.Id == id);
 
             if (cliente != null)
             {
@@ -62,21 +68,19 @@ namespace Carniceria.API.Modulos
 
                 return true;
             }
-
             return false;
         }
 
-        public bool EliminarCliente(string Id)
+        public bool EliminarCliente(Guid id)
         {
-            var cliente = listaClientes.FirstOrDefault(c => c.Id == int.Parse(Id));
+            //Compara directamente el Guid
+            var cliente = listaClientes.FirstOrDefault(c => c.Id == id);
 
             if (cliente != null)
             {
                 listaClientes.Remove(cliente);
-
                 return true;
             }
-
             return false;
         }
     }

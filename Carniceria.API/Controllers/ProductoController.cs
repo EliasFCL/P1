@@ -19,7 +19,7 @@ namespace Carniceria.API.Controllers
 
         // GET: api/productos/5
         [HttpGet("{id}")]
-        public ActionResult<Producto> GetById(int id)
+        public ActionResult<Producto> GetById(Guid id)
         {
             var p = _modulo.ListarProductos().FirstOrDefault(x => x.Id == id);
             if (p == null) return NotFound();
@@ -56,7 +56,7 @@ namespace Carniceria.API.Controllers
 
         // PUT: api/productos/5
         [HttpPut("{id}")]
-        public IActionResult Update(int id, Producto producto)
+        public IActionResult Update(Guid id, Producto producto)
         {
             if (producto == null) return BadRequest();
             producto.Id = id;
@@ -74,7 +74,7 @@ namespace Carniceria.API.Controllers
 
         // DELETE: api/productos/5
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public IActionResult Delete(Guid id)
         {
             var producto = _modulo.ListarProductos().FirstOrDefault(p => p.Id == id);
             if (producto == null) return NotFound();
