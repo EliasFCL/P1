@@ -122,14 +122,14 @@
 </div>
 
 <script>
-    let indice = 0;
+    let indice = @(Model.detalles?.Count ?? 0);
 
     function agregarFila() {
         //Apuntar al cuerpo de la tabla
-        var tbody = document.getElementById("cuerpoDetalles");
+        var cuerpo = document.getElementById("cuerpoDetalles");
 
         //Insertar fila en última posición
-        var fila = tbody.insertRow(-1);
+        var fila = cuerpo.insertRow(-1);
 
         //Celda 1: Producto
         var celda1 = fila.insertCell(0);

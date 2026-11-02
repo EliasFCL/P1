@@ -47,19 +47,21 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(Factura factura)
         {
-            if (factura == null)
-                return Json(new { ok = false, errores = new List<string> { "Factura vacía" } });
+            if (factura == null) return View(new Factura());
 
             var (ok, errores, creada) = await _facturaService.CrearAsync(factura);
-
             if (!ok)
             {
-                //Devolver errores en forato JSON
-                return Json(new { ok = false, errores = errores });
+                // Aquí metemos los errores en el ModelState para que salgan en rojo arriba
+                foreach (var err in errores) ModelState.AddModelError(string.Empty, err);
+                await CargarCombosAsync();
+                return View(factura);
             }
 
-            //Devolver el número
-            return Json(new { ok = true, numero = creada!.numeroFactura });
+            ModelState.Clear();
+            ViewBag.MensajeExito = "Factura registrada exitosamente. Número: " + creada!.numeroFactura;
+            await CargarCombosAsync();
+            return View(new Factura());
         }
 
         private async Task CargarCombosAsync()

@@ -1,7 +1,9 @@
 ﻿@*Entender margenes: https://www.syncfusion.com/faq/blazo/general*@
-@*agregar filas dinamicamente: https://stackoverflow.com/questions/60497876/how-to-add-items-entered-in-a-dynamic-html-table-to-a-model-bound-list*@
-@*Evitar que la vista se recargue para evitar que se borren las líneas de detalles: https://www.mediaevent.de/javascript/submit.html y
-https://github.com/search?q=%22fetch%28this.action%22+%22new+FormData%28this%29%22&type=code*@
+@*agregar filas dinamicamente: https://stackoverflow.com/questions/60497876/how-to-add-items-entered-in-a-dynamic-html-table-to-a-model-bound-list y
+    https://developer.mozilla.org/es/docs/Web/API/Element/innerHTML*@
+@*Mantener la fila si hay errores: https://learn.microsoft.com/zh-tw/archive/msdn-technet-forums/da7eed02-fc23-4774-a52d-c28798390372,
+https://learn.microsoft.com/en-us/archive/msdn-technet-forums/576686b3-85b2-425e-b9c4-d334a64fc93d#1 y https://learn.microsoft.com/en-us/archive/msdn-technet-forums/576686b3-85b2-425e-b9c4-d334a64fc93d#1
+*@
 
 @model Models.Factura
 
@@ -17,6 +19,7 @@ https://github.com/search?q=%22fetch%28this.action%22+%22new+FormData%28this%29%
     <div class="col-md-9">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            
             @if (ViewBag.MensajeExito != null)
             {
                 <p style="color: green;">@ViewBag.MensajeExito</p>
@@ -79,7 +82,31 @@ https://github.com/search?q=%22fetch%28this.action%22+%22new+FormData%28this%29%
                         <th></th>
                     </tr>
                 </thead>
-                <tbody id="cuerpoDetalles"></tbody>
+                <tbody id="cuerpoDetalles">
+                    <!-- Guardar la fila si hay errores -->
+                    @if (Model.detalles != null)
+                    {
+                        for (int i = 0; i < Model.detalles.Count; i++)
+                        {
+                            var detalle = Model.detalles[i];
+                            <tr>
+                                <td>
+                                    <select name="detalles[@i].producto" class="form-control" onchange="copiarProducto(this)">
+                                        <option value="">-- Seleccione --</option>
+                                        @foreach (var p in productos)
+                                        {
+                                            <option value="@p.nombre" data-unidad="@p.unidadMedida" data-precio="@p.precio.ToString(System.Globalization.CultureInfo.InvariantCulture)" selected="@(p.nombre == detalle.producto)">@p.nombre</option>
+                                        }
+                                    </select>
+                                </td>
+                                <td><input type="text" class="form-control unidad" name="detalles[@i].unidadMedida" value="@detalle.unidadMedida" readonly /></td>
+                                <td><input type="number" min="1" class="form-control" name="detalles[@i].cantidad" value="@detalle.cantidad" /></td>
+                                <td><input type="number" step="0.01" class="form-control precio" name="detalles[@i].precioUnitario" value="@detalle.precioUnitario.ToString(System.Globalization.CultureInfo.InvariantCulture)" readonly /></td>
+                                <td><button type="button" class="btn btn-danger" onclick="this.closest('tr').remove()">X</button></td>
+                            </tr>
+                        }
+                    }
+                </tbody>
             </table>
             <button type="button" class="btn btn-secondary" onclick="agregarFila()">Agregar detalle</button>
 
@@ -95,73 +122,44 @@ https://github.com/search?q=%22fetch%28this.action%22+%22new+FormData%28this%29%
 </div>
 
 <script>
-    let indice = 0;
+    let indice = @(Model.detalles?.Count ?? 0);
 
     function agregarFila() {
-        //Apuntar al cuerpo de la tabla
-        var tbody = document.getElementById("cuerpoDetalles");
+        var cuerpo = document.getElementById("cuerpoDetalles");
+        var fila = cuerpo.insertRow(-1);
 
-        //Insertar fila en última posición
-        var fila = tbody.insertRow(-1);
-
-        //Celda 1: Producto
         var celda1 = fila.insertCell(0);
         celda1.innerHTML = `
-                <select name="detalles[${indice}].producto" class="form-control" onchange="copiarProducto(this)">
-                    <option value="">-- Seleccione --</option>
-                    @foreach (var p in productos)
-                    {
-                            <option value="@p.nombre"
-                data-unidad="@p.unidadMedida"
-                data-precio="@p.precio.ToString(System.Globalization.CultureInfo.InvariantCulture)">
-                                    @p.nombre
-                            </option>
-                    }
-                </select>
-            `;
-
-        //Celda 2: Unidad de medida
+                    <select name="detalles[${indice}].producto" class="form-control" onchange="copiarProducto(this)">
+                        <option value="">-- Seleccione --</option>
+                        @foreach (var p in productos)
+                        {
+                                <option value="@p.nombre" data-unidad="@p.unidadMedida" data-precio="@p.precio.ToString(System.Globalization.CultureInfo.InvariantCulture)">@p.nombre</option>
+                        }
+                    </select>
+                `;
         var celda2 = fila.insertCell(1);
         celda2.innerHTML = `<input type="text" class="form-control unidad" name="detalles[${indice}].unidadMedida" readonly />`;
-
-        //Celda 3: Cantidad
         var celda3 = fila.insertCell(2);
         celda3.innerHTML = `<input type="number" min="1" value="1" class="form-control" name="detalles[${indice}].cantidad" />`;
-
-        //Celda 4: Precio Unitario
         var celda4 = fila.insertCell(3);
         celda4.innerHTML = `<input type="number" step="0.01" class="form-control precio" name="detalles[${indice}].precioUnitario" readonly />`;
-
-        //Boton para eliminar fila
         var celda5 = fila.insertCell(4);
         celda5.innerHTML = `<button type="button" class="btn btn-danger" onclick="this.closest('tr').remove()">X</button>`;
 
-        //Aumentar indice para la siguiente fila
         indice++;
     }
 
-    //Autocompletar datos
     function copiarProducto(select) {
         const fila = select.closest("tr");
-        const opt = select.selectedOptions[0];
-        fila.querySelector(".unidad").value = opt.dataset.unidad || "";
-        fila.querySelector(".precio").value = opt.dataset.precio || "";
+        const opcion = select.selectedOptions[0];
+        fila.querySelector(".unidad").value = opcion.dataset.unidad || "";
+        fila.querySelector(".precio").value = opcion.dataset.precio || "";
     }
 
-    window.addEventListener("DOMContentLoaded", agregarFila);//Fila por defecto al cargar la página
-
-    document.querySelector("form").addEventListener("submit", async function (e) {
-        e.preventDefault(); //La página no recarga (Evitar que se borren las líneas de detalle cuando hay un error)
-
-        let mantener = await fetch(this.action, { method: 'POST', body: new FormData(this) });
-        let datos = await mantener.json();
-
-        if (!datos.ok) {
-            //Mostrar una alerta
-            alert(datos.errores.join("\n"));
-        } else {
-            alert("Factura " + datos.numero + " guardada con éxito");
-            window.location.href = "/Factura/Index";
+    window.addEventListener("DOMContentLoaded", function () {
+        if (indice === 0) {
+            agregarFila();
         }
     });
 </script>
