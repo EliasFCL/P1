@@ -1,6 +1,4 @@
-﻿//Create modificado: https://msprogrammer.serviciipeweb.ro/jquery-ajax-request-and-mvcdetailed/
-
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Models;
 using Proyecto1_EliasCorderoLeon.Services;
 

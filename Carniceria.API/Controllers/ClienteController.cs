@@ -21,17 +21,17 @@ namespace Carniceria.API.Controllers
         [HttpGet("{id}")]
         public ActionResult<Cliente> GetById(Guid id)
         {
-            var c = _modulo.ListarClientes().FirstOrDefault(x => x.Id == id);
-            if (c == null) return NotFound();
-            return c;
+            var cliente = _modulo.ListarClientes().FirstOrDefault(x => x.Id == id);
+            if (cliente == null) return NotFound();
+            return cliente;
         }
 
         [HttpGet("porNumId/{numId}")]
         public ActionResult<Cliente> GetByNumId(string numId)
         {
-            var c = _modulo.BuscarCliente(numId);
-            if (c == null) return NotFound();
-            return c;
+            var cliente = _modulo.BuscarCliente(numId);
+            if (cliente == null) return NotFound();
+            return cliente;
         }
 
         [HttpPost]

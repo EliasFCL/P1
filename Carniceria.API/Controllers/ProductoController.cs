@@ -21,9 +21,9 @@ namespace Carniceria.API.Controllers
         [HttpGet("{id}")]
         public ActionResult<Producto> GetById(Guid id)
         {
-            var p = _modulo.ListarProductos().FirstOrDefault(x => x.Id == id);
-            if (p == null) return NotFound();
-            return p;
+            var producto = _modulo.ListarProductos().FirstOrDefault(x => x.Id == id);
+            if (producto == null) return NotFound();
+            return producto;
         }
 
         // GET: api/productos/buscar/Codigo o nombre
@@ -31,9 +31,9 @@ namespace Carniceria.API.Controllers
         public ActionResult<Producto> Buscar(string busqueda)
         {
 
-            var p = _modulo.BuscarProducto(busqueda);
-            if (p == null) return NotFound();
-            return p;
+            var producto = _modulo.BuscarProducto(busqueda);
+            if (producto == null) return NotFound();
+            return producto;
         }
 
         // POST: api/productos

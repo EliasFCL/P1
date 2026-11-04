@@ -16,7 +16,6 @@
             <div class="form-group">
                 @* Combo box para el tipo de identificación *@
                 <label class="control-label">Tipo de indetificación</label>
-
                 <select asp-for="tipoIdentificacion" class="form-control">
                     <option value="Cédula">Cédula</option>
                     <option value="DIMEX">DIMEX</option>
@@ -54,7 +53,3 @@
     <a asp-action="IndexActualizar">Volver a la lista</a> ||
     <a asp-action="ClienteHome">Volver a la gestión de clientes</a>
 </div>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}

@@ -53,18 +53,18 @@ namespace Proyecto1_EliasCorderoLeon.Services
         }
 
         //Mostrar el error real 
-        private static async Task<List<string>> LeerErrores(HttpResponseMessage response)
+        private static async Task<List<string>> LeerErrores(HttpResponseMessage respuesta)
         {
-            if (response.Content is null)
+            if (respuesta.Content is null)
             {
-                return new List<string> { response.ReasonPhrase ?? "Request fallido" };
+                return new List<string> { respuesta.ReasonPhrase ?? "Request fallido" };
             }
 
-            var payload = await response.Content.ReadAsStringAsync();
+            var payload = await respuesta.Content.ReadAsStringAsync();
 
             if (string.IsNullOrWhiteSpace(payload))
             {
-                return new List<string> { "Empty response from server" };
+                return new List<string> { "Respuesta vacía del servidor" };
             }
 
             try
@@ -78,7 +78,7 @@ namespace Proyecto1_EliasCorderoLeon.Services
                     var errores = new List<string>();
                     foreach (var item in erroresArray.EnumerateArray())
                     {
-                        errores.Add(item.GetString() ?? "Unknown error");
+                        errores.Add(item.GetString() ?? "Error desconocido");
                     }
                     return errores;
                 }
@@ -93,7 +93,7 @@ namespace Proyecto1_EliasCorderoLeon.Services
                         {
                             foreach (var item in prop.Value.EnumerateArray())
                             {
-                                errores.Add(item.GetString() ?? "Unknown error");
+                                errores.Add(item.GetString() ?? "Error desconocido");
                             }
                         }
                     }
@@ -105,7 +105,7 @@ namespace Proyecto1_EliasCorderoLeon.Services
                 //Ignorar si el JSON está mal formado
             }
 
-            //Fallback si no encontró las claves o falló el parseo
+            //Fallback si no se encontró la clave o falló el parseo
             return new List<string> { payload };
         }
 

@@ -1,4 +1,5 @@
-﻿@model IEnumerable<Models.Factura>
+﻿@*Mnesaje retornado por botón: https://stackoverflow.com/questions/128923/whats-the-effect-of-adding-return-false-to-a-click-event-listener/22270882*@
+@model IEnumerable<Models.Factura>
 
 @{
     ViewData["Title"] = "IndexActualizar";
@@ -59,7 +60,7 @@
                     @if (item.estado == "Pagada")
                     {
                         <form asp-action="Anular" asp-route-numeroFactura="@item.numeroFactura" method="post" style="display:inline;">
-                            <button type="submit" class="btn btn-warning btn-sm" onclick="return confirm('¿Seguro que desea anular esta factura? El inventario será devuelto.');">
+                            <button type="submit" class="btn btn-warning btn-sm" onclick="return confirm('¿Seguro que desea anular esta factura? El inventario será devuelto');">
                                 Anular
                             </button>
                         </form>

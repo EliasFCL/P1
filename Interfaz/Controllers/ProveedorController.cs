@@ -43,7 +43,6 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
 
         public async Task<ActionResult> Details(string busqueda)
         {
-            //Agregar lo de 2 o mas proveedores
             if (string.IsNullOrWhiteSpace(busqueda)) return View();
             var proveedor = await _proveedorService.BuscarAsync(busqueda);
             if (proveedor == null)

@@ -3,7 +3,6 @@
 //Convertir JSON a un objeto: https://learn.microsoft.com/id-id/dotnet/csharp/tutorials/console-webapiclient#1
 //Leer errores: https://github.com/honua-io/honua-server/pull/257/changes/7433aa52cfc052fba78733f4abf4d6665ad700d8#3
 using Models;
-using System.Net.Http.Json;
 using System.Text.Json;
 
 namespace Proyecto1_EliasCorderoLeon.Services
@@ -78,7 +77,7 @@ namespace Proyecto1_EliasCorderoLeon.Services
 
             if (string.IsNullOrWhiteSpace(payload))
             {
-                return new List<string> { "Empty response from server" };
+                return new List<string> { "Respuesta vacía del servidor" };
             }
 
             try
@@ -91,7 +90,7 @@ namespace Proyecto1_EliasCorderoLeon.Services
                     var errores = new List<string>();
                     foreach (var item in erroresArray.EnumerateArray())
                     {
-                        errores.Add(item.GetString() ?? "Unknown error");
+                        errores.Add(item.GetString() ?? "Error desconocido");
                     }
                     return errores;
                 }
@@ -105,7 +104,7 @@ namespace Proyecto1_EliasCorderoLeon.Services
                         {
                             foreach (var item in prop.Value.EnumerateArray())
                             {
-                                errores.Add(item.GetString() ?? "Unknown error");
+                                errores.Add(item.GetString() ?? "Error desconocido");
                             }
                         }
                     }

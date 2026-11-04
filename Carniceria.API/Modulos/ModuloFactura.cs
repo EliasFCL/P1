@@ -132,7 +132,7 @@ namespace Carniceria.API.Modulos
 
         private void AjustarInventario(string nombreProducto, int cantidadCambio)
         {
-            // Instanciar el módulo de productos para buscar el producto
+            //Instanciar el módulo de productos para buscar el producto
             var moduloProd = new ModuloProducto();
             var producto = moduloProd.ListarProductos().FirstOrDefault(p => p.nombre.Equals(nombreProducto, StringComparison.OrdinalIgnoreCase));
 
@@ -186,7 +186,7 @@ namespace Carniceria.API.Modulos
                 cantidad = 3,
                 precioUnitario = productos[0].precio
             },
-            //Usar el mismo producto para el minimo de 2 líneas de detalle
+            //Usar el segundo producto para el minimo de 2 líneas de detalle
             new DetalleFactura {
                 producto = productos[1].nombre,
                 unidadMedida = productos[1].unidadMedida,

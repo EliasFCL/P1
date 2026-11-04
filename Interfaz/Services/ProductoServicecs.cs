@@ -1,4 +1,4 @@
-﻿//Consulta a la API: https://nugetprodusnc-northcentralus-01.regional.azure-api.net/packages/Myth.Testing/4.3.0-preview.2#3
+﻿//Consulta a la API (VerificarCombinacion): https://nugetprodusnc-northcentralus-01.regional.azure-api.net/packages/Myth.Testing/4.3.0-preview.2#3
 
 using Models;
 using System.Text.Json;
