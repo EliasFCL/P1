@@ -7,14 +7,7 @@ namespace Carniceria.API.Validadores
     {
         public List<string> Validar(Factura factura)
         {
-            try
-            {
 
-            }
-            catch (Exception ex)
-            {
-                return new List<string> { $"Error al validar la factura: {ex.Message}" };
-            }
             List<string> errores = new List<string>();
 
             if (string.IsNullOrWhiteSpace(factura.nombreCliente))

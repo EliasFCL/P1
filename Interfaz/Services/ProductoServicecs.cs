@@ -69,7 +69,7 @@ namespace Proyecto1_EliasCorderoLeon.Services
 
             if (string.IsNullOrWhiteSpace(payload))
             {
-                return new List<string> { "Empty response from server" };
+                return new List<string> { "Respuesta vacía del servidor" };
             }
 
             try
@@ -82,7 +82,7 @@ namespace Proyecto1_EliasCorderoLeon.Services
                     var errores = new List<string>();
                     foreach (var item in erroresArray.EnumerateArray())
                     {
-                        errores.Add(item.GetString() ?? "Unknown error");
+                        errores.Add(item.GetString() ?? "Errores desconocidos");
                     }
                     return errores;
                 }
@@ -96,7 +96,7 @@ namespace Proyecto1_EliasCorderoLeon.Services
                         {
                             foreach (var item in prop.Value.EnumerateArray())
                             {
-                                errores.Add(item.GetString() ?? "Unknown error");
+                                errores.Add(item.GetString() ?? "Error desconocido");
                             }
                         }
                     }

@@ -52,7 +52,6 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
             var (ok, errores, creada) = await _facturaService.CrearAsync(factura);
             if (!ok)
             {
-                // Aquí metemos los errores en el ModelState para que salgan en rojo arriba
                 foreach (var err in errores) ModelState.AddModelError(string.Empty, err);
                 await CargarCombosAsync();
                 return View(factura);

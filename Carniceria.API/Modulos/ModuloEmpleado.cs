@@ -17,10 +17,10 @@ namespace Carniceria.API.Modulos
                 apellido1 = "Williams",
                 apellido2 = "Miller",
                 fechaNacimiento = new DateTime(2007, 4, 14),
-                cargo = "Administrador",
+                cargo = "Bodeguero",
                 salario = 500000,
                 fechaIngreso = new DateTime(2023, 1, 15),
-                areaTrabajo = "Asistente administrativo",
+                areaTrabajo = "Bodega e Inventario",
                 turno = "Mañana"
             });
             listaEmpleados.Add(new Empleado
@@ -32,10 +32,10 @@ namespace Carniceria.API.Modulos
                 apellido1 = "Doe",
                 apellido2 = "Smith",
                 fechaNacimiento = new DateTime(2000, 4, 12),
-                cargo = "Ventas y caja",
+                cargo = "Vendedor",
                 salario = 500000,
                 fechaIngreso = new DateTime(2023, 1, 15),
-                areaTrabajo = "Vendedor",
+                areaTrabajo = "Ventas y Caja",
                 turno = "Tarde"
             });
         }

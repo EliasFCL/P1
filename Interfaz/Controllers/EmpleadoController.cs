@@ -82,6 +82,7 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
         public async Task<ActionResult> Edit(Guid id)
         {
             var empleado = await _empleadoService.BuscarPorIdAsync(id);
+
             if (empleado == null) return NotFound();
             return View(empleado);
         }

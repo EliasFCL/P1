@@ -64,9 +64,7 @@
 
             <div class="form-group">
                 <label class="control-label">Aréa de trabajo</label>
-                <p>El área actual es: "@Model.areaTrabajo"</p>
                 <select asp-for="areaTrabajo" name="areaTrabajo" class="form-control">
-                    <option value="">Seleccione un área</option>
                     <option value="Administracion">Administración</option>
                     <option value="Ventas y Caja">Ventas y Caja</option>
                     <option value="Servicio al cliente">Servicio al cliente</option>
@@ -155,10 +153,6 @@
         const area = areaSelect.value;
         cargoSelect.innerHTML = "";
 
-        if (!area || !cargosPorArea[area]) {
-            cargoSelect.innerHTML = '<option value="">Primero seleccione un área</option>';
-            return;
-        }
 
         cargosPorArea[area].forEach(c => {
             const opt = document.createElement("option");

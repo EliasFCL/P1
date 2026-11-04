@@ -72,7 +72,7 @@ namespace Carniceria.API.Controllers
             var empleado = _modulo.ListarEmpleados().FirstOrDefault(e => e.Id == id);
             if (empleado == null) return NotFound();
 
-            //No se puede eliminar un empleado con una o más facturas.
+            //No se puede eliminar un empleado con una o más facturas
             var moduloFactura = new ModuloFactura();
             //Usar string.Equals para evitar NullReferenceException
             bool tieneFacturas = moduloFactura.ListarFacturas()

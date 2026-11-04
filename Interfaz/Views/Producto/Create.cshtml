@@ -21,6 +21,12 @@
                     @ViewBag.MensajeExito
                 </p>
             }
+            @if (ViewBag.Aviso != null)
+            {
+                <p style="color: orange;">
+                    @ViewBag.Aviso
+                </p>
+            }
             <div class="form-group">
                 <label class="control-label">Identificador único</label>
                 <input type="text" class="form-control" value="@Model.Id" readonly />

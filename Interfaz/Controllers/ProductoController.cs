@@ -11,6 +11,7 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
     {
         private readonly IProductoService _productoService;
         private readonly IProveedorService _proveedorService;
+
         public ProductoController(IProductoService productoService, IProveedorService proveedorService)
         {
             _productoService = productoService;
@@ -21,6 +22,13 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
         {
             var productos = await _productoService.ListarAsync();
             return View(productos);
+        }
+
+        private async Task CargarCombosAsync()
+        {
+            var proveedor = await _proveedorService.ListarAsync();
+
+            ViewBag.Proveedores = proveedor.Select(p => p.nombre).ToList();
         }
 
         public async Task<ActionResult> Index()
@@ -93,14 +101,22 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
 
             var (ok, errores) = await _productoService.CrearAsync(producto);
             if (!ok)
-            {
+            {   
                 foreach (var err in errores) ModelState.AddModelError(string.Empty, err);
                 ViewBag.Proveedores = await _proveedorService.ListarNombresAsync();
+                await CargarCombosAsync();
                 return View(producto);
             }
 
+
             ModelState.Clear();
-            ViewBag.MensajeExito = "Producto registrado exitosamente.";
+            if (producto.existenciaActual <= producto.existeciaMinima)
+            {
+                ViewBag.Aviso = "Producto registrado: Existe un faltante de productos para el pedido correspondiente";
+            }else { 
+                ViewBag.MensajeExito = "Producto registrado exitosamente";
+            }
+            await CargarCombosAsync();
             return View(new Producto() { Id = Guid.NewGuid() });
         }
 

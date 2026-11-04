@@ -8,6 +8,7 @@ namespace Carniceria.API.Validadores
         public List<string> Validar(Producto producto)
         {
             List<string> errores = new List<string>();
+            List<string> mensajes = new List<string>();
             //Validar código
             if (string.IsNullOrWhiteSpace(producto.codigo))
             {
@@ -61,7 +62,7 @@ namespace Carniceria.API.Validadores
             }
             if (producto.existenciaActual <= producto.existeciaMinima)
             {
-                errores.Add("Existencias insuficientes: la cantidad actual del producto es menor que la existencia minima permitida");
+                mensajes.Add("Existencias insuficientes: la cantidad actual del producto es menor que la existencia minima permitida");
             }
             if (producto.existeciaMinima.ToString().StartsWith("-") || producto.existenciaActual.ToString().StartsWith("-"))
             {
