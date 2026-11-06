@@ -53,28 +53,16 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
 
         public async Task<ActionResult> Details(string busqueda)
         {
-            if (string.IsNullOrWhiteSpace(busqueda))
-                return View();
-
-            var producto = await _productoService.BuscarAsync(busqueda);
-
-            if (producto == null)
-            {
-                ViewBag.NoEncontrado = "No se encontró un producto con ese código o nombre.";
-                return View();
-            }
-
-            int contador = 0;
+            if (string.IsNullOrWhiteSpace(busqueda)) return View();
             var productos = await _productoService.ListarAsync();
-            for (int i = 0; i < productos.Count; i++)
-            {
-                if (productos[i].nombre.ToString() == busqueda)
-                {
-                    contador = contador + 1;
-                }
-            }
 
-            if (contador > 1)
+            var producto = productos.Where(p => p.nombre.Equals(busqueda, StringComparison.OrdinalIgnoreCase)|| p.codigo.ToString() == busqueda).ToList();
+            if (producto == null || !producto.Any())
+            {
+                ViewBag.NoEncontrado = "No se encontró ningún producto con ese código o nombre";
+                return View(new List<Producto>());
+            }
+            if (producto.Count() > 1)
             {
                 ViewBag.NoEncontrado = "Existen 2 o más productos con ese nombre";
             }

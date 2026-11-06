@@ -23,11 +23,6 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
             _productoService = productoService;
         }
 
-        public async Task<ActionResult> Create()
-        {
-            await CargarCombosAsync();
-            return View(new Factura());
-        }
 
         public async Task<ActionResult> FacturaHome()
         {
@@ -39,6 +34,17 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
         {
             var facturas = await _facturaService.ListarAsync();
             return View(facturas);
+        }
+        public async Task<ActionResult> Create()
+        {
+            var nuevaFactura = new Factura
+            {
+                numeroFactura = "F-" + Guid.NewGuid().ToString().Substring(0, 6).ToUpper(),
+                fecha = DateTime.Now
+                
+            };
+            await CargarCombosAsync();
+            return View(nuevaFactura);
         }
 
         [HttpPost]
@@ -56,9 +62,15 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
             }
 
             ModelState.Clear();
-            ViewBag.MensajeExito = "Factura registrada exitosamente. Número: " + creada!.numeroFactura;
+            ViewBag.MensajeExito = "Factura registrada exitosamente. Número: " + creada!.numeroFactura + " | Fecha y hora: " + creada!.fecha;
             await CargarCombosAsync();
-            return View(new Factura());
+            var nuevaFactura = new Factura
+            {
+                numeroFactura = "F-" + Guid.NewGuid().ToString().Substring(0, 6).ToUpper(),
+                fecha = DateTime.Now
+
+            };
+            return View(nuevaFactura);
         }
 
         private async Task CargarCombosAsync()
@@ -75,15 +87,20 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
         public async Task<ActionResult> Details(string criterio)
         {
             if (string.IsNullOrWhiteSpace(criterio)) return View();
-
             var facturas = await _facturaService.BuscarAsync(criterio);
             if (facturas == null || !facturas.Any())
             {
-                ViewBag.NoEncontrado = "No se encontró ninguna factura con ese número ni con esa identificación de cliente.";
+                ViewBag.NoEncontrado = "No se encontró ninguna factura con ese número ni con la identificación del cliente";
                 return View(new List<Factura>());
             }
-
-            ViewBag.Encontrado = $"Se encontraron {facturas.Count} factura(s).";
+            if (facturas.Count() > 1)
+            {
+                ViewBag.Repetido = "Existen 2 o más facturas asociadas a ese cliente";
+            }
+            else
+            {
+                ViewBag.Encontrado = "Factura encontrada";
+            }
             return View(facturas);
         }
 

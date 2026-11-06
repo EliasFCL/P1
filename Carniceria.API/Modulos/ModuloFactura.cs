@@ -1,4 +1,4 @@
-﻿//Logica para el numero de la factura: https://stackoverflow.com/posts/63604623/edit
+﻿//Logica para el número de la factura: https://stackoverflow.com/posts/63604623/edit
 //Adaptar la inicialización de objeto y colección: https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/object-and-collection-initializers
 using Models;
 
@@ -34,9 +34,6 @@ namespace Carniceria.API.Modulos
         //Metodo de registro
         public void registrarFactura(Factura factura)
         {
-            factura.numeroFactura = GenerarNumeroFactura();
-            factura.fecha = DateTime.Now;
-
             foreach (var detalle in factura.detalles)
             {
                 DetalleCounter++;
@@ -86,7 +83,6 @@ namespace Carniceria.API.Modulos
         }
 
         public List<Factura> ListarFacturas() => facturas;
-
 
         public bool ActualizarFactura(string numero, Factura facturaActualizada)
         {
@@ -138,7 +134,7 @@ namespace Carniceria.API.Modulos
 
             if (producto != null)
             {
-                //?? 0 por si la existencia es nula al inicio
+                //?? 0 por si la existencia es nula
                 producto.existenciaActual = (producto.existenciaActual ?? 0) + cantidadCambio;
             }
         }
@@ -172,31 +168,33 @@ namespace Carniceria.API.Modulos
             {
                 var facturaDefecto = new Factura
                 {
+                    numeroFactura = "F-0001",
+                    fecha = new DateTime(2007, 8, 7, 15,30,2),
                     nombreCliente = cliente.nombre,
                     empleadoResponsable = empleado.nombre,
                     metodoPago = "Efectivo",
                     descuento = 12,
                     estado = "Pendiente",
                     detalles = new List<DetalleFactura>
-        {
-            //Usar el primer producto
-            new DetalleFactura {
-                producto = productos[0].nombre,
-                unidadMedida = productos[0].unidadMedida,
-                cantidad = 3,
-                precioUnitario = productos[0].precio
-            },
-            //Usar el segundo producto para el minimo de 2 líneas de detalle
-            new DetalleFactura {
-                producto = productos[1].nombre,
-                unidadMedida = productos[1].unidadMedida,
-                cantidad = 5,
-                precioUnitario = productos[1].precio
+            {
+                //Usar el primer producto
+                new DetalleFactura {
+                    producto = productos[0].nombre,
+                    unidadMedida = productos[0].unidadMedida,
+                    cantidad = 3,
+                    precioUnitario = productos[0].precio
+                },
+                //Usar el segundo producto para el minimo de 2 líneas de detalle
+                new DetalleFactura {
+                    producto = productos[1].nombre,
+                    unidadMedida = productos[1].unidadMedida,
+                    cantidad = 5,
+                    precioUnitario = productos[1].precio
+                }
             }
-        }
                 };
-                
-                var instancia = new ModuloFactura();//Instancia para no dar error de estático
+
+                var instancia = new ModuloFactura(); //Instancia para no dar error de estático
                 instancia.registrarFactura(facturaDefecto);
             }
         }

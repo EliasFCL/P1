@@ -26,7 +26,7 @@
             <div class="form-group">
                 <label class="control-label">Cliente</label>
                 <select asp-for="nombreCliente" class="form-control">
-                    <option value="">-- Seleccione un cliente --</option>
+                    <option value="">Seleccione un cliente</option>
                     @foreach (var nombre in (ViewBag.Clientes as List<string>) ?? new List<string>())
                     {
                         <option value="@nombre" selected="@(nombre == Model.nombreCliente)">@nombre</option>
@@ -76,6 +76,7 @@
                         <th>Unidad</th>
                         <th>Cantidad</th>
                         <th>Precio unitario</th>
+                        <th>Subtotal</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -88,7 +89,7 @@
                             <tr>
                                 <td>
                                     <select name="detalles[@i].producto" class="form-control" onchange="copiarProducto(this)">
-                                        <option value="">-- Seleccione --</option>
+                                        <option value="">Seleccione un producto</option>
                                         @foreach (var p in productos)
                                         {
                                             <option value="@p.nombre" data-unidad="@p.unidadMedida" data-precio="@p.precio.ToString(System.Globalization.CultureInfo.InvariantCulture)" selected="@(p.nombre == detalle.producto)">@p.nombre</option>
@@ -98,6 +99,7 @@
                                 <td><input type="text" class="form-control unidad" name="detalles[@i].unidadMedida" value="@detalle.unidadMedida" readonly /></td>
                                 <td><input type="number" min="1" class="form-control" name="detalles[@i].cantidad" value="@detalle.cantidad" /></td>
                                 <td><input type="number" step="0.01" class="form-control precio" name="detalles[@i].precioUnitario" value="@detalle.precioUnitario.ToString(System.Globalization.CultureInfo.InvariantCulture)" readonly /></td>
+                                <td><input type="number" step="0.01" class="form-control subtotal" name="detalles[@i].subtotal" value="@detalle.subtotal.ToString(System.Globalization.CultureInfo.InvariantCulture)" readonly /></td>
                                 <td>
                                     <input type="hidden" name="detalles[@i].Id" value="@detalle.Id" />
                                     <button type="button" class="btn btn-danger" onclick="this.closest('tr').remove()">X</button>
@@ -117,7 +119,8 @@
 </div>
 
 <div>
-    <a asp-action="IndexActualizar">Volver a la lista</a>
+    <a asp-action="IndexActualizar">Volver a la lista</a> || 
+    <a asp-action="FacturaHome">Volver al home de factura</a>
 </div>
 
 <script>
@@ -134,7 +137,7 @@
         var celda1 = fila.insertCell(0);
         celda1.innerHTML = `
                     <select name="detalles[${indice}].producto" class="form-control" onchange="copiarProducto(this)">
-                        <option value="">-- Seleccione --</option>
+                        <option value="">Seleccione un producto</option>
                         @foreach (var p in productos)
                         {
                                     <option value="@p.nombre"
@@ -152,15 +155,18 @@
 
         //Celda 3: Cantidad
         var celda3 = fila.insertCell(2);
-        celda3.innerHTML = `<input type="number" min="1" value="1" class="form-control" name="detalles[${indice}].cantidad" />`;
+        celda3.innerHTML = `<input type="number" min="1" value="1" class="form-control" name="detalles[${indice}].cantidad" onkeydown="return event.key != 'Enter';" oninput="this.closest('tr').querySelector('.subtotal').value = ((parseFloat(this.value) || 0) * (parseFloat(this.closest('tr').querySelector('.precio').value) || 0)).toFixed(2)" />`;
 
         //Celda 4: Precio Unitario
         var celda4 = fila.insertCell(3);
         celda4.innerHTML = `<input type="number" step="0.01" class="form-control precio" name="detalles[${indice}].precioUnitario" readonly />`;
 
-        //Boton para eliminar fila
         var celda5 = fila.insertCell(4);
-        celda5.innerHTML = `<button type="button" class="btn btn-danger" onclick="this.closest('tr').remove()">X</button>`;
+        celda5.innerHTML = `<input type="number" step="0.01" class="form-control subtotal" name="detalles[${indice}].subtotal" readonly />`;
+
+        //Boton para eliminar fila
+        var celda6 = fila.insertCell(5);
+        celda6.innerHTML = `<button type="button" class="btn btn-danger" onclick="this.closest('tr').remove()">X</button>`;
 
         //Aumentar indice para la siguiente fila
         indice++;
@@ -172,7 +178,19 @@
         const opt = select.selectedOptions[0];
         fila.querySelector(".unidad").value = opt.dataset.unidad || "";
         fila.querySelector(".precio").value = opt.dataset.precio || "";
+        calcularSubtotal(select);
     }
 
-    window.addEventListener("DOMContentLoaded", agregarFila);//Fila por defecto al cargar la página
+        function calcularSubtotal(elemento) {
+        //Encontrar la fila donde se escribe
+        const fila = elemento.closest("tr");
+        
+        //Obtener la cantidad y el precio 
+        const cantidad = parseFloat(fila.querySelector("input[name$='.cantidad']").value) || 0;
+        const precio = parseFloat(fila.querySelector(".precio").value) || 0;
+        
+        // Calcular y poner el subtotal en su celda
+        const subtotal = cantidad * precio;
+        fila.querySelector(".subtotal").value = subtotal.toFixed(2);
+    }
 </script>

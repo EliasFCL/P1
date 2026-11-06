@@ -1,4 +1,4 @@
-@model Models.Proveedor
+@model IEnumerable<Models.Proveedor>
 
 @{
     ViewData["Title"] = "Details";
@@ -34,65 +34,43 @@
         </button>
     </div>
 </form>
-<div>
-    <h4>Proveedor</h4>
+@if (Model != null && Model.Any())
+{
+    <h4>Resultados</h4>
     <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            Id único
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Id)
-        </dd>
-        <dt class="col-sm-2">
-            Tipo de identificiación
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.tipoIdentificacion)
-        </dd>
-    <dt class="col-sm-2">
-        Identificación
-    </dt>
-    <dd class="col-sm-10">
-        @Html.DisplayFor(model => model.numId)
-    </dd>
-<dt class="col-sm-2">
-    Nombre
-</dt>
-<dd class="col-sm-10">
-    @Html.DisplayFor(model => model.nombre)
-</dd>
-        <dt class = "col-sm-2">
-            Razón social
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.RazonSocial)
-        </dd>
-        <dt class = "col-sm-2">
-            Teléfono
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Telefono)
-        </dd>
-        <dt class = "col-sm-2">
-            Correo electrónico
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CorreoElectronico)
-        </dd>
-        <dt class = "col-sm-2">
-            Tipo de suministro
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TipoSuministro)
-        </dd>
-        <dt class = "col-sm-2">
-            Frecuencia de entrega
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FrecuenciaEntrega)
-        </dd>
-</div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Identificación</th>
+                <th>Razón Social</th>
+                <th>Nombre</th>
+                <th>Primer apellido</th>
+                <th>Segundo apellido</th>
+                <th>Correo electrónico</th>
+                <th>Teléfono</th>
+                <th>Tipo de suministro</th>
+                <th>Frecuencia de entrega</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var P in Model)
+            {
+                <tr>
+                    <td>@P.numId</td>
+                    <td>@P.RazonSocial</td>
+                    <td>@P.nombre</td>
+                    <td>@P.apellido1</td>
+                    <td>@P.apellido2</td>
+                    <td>@P.CorreoElectronico</td>
+                    <td>@P.Telefono</td>
+                    <td>@P.CorreoElectronico</td>
+                    <td>@P.TipoSuministro</td>
+                    <td>@P.FrecuenciaEntrega</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
 <div>
     <a asp-action="ProveedorHome">Volver</a>
 </div>

@@ -1,7 +1,7 @@
 ﻿@*Entender margenes: https://coddy.tech/learn/es/html/styling_with_css/margins*@
+@*Enlace de modelos: https://learn.microsoft.com/es-es/aspnet/core/mvc/models/model-binding?view=aspnetcore-10.0*@
 @*Agregar filas dinamicamente: https://stackoverflow.com/questions/60497876/how-to-add-items-entered-in-a-dynamic-html-table-to-a-model-bound-list y
     https://developer.mozilla.org/es/docs/Web/API/Element/innerHTML*@
-@*Enlace de modelos: https://learn.microsoft.com/es-es/aspnet/core/mvc/models/model-binding?view=aspnetcore-10.0*@
 @*Mantener la fila si hay errores: https://learn.microsoft.com/zh-tw/archive/msdn-technet-forums/da7eed02-fc23-4774-a52d-c28798390372,
 https://learn.microsoft.com/en-us/archive/msdn-technet-forums/576686b3-85b2-425e-b9c4-d334a64fc93d#1 y 
 *@
@@ -27,9 +27,21 @@ https://learn.microsoft.com/en-us/archive/msdn-technet-forums/576686b3-85b2-425e
             }
 
             <div class="form-group">
+                <label class="control-label">Número de factura</label>
+                 <input asp-for="numeroFactura" type="hidden" />
+                <input value="@Model.numeroFactura" class="form-control" readonly />
+            </div>
+
+            <div class="form-group">
+                <label class="control-label">Fecha</label>
+                 <input asp-for="fecha" type="hidden" />
+                <input value="@Model.fecha.ToString("dd/MM/yyyy HH:mm")" class="form-control" readonly />
+            </div>
+
+            <div class="form-group">
                 <label class="control-label">Cliente</label>
                 <select asp-for="nombreCliente" class="form-control">
-                    <option value="">-- Seleccione un cliente --</option>
+                    <option value="">Seleccione un cliente</option>
                     @foreach (var nombre in (ViewBag.Clientes as List<string>) ?? new List<string>())
                     {
                         <option value="@nombre">@nombre</option>
@@ -40,7 +52,7 @@ https://learn.microsoft.com/en-us/archive/msdn-technet-forums/576686b3-85b2-425e
             <div class="form-group">
                 <label class="control-label">Empleado responsable</label>
                 <select asp-for="empleadoResponsable" class="form-control">
-                    <option value="">-- Seleccione un empleado --</option>
+                    <option value="">Seleccione un empleado</option>
                     @foreach (var nombre in (ViewBag.Empleados as List<string>) ?? new List<string>())
                     {
                         <option value="@nombre">@nombre</option>
@@ -59,8 +71,8 @@ https://learn.microsoft.com/en-us/archive/msdn-technet-forums/576686b3-85b2-425e
             </div>
 
             <div class="form-group">
-                <label class="control-label">Porcentaje de descuento (%)</label>
-                <input asp-for="descuento" type="number" min="0" max="25" value="0" class="form-control" />
+                <label class="control-label">Porcentaje de descuento</label>
+                <input asp-for="descuento" type="number" class="form-control" />
             </div>
 
             <div class="form-group">
@@ -80,6 +92,7 @@ https://learn.microsoft.com/en-us/archive/msdn-technet-forums/576686b3-85b2-425e
                         <th>Unidad</th>
                         <th>Cantidad</th>
                         <th>Precio unitario</th>
+                        <th>Subtotal</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -93,7 +106,7 @@ https://learn.microsoft.com/en-us/archive/msdn-technet-forums/576686b3-85b2-425e
                             <tr>
                                 <td>
                                     <select name="detalles[@i].producto" class="form-control" onchange="copiarProducto(this)">
-                                        <option value="">-- Seleccione --</option>
+                                        <option value="">Seleccione un producto</option>
                                         @foreach (var p in productos)
                                         {
                                             <option value="@p.nombre" data-unidad="@p.unidadMedida" data-precio="@p.precio.ToString(System.Globalization.CultureInfo.InvariantCulture)" selected="@(p.nombre == detalle.producto)">@p.nombre</option>
@@ -126,13 +139,17 @@ https://learn.microsoft.com/en-us/archive/msdn-technet-forums/576686b3-85b2-425e
     let indice = @(Model.detalles?.Count ?? 0);
 
     function agregarFila() {
+        //Apuntar al cuerpo de la tabla
         var cuerpo = document.getElementById("cuerpoDetalles");
+
+        //Insertar fila en última posición
         var fila = cuerpo.insertRow(-1);
 
+         //Celda 1: Producto
         var celda1 = fila.insertCell(0);
         celda1.innerHTML = `
                     <select name="detalles[${indice}].producto" class="form-control" onchange="copiarProducto(this)">
-                        <option value="">-- Seleccione --</option>
+                        <option value=""> Seleccione un producto</option>
                         @foreach (var p in productos)
                         {
                                 <option value="@p.nombre" data-unidad="@p.unidadMedida" data-precio="@p.precio.ToString(System.Globalization.CultureInfo.InvariantCulture)">@p.nombre</option>
@@ -142,25 +159,38 @@ https://learn.microsoft.com/en-us/archive/msdn-technet-forums/576686b3-85b2-425e
         var celda2 = fila.insertCell(1);
         celda2.innerHTML = `<input type="text" class="form-control unidad" name="detalles[${indice}].unidadMedida" readonly />`;
         var celda3 = fila.insertCell(2);
-        celda3.innerHTML = `<input type="number" min="1" value="1" class="form-control" name="detalles[${indice}].cantidad" />`;
+        celda3.innerHTML = `<input type="number" min="1" value="1" class="form-control" name="detalles[${indice}].cantidad" onkeydown="return event.key != 'Enter';" oninput="this.closest('tr').querySelector('.subtotal').value = ((parseFloat(this.value) || 0) * (parseFloat(this.closest('tr').querySelector('.precio').value) || 0)).toFixed(2)" />`;
         var celda4 = fila.insertCell(3);
         celda4.innerHTML = `<input type="number" step="0.01" class="form-control precio" name="detalles[${indice}].precioUnitario" readonly />`;
         var celda5 = fila.insertCell(4);
-        celda5.innerHTML = `<button type="button" class="btn btn-danger" onclick="this.closest('tr').remove()">X</button>`;
+        celda5.innerHTML = `<input type="number" step="0.01" class="form-control subtotal" name="detalles[${indice}].subtotal" readonly />`;
+        var celda6 = fila.insertCell(5);
+        celda6.innerHTML = `<button type="button" class="btn btn-danger" onclick="this.closest('tr').remove()">X</button>`;
 
-        indice++;
+       indice++;
     }
 
+    //Autocompletar datos
     function copiarProducto(select) {
         const fila = select.closest("tr");
         const opcion = select.selectedOptions[0];
         fila.querySelector(".unidad").value = opcion.dataset.unidad || "";
         fila.querySelector(".precio").value = opcion.dataset.precio || "";
+        calcularSubtotal(select);
     }
 
-    window.addEventListener("DOMContentLoaded", function () {
-        if (indice === 0) {
-            agregarFila();
-        }
-    });
+    function calcularSubtotal(elemento) {
+        //Encontrar la fila donde se escribe
+        const fila = elemento.closest("tr");
+        
+        //Obtener la cantidad y el precio 
+        const cantidad = parseFloat(fila.querySelector("input[name$='.cantidad']").value) || 0;
+        const precio = parseFloat(fila.querySelector(".precio").value) || 0;
+        
+        // Calcular y poner el subtotal en su celda
+        const subtotal = cantidad * precio;
+        fila.querySelector(".subtotal").value = subtotal.toFixed(2);
+    }
+
+    //window.addEventListener("DOMContentLoaded", agregarFila);//Fila por defecto al cargar la página
 </script>

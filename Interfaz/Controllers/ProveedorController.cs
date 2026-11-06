@@ -44,31 +44,22 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
         public async Task<ActionResult> Details(string busqueda)
         {
             if (string.IsNullOrWhiteSpace(busqueda)) return View();
-            var proveedor = await _proveedorService.BuscarAsync(busqueda);
-            if (proveedor == null)
-            {
-                ViewBag.NoEncontrado = "No se encontró un proveedor con ese número de identificación.";
-                return View();
-            }
-            int contador = 0;
             var proveedores = await _proveedorService.ListarAsync();
-            for (int i = 0; i < proveedores.Count; i++)
-            {
-                if (proveedores[i].RazonSocial.ToString() == busqueda)
-                {
-                    contador = contador + 1;
-                }
-            }
 
-            if (contador > 1)
+            var proveedor = proveedores.Where(p => p.nombre.Equals(busqueda, StringComparison.OrdinalIgnoreCase) || p.RazonSocial.ToString() == busqueda).ToList();
+            if (proveedor == null || !proveedor.Any())
             {
-                ViewBag.NoEncontrado = "Existen 2 o más proveedores con esa razón social";
+                ViewBag.NoEncontrado = "No se encontró ningún proveedor con ese nombre o razón social";
+                return View(new List<Proveedor>());
+            }
+            if (proveedor.Count() > 1)
+            {
+                ViewBag.NoEncontrado = "Existen 2 o más proveedores con esarazón social";
             }
             else
             {
                 ViewBag.Encontrado = "Proveedor encontrado";
             }
-
             return View(proveedor);
         }
 
