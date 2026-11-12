@@ -130,11 +130,13 @@ CREATE TABLE Facturas (
 
 CREATE TABLE DetallesFactura (
     Id UNIQUEIDENTIFIER PRIMARY KEY,
-    numeroFactura NVARCHAR(50) NOT NULL, -- FK hacia Factura
-    ProductoId UNIQUEIDENTIFIER NOT NULL, -- FK hacia Producto
+    numeroFactura NVARCHAR(50) NOT NULL, 
+    ProductoId UNIQUEIDENTIFIER NOT NULL, 
+    unidadMedida NVARCHAR(50) NOT NULL,
     cantidad INT NOT NULL,
-    precioUnitario DECIMAL NOT NULL,
-    subtotal FLOAT NOT NULL,
-    FOREIGN KEY (numeroFactura) REFERENCES Facturas(numeroFactura) ON DELETE CASCADE, -- Si se borra la factura también los detalles
+    precioUnitario DECIMAL(18,2) NOT NULL, 
+    subtotal DECIMAL(18,2) NOT NULL,
+    FOREIGN KEY (numeroFactura) REFERENCES Facturas(numeroFactura) ON DELETE CASCADE, 
     FOREIGN KEY (ProductoId) REFERENCES Productos(Id)
 );
+SELECT Id, nombre FROM Productos;

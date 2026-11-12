@@ -22,7 +22,7 @@ namespace Carniceria.API.Controllers
         [HttpGet("{numero}")]
         public ActionResult<Factura> GetByNumero(string numero)
         {
-            var factura = _modulo.BuscarFactura(numero);
+            var factura = _facturaRepositorio.buscarFactura(numero);
             if (factura == null) return NotFound();
             return factura;
         }
@@ -56,7 +56,7 @@ namespace Carniceria.API.Controllers
         [HttpGet("buscar/{criterio}")]
         public ActionResult<List<Factura>> Buscar(string criterio)
         {
-            var facturas = _modulo.ListarFacturas();
+            var facturas = _facturaRepositorio.Listar();
 
             //Buscar por de factura
             var porNumero = facturas
@@ -81,7 +81,7 @@ namespace Carniceria.API.Controllers
         [HttpDelete("{numero}")]
         public IActionResult Delete(string numero)
         {
-            var factura = _modulo.BuscarFactura(numero);
+            var factura = _facturaRepositorio.buscarFactura(numero);
             if (factura == null) return NotFound(new { errores = new List<string> { "Factura no encontrada" } });
 
             //Validar estado antes de intentar borrar
@@ -90,7 +90,7 @@ namespace Carniceria.API.Controllers
                 return BadRequest(new { errores = new List<string> { "No se puede eliminar una factura pagada o anulada" } });
             }
 
-            _modulo.eliminarFactura(numero);
+            _facturaRepositorio.Eliminar(numero);
             return NoContent();
         }
 
@@ -99,16 +99,11 @@ namespace Carniceria.API.Controllers
         {
             if (factura == null) return BadRequest();
 
-            var existente = _modulo.BuscarFactura(numero);
-            if (existente == null) return NotFound();
+            factura.numeroFactura = numero; // Nos aseguramos de que el número viaje
 
-            if (existente.estado == "Anulada")
-                return BadRequest(new { errores = new List<string> { "Una factura anulada no puede modificarse" } });
+            if (!_facturaRepositorio.Actualizar(factura))
+                return NotFound();
 
-            var errores = _validador.Validar(factura);
-            if (errores.Any())
-                return BadRequest(new { errores });
-            if (!_modulo.ActualizarFactura(numero, factura)) return NotFound();
             return NoContent();
         }
 

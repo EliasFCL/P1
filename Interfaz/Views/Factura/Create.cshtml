@@ -41,8 +41,8 @@ Adaptar calculo en tiempo real: https://stackoverflow.com/revisions/a1d67cac-3b8
 
             <div class="form-group">
                 <label class="control-label">Cliente</label>
-                <select asp-for="clienteId" class="form-control">
-                    <option value="">Seleccione un cliente</option>
+                <select asp-for="nombreCliente" class="form-control">
+                    <option value=""> Seleccione un cliente </option>
                     @if (ViewBag.Clientes != null)
                     {
                         foreach (var nombre in ViewBag.Clientes)
@@ -55,8 +55,8 @@ Adaptar calculo en tiempo real: https://stackoverflow.com/revisions/a1d67cac-3b8
 
             <div class="form-group">
                 <label class="control-label">Empleado</label>
-                <select asp-for="empleadoId" class="form-control">
-                    <option value="">Seleccione un empleado</option>
+                <select asp-for="empleadoResponsable" class="form-control">
+                    <option value=""> Seleccione un empleado </option>
                     @if (ViewBag.Empleados != null)
                     {
                         foreach (var nombre in ViewBag.Empleados)

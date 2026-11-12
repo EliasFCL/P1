@@ -37,7 +37,7 @@ namespace Carniceria.API.Modulos
             foreach (var detalle in factura.detalles)
             {
                 DetalleCounter++;
-                detalle.Id = DetalleCounter;
+                detalle.Id = Guid.NewGuid();
                 detalle.subtotal = detalle.cantidad * detalle.precioUnitario;
             }
             factura.descuento = factura.descuento;
@@ -113,7 +113,7 @@ namespace Carniceria.API.Modulos
             facturaOriginal.detalles = facturaActualizada.detalles ?? new List<DetalleFactura>();
             foreach (var d in facturaOriginal.detalles)
             {
-                if (d.Id == 0) d.Id = ++FacturaCounter;
+                if (d.Id == Guid.Empty) d.Id = Guid.NewGuid();
                 d.subtotal = d.cantidad * d.precioUnitario;
             }
 
@@ -122,6 +122,7 @@ namespace Carniceria.API.Modulos
             facturaOriginal.baseGravable = facturaOriginal.subtotal - facturaOriginal.montoDescuento;
             facturaOriginal.iva = facturaOriginal.baseGravable * 0.13m;
             facturaOriginal.total = facturaOriginal.baseGravable + facturaOriginal.iva;
+
 
             return true;
         }

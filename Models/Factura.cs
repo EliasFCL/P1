@@ -11,6 +11,8 @@ namespace Models
         public DateTime fecha { get; set; }
         public Guid clienteId { get; set; }
         public Guid empleadoId { get; set; }
+        public string nombreCliente { get; set; }
+public string empleadoResponsable { get; set; }
         public string metodoPago { get; set; }
         public int descuento { get; set; } // porcentaje 
         public string estado { get; set; }
@@ -27,7 +29,7 @@ namespace Models
 
     public class DetalleFactura
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string producto { get; set; }
         public string unidadMedida { get; set; }
         public int cantidad { get; set; }

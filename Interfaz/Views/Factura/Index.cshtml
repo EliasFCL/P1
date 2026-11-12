@@ -28,8 +28,8 @@
             <tr>
                 <td>@Html.DisplayFor(model => item.numeroFactura)</td>
                 <td>@Html.DisplayFor(model => item.fecha)</td>
-                <td>@Html.DisplayFor(model => item.clienteId)</td>
-                <td>@Html.DisplayFor(model => item.empleadoId)</td>
+                <td>@Html.DisplayFor(model => item.nombreCliente)</td>
+                <td>@Html.DisplayFor(model => item.empleadoResponsable)</td>
                 <td>
                     @if (item.detalles != null && item.detalles.Any())
                     {
