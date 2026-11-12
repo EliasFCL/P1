@@ -15,15 +15,14 @@ builder.Services.AddControllers()
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-//Registrar repositorio de clientes 
+//Registrar repositorio de clientes (sin esto salta error 505)
 string connectionString = builder.Configuration.GetConnectionString("CarniceriaDb");
 builder.Services.AddScoped<AccesoDatos.Repositorios.ClienteRepositorio>(provider => new AccesoDatos.Repositorios.ClienteRepositorio(connectionString));
 builder.Services.AddScoped<AccesoDatos.Repositorios.EmpleadoRepositorio>(provider => new AccesoDatos.Repositorios.EmpleadoRepositorio(connectionString));
 builder.Services.AddScoped<AccesoDatos.Repositorios.ProveedorRepositorio>(provider => new AccesoDatos.Repositorios.ProveedorRepositorio(connectionString));
+builder.Services.AddScoped<AccesoDatos.Repositorios.ProductoRepositorio>(provider => new AccesoDatos.Repositorios.ProductoRepositorio(connectionString));
+builder.Services.AddScoped<AccesoDatos.Repositorios.FacturaRepositorio>(provider => new AccesoDatos.Repositorios.FacturaRepositorio(connectionString));
 var app = builder.Build();
-
-
-//builder.Services.AddScoped<AccesoDatos.Repositorios.ProductoRepositorio>(provider => new AccesoDatos.Repositorios.ProductoRepositorio(connectionString));
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

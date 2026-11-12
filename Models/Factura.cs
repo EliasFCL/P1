@@ -16,11 +16,11 @@ namespace Models
         public string estado { get; set; }
 
         // Calculados por el sistema (el usuario no debe verlos)
-        public double subtotal { get; set; }
-        public double montoDescuento { get; set; }
-        public double baseGravable { get; set; }
-        public double iva { get; set; }
-        public double total { get; set; }
+        public decimal subtotal { get; set; }
+        public decimal montoDescuento { get; set; }
+        public decimal baseGravable { get; set; }
+        public decimal iva { get; set; }
+        public decimal total { get; set; }
 
         public List<DetalleFactura> detalles { get; set; } = new List<DetalleFactura>();
     }
@@ -31,7 +31,7 @@ namespace Models
         public string producto { get; set; }
         public string unidadMedida { get; set; }
         public int cantidad { get; set; }
-        public double precioUnitario { get; set; }
-        public double subtotal { get; set; }//cantidad × precioUnitario
+        public decimal precioUnitario { get; set; }
+        public decimal subtotal { get; set; }//cantidad × precioUnitario
     }
 }

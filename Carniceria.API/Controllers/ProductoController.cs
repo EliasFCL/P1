@@ -1,8 +1,9 @@
-﻿using Carniceria.API.Modulos;
+﻿using AccesoDatos.Repositorios;
+using Carniceria.API.Modulos;
 using Carniceria.API.Validadores;
 using Microsoft.AspNetCore.Mvc;
 using Models;
-using AccesoDatos.Repositorios;
+using static Carniceria.API.Controllers.ProductosController;
 
 namespace Carniceria.API.Controllers
 {
@@ -17,6 +18,23 @@ namespace Carniceria.API.Controllers
         {
             _productoRepositorio = productoRepositorio;
         }
+
+        public class CombinacionRequest
+        {
+            public string categoria { get; set; }
+            public string unidadMedida { get; set; }
+        }
+
+        [HttpPost("verificarCombinacion")]
+        public IActionResult VerificarCombinacion([FromBody] CombinacionRequest request)
+        {
+            if (request == null) return BadRequest();
+
+            var precio = _productoRepositorio.ObtenerPrecioPorCombinacion(request.categoria, request.unidadMedida);
+
+            return Ok(new { existe = precio != null, precio = precio });
+        }
+
 
         [HttpGet]
         public ActionResult<List<Producto>> GetAll() => _productoRepositorio.Listar();

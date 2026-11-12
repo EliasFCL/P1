@@ -37,13 +37,13 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
         }
         public async Task<ActionResult> Create()
         {
+            await CargarCombosAsync();
             var nuevaFactura = new Factura
             {
                 numeroFactura = "F-" + Guid.NewGuid().ToString().Substring(0, 6).ToUpper(),
                 fecha = DateTime.Now
                 
             };
-            await CargarCombosAsync();
             return View(nuevaFactura);
         }
 
@@ -194,5 +194,7 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
 
             return RedirectToAction(nameof(IndexActualizar));
         }
+
+
     }
 }

@@ -13,7 +13,7 @@ namespace Proyecto1_EliasCorderoLeon.Services
         Task<(bool ok, List<string> errores)> ActualizarAsync(Guid id, Producto producto);
         Task<(bool ok, List<string> errores)> EliminarAsync(Guid id);
         Task<Producto?> BuscarAsync(string busqueda);
-        Task<(bool existe, double? precio)> VerificarCombinacionAsync(Producto producto);
+        Task<decimal?> ObtenerPrecioAsync(Guid id);
     }
 
     public class ProductoService : IProductoService
@@ -123,16 +123,18 @@ namespace Proyecto1_EliasCorderoLeon.Services
             return await resp.Content.ReadFromJsonAsync<Producto>();
         }
 
-        public async Task<(bool existe, double? precio)> VerificarCombinacionAsync(Producto producto)
+        public async Task<decimal?> ObtenerPrecioAsync(Guid id)
         {
-            var resp = await _http.PostAsJsonAsync("api/productos/verificarCombinacion", new
-            {
-                unidadMedida = producto.unidadMedida,
-                categoria = producto.categoria
-            });
-            if (!resp.IsSuccessStatusCode) return (false, null);
-            var result = await resp.Content.ReadFromJsonAsync<CombinacionResult>();
-            return (result?.existe ?? false, result?.precio);
+            var resp = await _http.GetAsync($"api/productos/precio/{id}");
+            if (!resp.IsSuccessStatusCode) return null;
+
+            var result = await resp.Content.ReadFromJsonAsync<PrecioResult>();
+            return result?.precio;
+        }
+
+        private class PrecioResult
+        {
+            public decimal precio { get; set; }
         }
 
         private class CombinacionResult

@@ -42,9 +42,9 @@ namespace Carniceria.API.Modulos
             }
             factura.descuento = factura.descuento;
             factura.subtotal = factura.detalles.Sum(d => d.subtotal);
-            factura.montoDescuento = (factura.subtotal * factura.descuento) / 100;
+            factura.montoDescuento = (factura.subtotal * factura.descuento) / 100.0m;
             factura.baseGravable = factura.subtotal - factura.montoDescuento;
-            factura.iva = factura.baseGravable * 0.13;
+            factura.iva = factura.baseGravable * 0.13m;
             factura.total = factura.baseGravable + factura.iva;
 
             //Si es pagada, se resta la cantidad
@@ -118,9 +118,9 @@ namespace Carniceria.API.Modulos
             }
 
             facturaOriginal.subtotal = facturaOriginal.detalles.Sum(d => d.subtotal);
-            facturaOriginal.montoDescuento = (facturaOriginal.subtotal * facturaOriginal.descuento) / 100.0;
+            facturaOriginal.montoDescuento = (facturaOriginal.subtotal * facturaOriginal.descuento) / 100.0m;
             facturaOriginal.baseGravable = facturaOriginal.subtotal - facturaOriginal.montoDescuento;
-            facturaOriginal.iva = facturaOriginal.baseGravable * 0.13;
+            facturaOriginal.iva = facturaOriginal.baseGravable * 0.13m;
             facturaOriginal.total = facturaOriginal.baseGravable + facturaOriginal.iva;
 
             return true;

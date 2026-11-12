@@ -75,7 +75,7 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
         public async Task<ActionResult> Create()
         {
             var nuevoGuid = new Producto { Id = Guid.NewGuid() };
-            ViewBag.Proveedores = await _proveedorService.ListarNombresAsync();
+            ViewBag.Proveedores = await _proveedorService.ListarAsync();
             
             return View(nuevoGuid);
         }
@@ -91,7 +91,7 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
             if (!ok)
             {   
                 foreach (var err in errores) ModelState.AddModelError(string.Empty, err);
-                ViewBag.Proveedores = await _proveedorService.ListarNombresAsync();
+                ViewBag.Proveedores = await _proveedorService.ListarAsync();
                 await CargarCombosAsync();
                 return View(producto);
             }
@@ -111,7 +111,7 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
         public async Task<ActionResult> Edit(Guid id)
         {
             var producto = await _productoService.BuscarPorIdAsync(id);
-            ViewBag.Proveedores = await _proveedorService.ListarNombresAsync();
+            ViewBag.Proveedores = await _proveedorService.ListarAsync();
             if (producto == null) return NotFound();
             return View(producto);
         }
@@ -125,7 +125,7 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
             if (!ok)
             {
                 foreach (var err in errores) ModelState.AddModelError(string.Empty, err);
-                ViewBag.Proveedores = await _proveedorService.ListarNombresAsync();
+                ViewBag.Proveedores = await _proveedorService.ListarAsync();
                 return View(producto);
             }
 
@@ -159,11 +159,30 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
 
 
         //Recibir la peticion desde el MVC y devolver el resultado
+        [HttpGet]
+        public async Task<ActionResult> ObtenerPrecio(Guid id)
+        {
+            var precio = await _productoService.ObtenerPrecioAsync(id);
+            if (precio == null) return Json(new { existe = false });
+
+            return Json(new { existe = true, precio = precio });
+        }
+
         [HttpPost]
         public async Task<ActionResult> verificarCombinacion(Producto producto)
         {
-            var (existe, precio) = await _productoService.VerificarCombinacionAsync(producto);
-            return Json(new { existe, precio });
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("http://localhost:5221/");
+                var resp = await client.PostAsJsonAsync("api/productos/verificarCombinacion", new
+                {
+                    categoria = producto.categoria,
+                    unidadMedida = producto.unidadMedida
+                });
+
+                var data = await resp.Content.ReadFromJsonAsync<dynamic>();
+                return Json(new { existe = data.GetProperty("existe").GetBoolean(), precio = data.GetProperty("precio") });
+            }
         }
     }
 }

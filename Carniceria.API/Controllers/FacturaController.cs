@@ -1,4 +1,5 @@
-﻿using Carniceria.API.Modulos;
+﻿using AccesoDatos.Repositorios;
+using Carniceria.API.Modulos;
 using Carniceria.API.Validadores;
 using Microsoft.AspNetCore.Mvc;
 using Models;
@@ -10,6 +11,13 @@ namespace Carniceria.API.Controllers
     public class FacturasController : ControllerBase
     {
         private static ModuloFactura _modulo = new ModuloFactura();
+        private readonly FacturaRepositorio _facturaRepositorio;
+
+        public FacturasController(FacturaRepositorio facturaRepositorio)
+        {
+            _facturaRepositorio = facturaRepositorio;
+  
+        }
 
         [HttpGet("{numero}")]
         public ActionResult<Factura> GetByNumero(string numero)
@@ -23,21 +31,25 @@ namespace Carniceria.API.Controllers
         public ActionResult<Factura> Create(Factura factura)
         {
             if (factura == null)
-                return BadRequest(new { errores = new List<string> { "Factura vacía" } });
+                return BadRequest(new { errores = new List<string> { "Factura vacía." } });
 
             if (factura.detalles == null || !factura.detalles.Any())
-                return BadRequest(new { errores = new List<string> { "La factura debe tener al menos un detalle" } });
+                return BadRequest(new { errores = new List<string> { "La factura debe tener al menos un detalle." } });
 
-            var errores = _validador.Validar(factura);
-            if (errores.Any())
-                return BadRequest(new { errores });
 
-            _modulo.registrarFactura(factura);
-            return CreatedAtAction(nameof(GetByNumero), new { numero = factura.numeroFactura }, factura);
+            bool guardado = _facturaRepositorio.Registrar(factura);
+
+            if (!guardado)
+                return BadRequest(new { errores = new List<string> { "Error al guardar la factura en la base de datos." } });
+
+            return Ok(factura);
         }
 
         [HttpGet]
-        public ActionResult<List<Factura>> GetAll() => _modulo.ListarFacturas();
+        public ActionResult<List<Factura>> GetAll()
+        {
+            return _facturaRepositorio.Listar();
+        }
 
         private static ModuloCliente _moduloCliente = new ModuloCliente();
 

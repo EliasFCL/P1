@@ -109,6 +109,7 @@ CREATE TABLE Productos (
     ProveedorId UNIQUEIDENTIFIER NOT NULL,
     FOREIGN KEY (ProveedorId) REFERENCES Proveedores(Id)
 );
+Select * FROM Productos
 
 CREATE TABLE Facturas (
     numeroFactura NVARCHAR(50) PRIMARY KEY,

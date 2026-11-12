@@ -1,20 +1,22 @@
 ﻿using Microsoft.Data.SqlClient;
 using Models;
+using AccesoDatos.Contexto;
+using AccesoDatos.Configuraciones;
 
 namespace AccesoDatos.Repositorios
 {
     public class ProductoRepositorio
     {
-        private readonly string _connectionString;
-
+        private readonly string conexionString;
+        Conectar conectar = new Conectar();
         public ProductoRepositorio(string connectionString)
         {
-            _connectionString = connectionString;
+            conexionString = conectar.CadenaConexion();
         }
 
         public bool Registrar(Producto producto)
         {
-            using (var conexion = new SqlConnection(_connectionString))
+            using (var conexion = new SqlConnection(conexionString))
             {
                 string consulta = @"INSERT INTO Productos (Id, codigo, nombre, categoria, unidadMedida, precio, existenciaActual, existenciaMinima, ProveedorId) 
                                     VALUES (@Id, @codigo, @nombre, @categoria, @unidadMedida, @precio, @existenciaActual, @existenciaMinima, @ProveedorId)";
@@ -31,9 +33,6 @@ namespace AccesoDatos.Repositorios
                     comando.Parameters.AddWithValue("@precio", producto.precio);
                     comando.Parameters.AddWithValue("@existenciaActual", producto.existenciaActual);
                     comando.Parameters.AddWithValue("@existenciaMinima", producto.existeciaMinima);
-
-                    // Nota: Aquí asumimos que en tu clase Producto el proveedor es string. 
-                    // Si SQL espera un Guid, habrá que hacer una conversión. 
                     comando.Parameters.AddWithValue("@ProveedorId", producto.proveedorId);
 
                     conexion.Open();
@@ -46,9 +45,16 @@ namespace AccesoDatos.Repositorios
         public List<Producto> Listar()
         {
             var lista = new List<Producto>();
-            using (var conexion = new SqlConnection(_connectionString))
+            using (var conexion = new SqlConnection(conexionString))
             {
-                string consulta = "SELECT Id, codigo, nombre, categoria, unidadMedida, precio, existenciaActual, existenciaMinima, ProveedorId FROM Productos";
+                // Hacemos el JOIN con la tabla Proveedores
+                string consulta = @"
+            SELECT p.Id, p.codigo, p.nombre, p.categoria, p.unidadMedida, p.precio, 
+                   p.existenciaActual, p.existenciaMinima, p.ProveedorId, 
+                   pr.nombre AS nombreProveedor
+            FROM Productos p
+            LEFT JOIN Proveedores pr ON p.ProveedorId = pr.Id";
+
                 using (var comando = new SqlCommand(consulta, conexion))
                 {
                     conexion.Open();
@@ -63,10 +69,14 @@ namespace AccesoDatos.Repositorios
                                 nombre = lector["nombre"].ToString(),
                                 categoria = lector["categoria"].ToString(),
                                 unidadMedida = lector["unidadMedida"].ToString(),
-                                precio = Convert.ToDouble(lector["precio"]),
+                                precio = Convert.ToDecimal(lector["precio"]),
                                 existenciaActual = Convert.ToInt32(lector["existenciaActual"]),
                                 existeciaMinima = Convert.ToInt32(lector["existenciaMinima"]),
-                                proveedorId = (Guid)lector["ProveedorId"] // Se lee como Guid
+
+                                proveedorId = (Guid)lector["ProveedorId"],
+
+                                // Guardar nombre que trajo el JOIN
+                                nombreProveedor = lector["nombreProveedor"] == DBNull.Value ? "Sin Proveedor" : lector["nombreProveedor"].ToString()
                             });
                         }
                     }
@@ -77,13 +87,21 @@ namespace AccesoDatos.Repositorios
 
         public Producto BuscarPorId(Guid id)
         {
-            using (var conexion = new SqlConnection(_connectionString))
+            using (var conexion = new SqlConnection(conexionString))
             {
-                string consulta = "SELECT Id, codigo, nombre, categoria, unidadMedida, precio, existenciaActual, existenciaMinima, ProveedorId FROM Productos WHERE Id = @Id";
+                string consulta = @"
+            SELECT p.Id, p.codigo, p.nombre, p.categoria, p.unidadMedida, p.precio, 
+                   p.existenciaActual, p.existenciaMinima, p.ProveedorId, 
+                   pr.nombre AS nombreProveedor
+            FROM Productos p
+            LEFT JOIN Proveedores pr ON p.ProveedorId = pr.Id
+            WHERE p.Id = @Id";
+
                 using (var comando = new SqlCommand(consulta, conexion))
                 {
                     comando.Parameters.AddWithValue("@Id", id);
                     conexion.Open();
+
                     using (var lector = comando.ExecuteReader())
                     {
                         if (lector.Read())
@@ -95,10 +113,11 @@ namespace AccesoDatos.Repositorios
                                 nombre = lector["nombre"].ToString(),
                                 categoria = lector["categoria"].ToString(),
                                 unidadMedida = lector["unidadMedida"].ToString(),
-                                precio = Convert.ToDouble(lector["precio"]),
+                                precio = Convert.ToDecimal(lector["precio"]),
                                 existenciaActual = Convert.ToInt32(lector["existenciaActual"]),
                                 existeciaMinima = Convert.ToInt32(lector["existenciaMinima"]),
-                                proveedorId = (Guid)lector["ProveedorId"]
+                                proveedorId = (Guid)lector["ProveedorId"],
+                                nombreProveedor = lector["nombreProveedor"] == DBNull.Value ? "Sin Proveedor" : lector["nombreProveedor"].ToString()
                             };
                         }
                     }
@@ -109,7 +128,7 @@ namespace AccesoDatos.Repositorios
 
         public bool Actualizar(Producto producto)
         {
-            using (var conexion = new SqlConnection(_connectionString))
+            using (var conexion = new SqlConnection(conexionString))
             {
                 string consulta = @"UPDATE Productos 
                                     SET codigo = @codigo, nombre = @nombre, categoria = @categoria, unidadMedida = @unidadMedida, 
@@ -137,7 +156,7 @@ namespace AccesoDatos.Repositorios
 
         public bool Eliminar(Guid id)
         {
-            using (var conexion = new SqlConnection(_connectionString))
+            using (var conexion = new SqlConnection(conexionString))
             {
                 string consulta = "DELETE FROM Productos WHERE Id = @Id";
                 using (var comando = new SqlCommand(consulta, conexion))
@@ -146,6 +165,39 @@ namespace AccesoDatos.Repositorios
                     conexion.Open();
                     int filas = comando.ExecuteNonQuery();
                     return filas > 0;
+                }
+            }
+        }
+
+        public decimal? ObtenerPrecioPorId(Guid id)
+        {
+            using (var conexion = new SqlConnection(conexionString))
+            {
+                string consulta = "SELECT precio FROM Productos WHERE Id = @Id";
+                using (var comando = new SqlCommand(consulta, conexion))
+                {
+                    comando.Parameters.AddWithValue("@Id", id);
+                    conexion.Open();
+                    var resultado = comando.ExecuteScalar();
+                    return resultado != null ? Convert.ToDecimal(resultado) : (decimal?)null;
+                }
+            }
+        }
+
+        public decimal? ObtenerPrecioPorCombinacion(string categoria, string unidadMedida)
+        {
+            using (var conexion = new SqlConnection(conexionString))
+            {
+                //Buscar si existe un producto con esa categoría y unidad
+                string consulta = "SELECT TOP 1 precio FROM Productos WHERE categoria = @categoria AND unidadMedida = @unidad";
+                using (var comando = new SqlCommand(consulta, conexion))
+                {
+                    comando.Parameters.AddWithValue("@categoria", categoria);
+                    comando.Parameters.AddWithValue("@unidad", unidadMedida);
+                    conexion.Open();
+                    var resultado = comando.ExecuteScalar();
+
+                    return resultado != null ? Convert.ToDecimal(resultado) : (decimal?)null;
                 }
             }
         }
