@@ -64,7 +64,7 @@ namespace Carniceria.API.Validadores
                 errores.Add("Ninguna existencia puede tener un valor negativo");
             }
 
-            if (producto.proveedor == null)
+            if (producto.proveedorId == null)
             {
                 errores.Add("Seleccione un proveedor, verifique que haya al menos uno registrado");
             }

@@ -37,8 +37,8 @@
             <tr>
                 <td>@item.numeroFactura</td>
                 <td>@item.fecha.ToShortDateString()</td>
-                <td>@item.nombreCliente</td>
-                <td>@item.empleadoResponsable</td>
+                <td>@item.clienteId</td>
+                <td>@item.empleadoId</td>
                 <td>
                     @if (item.detalles != null && item.detalles.Any())
                     {

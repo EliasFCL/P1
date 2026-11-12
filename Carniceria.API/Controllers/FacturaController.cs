@@ -58,7 +58,7 @@ namespace Carniceria.API.Controllers
             if (cliente != null)
             {
                 var porCliente = facturas
-                    .Where(f => f.nombreCliente == cliente.nombre)
+                    .Where(f => f.clienteId.ToString() == cliente.numId)
                     .ToList();
                 if (porCliente.Any()) return porCliente;
             }

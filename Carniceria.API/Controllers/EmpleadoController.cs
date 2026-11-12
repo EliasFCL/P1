@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Models;
 using Carniceria.API.Validadores;
 using Carniceria.API.Modulos;
+using AccesoDatos.Repositorios;
 
 namespace Carniceria.API.Controllers
 {
@@ -12,23 +13,29 @@ namespace Carniceria.API.Controllers
     public class EmpleadosController : ControllerBase
     {
         private static ModuloEmpleado _modulo = new ModuloEmpleado();
+        private readonly EmpleadoRepositorio _empleadoRepositorio;
         private readonly EmpleadoValidador _validador = new EmpleadoValidador();
 
+        public EmpleadosController(EmpleadoRepositorio empleadoRepositorio)
+        {
+            _empleadoRepositorio = empleadoRepositorio;
+        }
+
         [HttpGet]
-        public ActionResult<List<Empleado>> GetAll() => _modulo.ListarEmpleados();
+        public ActionResult<List<Empleado>> GetAll() => _empleadoRepositorio.Listar();
 
         [HttpGet("{id}")]
         public ActionResult<Empleado> GetById(Guid id)
         {
-            var empleado = _modulo.ListarEmpleados().FirstOrDefault(x => x.Id == id);
-            if (empleado == null) return NotFound();
-            return empleado;
+            var e = _empleadoRepositorio.BuscarPorId(id);
+            if (e == null) return NotFound();
+            return e;
         }
 
         [HttpGet("porNumId/{numId}")]
         public ActionResult<Empleado> GetByNumId(string numId)
         {
-            var empleado = _modulo.BuscarEmpleado(numId);
+            var empleado = _empleadoRepositorio.BuscarPorNumId(numId);
             if (empleado == null) return NotFound();
             return empleado;
         }
@@ -38,14 +45,14 @@ namespace Carniceria.API.Controllers
         {
             if (empleado == null) return BadRequest("Empleado vacío");
 
-            if (_modulo.ListarEmpleados().Any(e => e.numId == empleado.numId))
+            if (_empleadoRepositorio.Listar().Any(e => e.numId == empleado.numId))
                 return BadRequest(new { errores = new List<string> { "Ese identificador ya existe" } });
 
             var errores = _validador.Validar(empleado);
             if (errores != null && errores.Any())
                 return BadRequest(new { errores });
 
-            _modulo.RegistrarEmpleado(empleado);
+            _empleadoRepositorio.Registrar(empleado);
             return CreatedAtAction(nameof(GetById), new { id = empleado.Id }, empleado);
         }
 
@@ -59,31 +66,31 @@ namespace Carniceria.API.Controllers
             if (errores != null && errores.Any())
                 return BadRequest(new { errores });
 
-            if (_modulo.ListarEmpleados().Any(e => e.numId == empleado.numId && e.Id != id))
+            if (_empleadoRepositorio.Listar().Any(e => e.numId == empleado.numId && e.Id != id))
                 return BadRequest(new { errores = new List<string> { "Ese identificador ya existe" } });
 
-            if (!_modulo.ActualizarEmpleado(id.ToString(), empleado)) return NotFound();
+            if (!_empleadoRepositorio.Actualizar(id, empleado)) return NotFound();
             return NoContent();
         }
 
         [HttpDelete("{id}")]
         public IActionResult Delete(Guid id)
         {
-            var empleado = _modulo.ListarEmpleados().FirstOrDefault(e => e.Id == id);
+            var empleado = _empleadoRepositorio.BuscarPorId(id);
             if (empleado == null) return NotFound();
 
             //No se puede eliminar un empleado con una o más facturas
             var moduloFactura = new ModuloFactura();
             //Usar string.Equals para evitar NullReferenceException
             bool tieneFacturas = moduloFactura.ListarFacturas()
-                .Any(f => string.Equals(f.empleadoResponsable, empleado.nombre, StringComparison.OrdinalIgnoreCase));
+                .Any(f => string.Equals(f.empleadoId.ToString(), empleado.Id.ToString(), StringComparison.OrdinalIgnoreCase));
 
             if (tieneFacturas)
             {
                 return BadRequest(new { errores = new List<string> { "No se puede eliminar el empleado porque tiene facturas asociadas" } });
             }
 
-            _modulo.EliminarEmpleado(id.ToString());
+            _empleadoRepositorio.Eliminar(id);
             return NoContent();
         }
     }

@@ -1,15 +1,17 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using AccesoDatos.Contexto;
+using Microsoft.Data.SqlClient;
 using Models;
+using AccesoDatos.Contexto;
 
 namespace AccesoDatos.Repositorios
 {
     public class ClienteRepositorio
     {
         private readonly string conexionString;
-
+        Conectar conectar = new Conectar();
         public ClienteRepositorio(string connectionString)
         {
-            conexionString = connectionString;
+            conexionString = conectar.CadenaConexion();
         }
 
         public bool Registrar(Cliente cliente)
@@ -76,22 +78,6 @@ namespace AccesoDatos.Repositorios
                     comando.Parameters.AddWithValue("@Id", id);
                     conexion.Open();
                     comando.ExecuteNonQuery();
-                }
-            }
-        }
-
-        //Evitar que se repita el numId en la base de datos
-        public bool ExisteNumId(string numId)
-        {
-            using (var conexion = new SqlConnection(conexionString))
-            {
-                string consulta = "SELECT COUNT(1) FROM Clientes WHERE numId = @numId";
-                using (var comando = new SqlCommand(consulta, conexion))
-                {
-                    comando.Parameters.AddWithValue("@numId", numId);
-                    conexion.Open();
-                    int cantidad = (int)comando.ExecuteScalar();
-                    return cantidad > 0;
                 }
             }
         }
@@ -184,7 +170,6 @@ namespace AccesoDatos.Repositorios
                                 fechaNacimiento = lector["fechaNacimiento"] == DBNull.Value ? null : (DateTime)lector["fechaNacimiento"]
 
                             };
-                            // Aquí puedes retornar el cliente encontrado o hacer lo que necesites con él
                         };
                     }
                 }

@@ -57,7 +57,7 @@ namespace Carniceria.API.Controllers
                 return BadRequest(new { errores });
 
             //Verificar que la cédula no exista en la Base de Datos
-            if (_clienteRepositorio.ExisteNumId(cliente.numId))
+            if (_clienteRepositorio.buscarPorNumId(cliente.numId) != null)
                 return BadRequest(new { errores = new List<string> { "Ese identificador ya existe" } });
 
             //Guardar en SQL Server
@@ -94,7 +94,7 @@ namespace Carniceria.API.Controllers
 
             var moduloFactura = new ModuloFactura();
             bool tieneFacturas = moduloFactura.ListarFacturas()
-                .Any(f => string.Equals(f.nombreCliente, cliente.nombre, StringComparison.OrdinalIgnoreCase));
+                .Any(f => string.Equals(f.clienteId.ToString(), cliente.Id.ToString(), StringComparison.OrdinalIgnoreCase));
 
             if (tieneFacturas)
             {

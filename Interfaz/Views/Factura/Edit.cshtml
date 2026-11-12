@@ -25,22 +25,22 @@
 
             <div class="form-group">
                 <label class="control-label">Cliente</label>
-                <select asp-for="nombreCliente" class="form-control">
+                <select asp-for="clienteId" class="form-control">
                     <option value="">Seleccione un cliente</option>
-                    @foreach (var nombre in (ViewBag.Clientes as List<string>) ?? new List<string>())
+                    @foreach (var cliente in (ViewBag.Clientes as List<Models.Cliente>) ?? new List<Models.Cliente>())
                     {
-                        <option value="@nombre" selected="@(nombre == Model.nombreCliente)">@nombre</option>
+                        <option value="@cliente.Id" selected="@(cliente.Id == Model.clienteId)">@cliente.nombre</option>
                     }
                 </select>
             </div>
 
             <div class="form-group">
                 <label class="control-label">Empleado responsable</label>
-                <select asp-for="empleadoResponsable" class="form-control">
+                <select asp-for="empleadoId" class="form-control">
                     <option value="">Seleccione un empleado</option>
-                    @foreach (var nombre in (ViewBag.Empleados as List<string>) ?? new List<string>())
+                    @foreach (var empleado in (ViewBag.Empleados as List<Models.Empleado>) ?? new List<Models.Empleado>())
                     {
-                        <option value="@nombre" selected="@(nombre == Model.empleadoResponsable)">@nombre</option>
+                        <option value="@empleado.Id" selected="@(empleado.Id == Model.empleadoId)">@empleado.nombre</option>
                     }
                 </select>
             </div>

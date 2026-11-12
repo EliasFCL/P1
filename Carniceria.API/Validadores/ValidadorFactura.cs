@@ -10,12 +10,12 @@ namespace Carniceria.API.Validadores
 
             List<string> errores = new List<string>();
 
-            if (string.IsNullOrWhiteSpace(factura.nombreCliente))
+            if (factura.clienteId == Guid.Empty)
             {
                 errores.Add("Debe seleccionar un cliente");
             }
 
-            if (string.IsNullOrWhiteSpace(factura.empleadoResponsable))
+            if (factura.empleadoId == Guid.Empty)
             {
                 errores.Add("Debe seleccionar un empleado responsable");
             }

@@ -103,8 +103,8 @@ namespace Carniceria.API.Modulos
             }
 
             //Actualizar la cabecera
-            facturaOriginal.nombreCliente = facturaActualizada.nombreCliente;
-            facturaOriginal.empleadoResponsable = facturaActualizada.empleadoResponsable;
+            facturaOriginal.clienteId = facturaActualizada.clienteId;
+            facturaOriginal.empleadoId = facturaActualizada.empleadoId;
             facturaOriginal.metodoPago = facturaActualizada.metodoPago;
             facturaOriginal.descuento = facturaActualizada.descuento;
             facturaOriginal.estado = facturaActualizada.estado;
@@ -170,8 +170,8 @@ namespace Carniceria.API.Modulos
                 {
                     numeroFactura = "F-0001",
                     fecha = new DateTime(2007, 8, 7, 15,30,2),
-                    nombreCliente = cliente.nombre,
-                    empleadoResponsable = empleado.nombre,
+                    clienteId = cliente.Id,
+                    empleadoId = empleado.Id,
                     metodoPago = "Efectivo",
                     descuento = 12,
                     estado = "Pendiente",

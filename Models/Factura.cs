@@ -9,8 +9,8 @@ namespace Models
     {
         public string? numeroFactura { get; set; }// automatico
         public DateTime fecha { get; set; }
-        public string nombreCliente { get; set; }
-        public string empleadoResponsable { get; set; }
+        public Guid clienteId { get; set; }
+        public Guid empleadoId { get; set; }
         public string metodoPago { get; set; }
         public int descuento { get; set; } // porcentaje 
         public string estado { get; set; }
