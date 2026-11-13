@@ -49,6 +49,10 @@ namespace Carniceria.API.Validadores
             {
                 errores.Add("El precio del producto debe ser mayor que cero.");
             }
+            if (!producto.unidadMedida.Equals("Kilogramo") & !producto.unidadMedida.Equals("libra") && producto.precio % 1 != 0)
+            {
+                errores.Add("Solo Kilogramo y libra pueden tener decimales");
+            }
 
             //Validar existencias
             if (producto.existenciaActual <= 0 || producto.existenciaActual == null)

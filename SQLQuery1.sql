@@ -30,9 +30,7 @@ CREATE TABLE AreaTrabajo(
  Id UNIQUEIDENTIFIER PRIMARY KEY,
  nombre NVARCHAR(100) NOT NULL UNIQUE
 )
-
-
-
+--Sin esto no se registran los empleados (verificar que AreaTrabajo y Puestos no esten vacias)
 INSERT INTO AreaTrabajo (Id, nombre) VALUES 
 ('11111111-1111-1111-1111-111111111111', 'Administracion'), 
 ('11111111-1111-1111-1111-111111111112', 'Ventas y Caja'),
@@ -81,7 +79,8 @@ CREATE TABLE Empleados (
     PuestoId UNIQUEIDENTIFIER NOT NULL,
     FOREIGN KEY (PuestoId) REFERENCES Puestos(Id)
 );
-
+SELECT * FROM Puestos;
+SELECT * FROM AreaTrabajo;
 SELECT * FROM Empleados;
 
 -- Tabla de proveedor
@@ -110,6 +109,11 @@ CREATE TABLE Productos (
     ProveedorId UNIQUEIDENTIFIER NOT NULL,
     FOREIGN KEY (ProveedorId) REFERENCES Proveedores(Id)
 );
+
+ALTER TABLE Productos 
+ALTER COLUMN precio DECIMAL(18,2) NOT NULL;
+ALTER TABLE Productos ALTER COLUMN existenciaActual DECIMAL(18,2) NOT NULL;
+ALTER TABLE Productos ALTER COLUMN existenciaMinima DECIMAL(18,2) NOT NULL;
 Select * FROM Productos
 
 CREATE TABLE Facturas (
@@ -128,6 +132,12 @@ CREATE TABLE Facturas (
     FOREIGN KEY (ClienteId) REFERENCES Clientes(Id),
     FOREIGN KEY (EmpleadoId) REFERENCES Empleados(Id)
 );
+SELECT * FROM Facturas;
+ALTER TABLE Facturas ALTER COLUMN subtotal DECIMAL(18,2) NOT NULL;
+ALTER TABLE Facturas ALTER COLUMN montoDescuento DECIMAL(18,2) NOT NULL;
+ALTER TABLE Facturas ALTER COLUMN baseGravable DECIMAL(18,2) NOT NULL;
+ALTER TABLE Facturas ALTER COLUMN iva DECIMAL(18,2) NOT NULL;
+ALTER TABLE Facturas ALTER COLUMN total DECIMAL(18,2) NOT NULL;
 
 CREATE TABLE DetallesFactura (
     Id UNIQUEIDENTIFIER PRIMARY KEY,
@@ -141,3 +151,4 @@ CREATE TABLE DetallesFactura (
     FOREIGN KEY (ProductoId) REFERENCES Productos(Id)
 );
 SELECT Id, nombre FROM Productos;
+ALTER TABLE DetallesFactura ALTER COLUMN cantidad DECIMAL(18,2) NOT NULL;

@@ -60,7 +60,7 @@ namespace Carniceria.API.Validadores
                     if (productoEncontrado != null)
                     {
                         //?? 0 por si la existencia del producto es nula
-                        if ((productoEncontrado.existenciaActual ?? 0) < detalle.cantidad)
+                        if ((productoEncontrado.existenciaActual) < detalle.cantidad)
                         {
                             errores.Add($"La cantidad para el producto '{detalle.producto}' excede la existencia disponible de {productoEncontrado.existenciaActual}");
                         }

@@ -52,7 +52,7 @@ namespace Carniceria.API.Modulos
             {
                 foreach (var d in factura.detalles)
                 {
-                    AjustarInventario(d.producto, -d.cantidad);
+                    AjustarInventario(d.producto, (int)-d.cantidad);
                 }
             }
 
@@ -93,13 +93,13 @@ namespace Carniceria.API.Modulos
             if (facturaOriginal.estado == "Pagada")
             {
                 foreach (var d in facturaOriginal.detalles)
-                    AjustarInventario(d.producto, d.cantidad);
+                    AjustarInventario(d.producto, (int)d.cantidad);
             }
             //Si ahora está pagada, descontar las cantidades nuevas
             if (facturaActualizada.estado == "Pagada")
             {
                 foreach (var d in facturaActualizada.detalles)
-                    AjustarInventario(d.producto, -d.cantidad);
+                    AjustarInventario(d.producto, (int)-d.cantidad);
             }
 
             //Actualizar la cabecera
@@ -136,7 +136,7 @@ namespace Carniceria.API.Modulos
             if (producto != null)
             {
                 //?? 0 por si la existencia es nula
-                producto.existenciaActual = (producto.existenciaActual ?? 0) + cantidadCambio;
+                producto.existenciaActual = (producto.existenciaActual) + cantidadCambio;
             }
         }
 
@@ -149,7 +149,7 @@ namespace Carniceria.API.Modulos
                 if (factura.estado == "Pagada")
                 {
                     foreach (var d in factura.detalles)
-                        AjustarInventario(d.producto, d.cantidad);
+                        AjustarInventario(d.producto, (int)d.cantidad);
                 }
                 factura.estado = "Anulada";
                 return true;

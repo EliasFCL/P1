@@ -15,8 +15,8 @@ namespace Models
         public string unidadMedida { get; set; }
         [Required(ErrorMessage = "El precio no puede estar vacio")]
         public decimal precio { get; set; }
-        public int? existenciaActual { get; set; }
-        public int? existeciaMinima { get; set; }
+        public decimal existenciaActual { get; set; }
+        public decimal existeciaMinima { get; set; }
         public Guid proveedorId { get; set; }
         public string nombreProveedor { get; set; }
     }

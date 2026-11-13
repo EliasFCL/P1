@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Modelos\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="IQToolkit.Data.SqlClient" Version="1.0.0" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="7.1.1" />
   </ItemGroup>

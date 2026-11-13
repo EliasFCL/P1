@@ -19,15 +19,6 @@ namespace AccesoDatos.Repositorios
 
         public bool Registrar(Factura factura)
         {
-            // Validaciones de seguridad
-            if (factura == null || factura.detalles == null || !factura.detalles.Any())
-                throw new Exception("La factura debe tener al menos un detalle.");
-
-            if (string.IsNullOrWhiteSpace(factura.nombreCliente))
-                throw new Exception("Debe seleccionar un cliente válido.");
-
-            if (string.IsNullOrWhiteSpace(factura.empleadoResponsable))
-                throw new Exception("Debe seleccionar un empleado válido.");
 
             using (var conexion = new SqlConnection(conexionString))
             {
@@ -58,7 +49,7 @@ namespace AccesoDatos.Repositorios
                         }
                         if (empleadoId == Guid.Empty) throw new Exception("El empleado seleccionado no existe en la base de datos.");
 
-                        //Calcular antes de gaurdar
+                        //Calcular antes de guardar
                         factura.subtotal = factura.detalles.Sum(d => d.cantidad * d.precioUnitario);
                         factura.montoDescuento = (factura.subtotal * factura.descuento) / 100m;
                         factura.baseGravable = factura.subtotal - factura.montoDescuento;
@@ -93,8 +84,25 @@ namespace AccesoDatos.Repositorios
 
                         foreach (var detalle in factura.detalles)
                         {
+
                             //Buscar el Guid del producto por su nombre
                             Guid productoId = Guid.Empty;
+                            if (factura.estado == "Pagada")
+                            {
+                                string queryStock = "SELECT existenciaActual FROM Productos WHERE Id = @Id";
+                                using (var cmdStock = new SqlCommand(queryStock, conexion, transaccion))
+                                {
+                                    cmdStock.Parameters.AddWithValue("@Id", productoId);
+
+                                    decimal inventarioActual = Convert.ToDecimal(cmdStock.ExecuteScalar());
+
+                                    //Comparar el inventario
+                                    if (inventarioActual < detalle.cantidad)
+                                    {
+                                        throw new Exception($"Su solicitud supera la cantidad almacenada en el inventario. Solicitado: {detalle.cantidad}, Disponible: {inventarioActual}");
+                                    }
+                                }
+                            }
                             using (var cmdP = new SqlCommand("SELECT TOP 1 Id FROM Productos WHERE nombre = @nombre", conexion, transaccion))
                             {
                                 cmdP.Parameters.AddWithValue("@nombre", detalle.producto);
@@ -208,7 +216,7 @@ namespace AccesoDatos.Repositorios
                                 {
                                     Id = (Guid)lectorDetalle["Id"], // Ojo: en tu SQL el Id es UNIQUEIDENTIFIER
                                     producto = lectorDetalle["producto"].ToString(),
-                                    cantidad = Convert.ToInt32(lectorDetalle["cantidad"]),
+                                    cantidad = Convert.ToDecimal(lectorDetalle["cantidad"]),
                                     precioUnitario = Convert.ToDecimal(lectorDetalle["precioUnitario"]),
                                     subtotal = Convert.ToDecimal(lectorDetalle["subtotal"])
                                 });
@@ -349,7 +357,7 @@ namespace AccesoDatos.Repositorios
                 {
                     try
                     {
-                        //Encontrar el estado anterior de la factura
+                        //Concer el esatdo de la factura anterior
                         string estadoAnterior = "";
                         string queryEstado = "SELECT estado FROM Facturas WHERE numeroFactura = @numero";
                         using (var cmdEstado = new SqlCommand(queryEstado, conexion, transaccion))
@@ -359,33 +367,28 @@ namespace AccesoDatos.Repositorios
                             if (res != null) estadoAnterior = res.ToString();
                         }
 
-                        //Resetear inventario si la factura estaba pagada y ahora no lo está
+                        //Devolver el inventario
                         if (estadoAnterior == "Pagada")
                         {
                             var ajustes = new List<(Guid id, int cant)>();
 
                             string queryStockViejo = @"
-                                SELECT d.ProductoId, d.cantidad 
-                                FROM DetallesFactura d 
-                                WHERE d.numeroFactura = @numero";
+                        SELECT d.ProductoId, d.cantidad 
+                        FROM DetallesFactura d 
+                        WHERE d.numeroFactura = @numero";
 
                             using (var cmdStockViejo = new SqlCommand(queryStockViejo, conexion, transaccion))
                             {
                                 cmdStockViejo.Parameters.AddWithValue("@numero", numero);
                                 using (var lectorStock = cmdStockViejo.ExecuteReader())
                                 {
-                                    //Leer y guardar sin hacer el update
                                     while (lectorStock.Read())
                                     {
-                                        ajustes.Add((
-                                            (Guid)lectorStock["ProductoId"],
-                                            Convert.ToInt32(lectorStock["cantidad"])
-                                        ));
+                                        ajustes.Add(((Guid)lectorStock["ProductoId"], Convert.ToInt32(lectorStock["cantidad"])));
                                     }
                                 }
                             }
 
-                            //Hacer update
                             foreach (var ajuste in ajustes)
                             {
                                 string querySumar = "UPDATE Productos SET existenciaActual = existenciaActual + @cantidad WHERE Id = @id";
@@ -398,7 +401,39 @@ namespace AccesoDatos.Repositorios
                             }
                         }
 
-                        //Actualizar cabecera
+                        //Recalcular totales
+                        decimal subtotalCalculado = factura.detalles.Sum(d => d.cantidad * d.precioUnitario);
+
+                        if (subtotalCalculado > 0)
+                        {
+                            factura.subtotal = subtotalCalculado;
+                            factura.montoDescuento = (factura.subtotal * factura.descuento) / 100m;
+                            factura.baseGravable = factura.subtotal - factura.montoDescuento;
+                            factura.iva = factura.baseGravable * 0.13m;
+                            factura.total = factura.baseGravable + factura.iva;
+                        }
+                        else
+                        {
+                            // Si el formulario no envió los precios bien, mantener originales
+                            string queryOriginal = "SELECT subtotal, montoDescuento, baseGravable, iva, total FROM Facturas WHERE numeroFactura = @numero";
+                            using (var cmdOriginal = new SqlCommand(queryOriginal, conexion, transaccion))
+                            {
+                                cmdOriginal.Parameters.AddWithValue("@numero", numero);
+                                using (var lectorOriginal = cmdOriginal.ExecuteReader())
+                                {
+                                    if (lectorOriginal.Read())
+                                    {
+                                        factura.subtotal = Convert.ToDecimal(lectorOriginal["subtotal"]);
+                                        factura.montoDescuento = Convert.ToDecimal(lectorOriginal["montoDescuento"]);
+                                        factura.baseGravable = Convert.ToDecimal(lectorOriginal["baseGravable"]);
+                                        factura.iva = Convert.ToDecimal(lectorOriginal["iva"]);
+                                        factura.total = Convert.ToDecimal(lectorOriginal["total"]);
+                                    }
+                                }
+                            }
+                        }
+
+                        //Actualizar la cabecera
                         string queryFactura = @"UPDATE Facturas 
                                         SET metodoPago = @pago, descuento = @descuento, estado = @estado, 
                                             subtotal = @subtotal, montoDescuento = @montoDesc, 
@@ -426,16 +461,32 @@ namespace AccesoDatos.Repositorios
                             cmdDel.ExecuteNonQuery();
                         }
 
-                        //Sobreescrubir detalles y actualizar inventario
+                        //Insertar y resatar
                         string queryDetalle = @"INSERT INTO DetallesFactura (Id, numeroFactura, ProductoId, unidadMedida, cantidad, precioUnitario, subtotal) 
                                         VALUES (@Id, @numero, @producto, @unidad, @cantidad, @precio, @subtotal)";
 
                         foreach (var detalle in factura.detalles)
                         {
                             Guid productoId = Guid.Empty;
+                            if (factura.estado == "Pagada")
+                            {
+                                string inventarioStock = "SELECT existenciaActual FROM Productos WHERE Id = @Id";
+                                using (var cmdStock = new SqlCommand(inventarioStock, conexion, transaccion))
+                                {
+                                    cmdStock.Parameters.AddWithValue("@Id", productoId);
+
+                                    decimal inventarioActual = Convert.ToDecimal(cmdStock.ExecuteScalar());
+
+                                    // Comparar cantidad
+                                    if (inventarioActual < detalle.cantidad)
+                                    {
+                                        throw new Exception($"Su solicitud del producto '{detalle.producto}' supera la cantidad almacenada en el inventario");
+                                    }
+                                }
+                            }
                             string queryProducto = @"
-                        SELECT TOP 1 Id FROM Productos 
-                        WHERE LTRIM(RTRIM(nombre)) = LTRIM(RTRIM(@nombre)) COLLATE SQL_Latin1_General_CP1_CI_AS";
+                                SELECT TOP 1 Id FROM Productos 
+                                WHERE LTRIM(RTRIM(nombre)) = LTRIM(RTRIM(@nombre)) COLLATE SQL_Latin1_General_CP1_CI_AS";
 
                             using (var cmdP = new SqlCommand(queryProducto, conexion, transaccion))
                             {
@@ -459,7 +510,7 @@ namespace AccesoDatos.Repositorios
                                 cmdD.ExecuteNonQuery();
                             }
 
-                            //Actualizar inventario
+                            //Restar el inventario
                             if (factura.estado == "Pagada")
                             {
                                 string queryRestar = "UPDATE Productos SET existenciaActual = existenciaActual - @cantidad WHERE Id = @id";

@@ -34,6 +34,7 @@ namespace Carniceria.API.Controllers
         [HttpPost]
         public ActionResult<Factura> Create(Factura factura)
         {
+            try { 
             if (factura == null)
                 return BadRequest(new { errores = new List<string> { "Factura vacía." } });
             if (factura.descuento < 0 || factura.descuento > 25)
@@ -51,6 +52,11 @@ namespace Carniceria.API.Controllers
                 return BadRequest(new { errores = new List<string> { "Error al guardar la factura en la base de datos." } });
 
             return Ok(factura);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { errores = new List<string> { ex.Message } });
+            }
         }
 
         [HttpGet]
@@ -96,14 +102,20 @@ namespace Carniceria.API.Controllers
         [HttpPut("{numero}")]
         public IActionResult Update(string numero, Factura factura)
         {
+            try {
             if (factura == null) return BadRequest();
 
-            factura.numeroFactura = numero; // Nos aseguramos de que el número viaje
+            factura.numeroFactura = numero; //Asegurar el número de factura que se está actualizando
 
             if (!_facturaRepositorio.Actualizar(numero, factura))
                 return NotFound();
 
             return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { errores = new List<string> { ex.Message } });
+            }
         }
 
         [HttpPut("{numero}/anular")]

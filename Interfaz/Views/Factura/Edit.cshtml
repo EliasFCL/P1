@@ -26,7 +26,6 @@
             <div class="form-group">
                 <label class="control-label">Cliente</label>
                 <select asp-for="nombreCliente" class="form-control">
-                    <option value="">Seleccione un cliente</option>
                     @foreach (var nombre in (ViewBag.Clientes as List<string>) ?? new List<string>())
                     {
                         <option value="@nombre">@nombre</option>
@@ -37,7 +36,6 @@
             <div class="form-group">
                 <label class="control-label">Empleado responsable</label>
                 <select asp-for="empleadoResponsable" class="form-control">
-                    <option value="">Seleccione un empleado</option>
                     @foreach (var nombre in (ViewBag.Empleados as List<string>) ?? new List<string>())
                     {
                         <option value="@nombre">@nombre</option>

@@ -42,7 +42,6 @@ Adaptar calculo en tiempo real: https://stackoverflow.com/revisions/a1d67cac-3b8
             <div class="form-group">
                 <label class="control-label">Cliente</label>
                 <select asp-for="nombreCliente" class="form-control">
-                    <option value=""> Seleccione un cliente </option>
                     @if (ViewBag.Clientes != null)
                     {
                         foreach (var nombre in ViewBag.Clientes)
@@ -56,7 +55,6 @@ Adaptar calculo en tiempo real: https://stackoverflow.com/revisions/a1d67cac-3b8
             <div class="form-group">
                 <label class="control-label">Empleado</label>
                 <select asp-for="empleadoResponsable" class="form-control">
-                    <option value=""> Seleccione un empleado </option>
                     @if (ViewBag.Empleados != null)
                     {
                         foreach (var nombre in ViewBag.Empleados)
@@ -146,35 +144,45 @@ Adaptar calculo en tiempo real: https://stackoverflow.com/revisions/a1d67cac-3b8
     let indice = @(Model.detalles?.Count ?? 0);
 
     function agregarFila() {
-        //Apuntar al cuerpo de la tabla
-        var cuerpo = document.getElementById("cuerpoDetalles");
+     var cuerpo = document.getElementById("cuerpoDetalles");
+      var fila = cuerpo.insertRow(-1);
 
-        //Insertar fila en última posición
-        var fila = cuerpo.insertRow(-1);
-
-         //Celda 1: Producto
-        var celda1 = fila.insertCell(0);
+       // 1. Celda 1: Producto (Eliminamos el option vacío)
+     var celda1 = fila.insertCell(0);
         celda1.innerHTML = `
-                    <select name="detalles[${indice}].producto" class="form-control" onchange="copiarProducto(this)">
-                        <option value=""> Seleccione un producto</option>
-                        @foreach (var p in productos)
-                        {
-                                <option value="@p.nombre" data-unidad="@p.unidadMedida" data-precio="@p.precio.ToString(System.Globalization.CultureInfo.InvariantCulture)">@p.nombre</option>
-                        }
-                    </select>
-                `;
+        <select name="detalles[${indice}].producto" class="form-control" onchange="copiarProducto(this)">
+            @foreach (var p in productos)
+            {
+                        <option value="@p.nombre" data-unidad="@p.unidadMedida" data-precio="@p.precio.ToString(System.Globalization.CultureInfo.InvariantCulture)">@p.nombre</option>
+                }
+            </select>
+        `;
+
         var celda2 = fila.insertCell(1);
         celda2.innerHTML = `<input type="text" class="form-control unidad" name="detalles[${indice}].unidadMedida" readonly />`;
+
         var celda3 = fila.insertCell(2);
-        celda3.innerHTML = `<input type="number" min="1" value="1" class="form-control" name="detalles[${indice}].cantidad" onkeydown="return event.key != 'Enter';" oninput="this.closest('tr').querySelector('.subtotal').value = ((parseFloat(this.value) || 0) * (parseFloat(this.closest('tr').querySelector('.precio').value) || 0)).toFixed(2)" />`;
+        celda3.innerHTML = `<input type="number" min="1" step="0.01" value="1" class="form-control" name="detalles[${indice}].cantidad" onkeydown="return event.key != 'Enter';" oninput="this.closest('tr').querySelector('.subtotal').value = ((parseFloat(this.value) || 0) * (parseFloat(this.closest('tr').querySelector('.precio').value) || 0)).toFixed(2)" />`;
+
         var celda4 = fila.insertCell(3);
         celda4.innerHTML = `<input type="number" step="0.01" class="form-control precio" name="detalles[${indice}].precioUnitario" readonly />`;
+
         var celda5 = fila.insertCell(4);
         celda5.innerHTML = `<input type="number" step="0.01" class="form-control subtotal" name="detalles[${indice}].subtotal" readonly />`;
+
         var celda6 = fila.insertCell(5);
         celda6.innerHTML = `<button type="button" class="btn btn-danger" onclick="this.closest('tr').remove()">X</button>`;
 
-       indice++;
+        //Cargar los datos del producto seleccionado en la nueva fila automaticamente 
+        var selectProducto = fila.querySelector("select");
+            if (selectProducto && selectProducto.options.length > 0) {
+            copiarProducto(selectProducto);
+        
+        // Calculamos el subtotal inicial
+        var precio = parseFloat(fila.querySelector(".precio").value) || 0;
+        fila.querySelector(".subtotal").value = precio.toFixed(2);
+        }
+        indice++;
     }
 
     //Autocompletar datos

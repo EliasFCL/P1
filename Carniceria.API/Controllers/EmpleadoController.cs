@@ -43,6 +43,7 @@ namespace Carniceria.API.Controllers
         [HttpPost]
         public ActionResult<Empleado> Create(Empleado empleado)
         {
+            try { 
             if (empleado == null) return BadRequest("Empleado vacío");
 
             if (_empleadoRepositorio.Listar().Any(e => e.numId == empleado.numId))
@@ -54,6 +55,11 @@ namespace Carniceria.API.Controllers
 
             _empleadoRepositorio.Registrar(empleado);
             return CreatedAtAction(nameof(GetById), new { id = empleado.Id }, empleado);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { errores = new List<string> { ex.Message } });
+            }
         }
 
         [HttpPut("{id}")]

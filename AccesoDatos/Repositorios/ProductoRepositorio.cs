@@ -70,8 +70,8 @@ namespace AccesoDatos.Repositorios
                                 categoria = lector["categoria"].ToString(),
                                 unidadMedida = lector["unidadMedida"].ToString(),
                                 precio = Convert.ToDecimal(lector["precio"]),
-                                existenciaActual = Convert.ToInt32(lector["existenciaActual"]),
-                                existeciaMinima = Convert.ToInt32(lector["existenciaMinima"]),
+                                existenciaActual = Convert.ToDecimal(lector["existenciaActual"]),
+                                existeciaMinima = Convert.ToDecimal(lector["existenciaMinima"]),
 
                                 proveedorId = (Guid)lector["ProveedorId"],
 

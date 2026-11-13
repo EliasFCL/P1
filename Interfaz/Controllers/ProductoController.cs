@@ -74,6 +74,7 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
         }
         public async Task<ActionResult> Create()
         {
+            
             var nuevoGuid = new Producto { Id = Guid.NewGuid() };
             ViewBag.Proveedores = await _proveedorService.ListarAsync();
             
@@ -92,7 +93,6 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
             {   
                 foreach (var err in errores) ModelState.AddModelError(string.Empty, err);
                 ViewBag.Proveedores = await _proveedorService.ListarAsync();
-                await CargarCombosAsync();
                 return View(producto);
             }
 
@@ -104,7 +104,7 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
             }else { 
                 ViewBag.MensajeExito = "Producto registrado exitosamente";
             }
-            await CargarCombosAsync();
+            ViewBag.Proveedores = await _proveedorService.ListarAsync();
             return View(new Producto() { Id = Guid.NewGuid() });
         }
 
