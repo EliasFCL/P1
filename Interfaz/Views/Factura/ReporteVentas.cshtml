@@ -1,0 +1,56 @@
+﻿@model IEnumerable<Models.Factura>
+
+@{
+    ViewData["Title"] = "Reporte de Ventas Semanales";
+}
+
+<h1>Reporte de Ventas Semanales</h1>
+<p>Facturas pagadas de la semana actual (Lunes a Domingo)</p>
+<hr />
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Número de Factura</th>
+            <th>Fecha</th>
+            <th>Cliente</th>
+            <th>Empleado</th>
+            <th>Subtotal</th>
+            <th>Descuento</th>
+            <th>IVA</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            foreach (var factura in Model)
+            {
+                <tr>
+                    <td>@factura.numeroFactura</td>
+                    <td>@factura.fecha.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@factura.nombreCliente</td>
+                    <td>@factura.empleadoResponsable</td>
+                    <td>@factura.subtotal.ToString("N2") CRC</td>
+                    <td>@factura.montoDescuento.ToString("N2") CRC</td>
+                    <td>@factura.iva.ToString("N2") CRC</td>
+                    <td>@factura.total.ToString("N2") CRC</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="8" class="text-center">No hay facturas pagadas registradas en la semana actual.</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="alert alert-success mt-4 text-end">
+    <h4><strong>Monto Total Vendido en la Semana: @(((decimal)ViewBag.TotalVendido).ToString("N2")) CRC</strong></h4>
+</div>
+
+<div>
+    <a asp-action="FacturaHome">Volver a la gestión de facturas</a>
+</div>

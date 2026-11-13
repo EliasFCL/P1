@@ -16,7 +16,7 @@ namespace Proyecto1_EliasCorderoLeon.Services
         Task<(bool ok, List<string> errores)> EliminarAsync(string numero);
         Task<(bool ok, List<string> errores)> ActualizarAsync(string numero, Factura factura);
         Task<(bool ok, List<string> errores)> AnularAsync(string numero);
-
+        Task<List<Factura>> ObtenerVentasAsync();
     }
     public class FacturaService : IFacturaService
     {
@@ -141,6 +141,11 @@ namespace Proyecto1_EliasCorderoLeon.Services
             var resp = await _http.PutAsync($"api/facturas/{numero}/anular", null);
             if (resp.IsSuccessStatusCode) return (true, new());
             return (false, await LeerErrores(resp));
+        }
+
+        public async Task<List<Factura>> ObtenerVentasAsync()
+        {
+            return await _http.GetFromJsonAsync<List<Factura>>("api/facturas/reporte-semanal") ?? new();
         }
     }
 }

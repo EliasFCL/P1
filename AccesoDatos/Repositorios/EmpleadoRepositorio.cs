@@ -208,18 +208,26 @@ namespace AccesoDatos.Repositorios
             }
             return null;
         }
-        public bool Eliminar(Guid id)
+        public bool eliminar(Guid id)
         {
-            using (var conexion = new SqlConnection(conexionString))
+            try
             {
-                string consulta = "DELETE FROM Empleados WHERE Id = @Id";
-                using (var comando = new SqlCommand(consulta, conexion))
+                using (var conexion = new SqlConnection(conexionString))
                 {
-                    comando.Parameters.AddWithValue("@Id", id);
-                    conexion.Open();
-                    int filasAfectadas = comando.ExecuteNonQuery();
-                    return filasAfectadas > 0; // Retorna true si se eliminó al menos una fila
+                    string consulta = "DELETE FROM Empleados WHERE Id = @Id";
+                    using (var comando = new SqlCommand(consulta, conexion))
+                    {
+                        comando.Parameters.AddWithValue("@Id", id);
+                        conexion.Open();
+                        int filasAfectadas = comando.ExecuteNonQuery();
+                        return filasAfectadas > 0; //Devolver true si se borra
+                    }
                 }
+            }
+            catch (Exception)
+            {
+                // Si SQL Server bloquea el borrado se devuelve false
+                return false;
             }
         }
 

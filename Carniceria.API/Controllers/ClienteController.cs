@@ -92,16 +92,15 @@ namespace Carniceria.API.Controllers
             var cliente = _clienteRepositorio.BuscarPorId(id);
             if (cliente == null) return NotFound();
 
-            var moduloFactura = new ModuloFactura();
-            bool tieneFacturas = moduloFactura.ListarFacturas()
-                .Any(f => string.Equals(f.clienteId.ToString(), cliente.Id.ToString(), StringComparison.OrdinalIgnoreCase));
+            bool eliminado = _clienteRepositorio.eliminar(id);
 
-            if (tieneFacturas)
+            if (!eliminado)
             {
+                //La base de datos no permite eliminar el cliente porque tiene facturas asociadas
                 return BadRequest(new { errores = new List<string> { "No se puede eliminar el cliente porque tiene facturas asociadas" } });
             }
-            _clienteRepositorio.eliminar(id);
-            return NoContent();
+
+            return NoContent(); 
         }
     }
 }

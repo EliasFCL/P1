@@ -22,9 +22,13 @@ namespace Carniceria.API.Controllers
         [HttpGet("{numero}")]
         public ActionResult<Factura> GetByNumero(string numero)
         {
-            var factura = _facturaRepositorio.buscarFactura(numero);
+            var facturas = _facturaRepositorio.buscarFactura(numero);
+
+            var factura = facturas.FirstOrDefault();
+
             if (factura == null) return NotFound();
-            return factura;
+
+            return Ok(factura);
         }
         private readonly FacturaValidador _validador = new FacturaValidador();
         [HttpPost]
@@ -32,9 +36,13 @@ namespace Carniceria.API.Controllers
         {
             if (factura == null)
                 return BadRequest(new { errores = new List<string> { "Factura vacía." } });
+            if (factura.descuento < 0 || factura.descuento > 25)
+            {
+                return BadRequest(new { errores = new List<string> { "El descuento debe estar entre 0 y 25" } });
+            }
 
             if (factura.detalles == null || !factura.detalles.Any())
-                return BadRequest(new { errores = new List<string> { "La factura debe tener al menos un detalle." } });
+                return BadRequest(new { errores = new List<string> { "La factura debe tener al menos un detalle" } });
 
 
             bool guardado = _facturaRepositorio.Registrar(factura);
@@ -56,35 +64,26 @@ namespace Carniceria.API.Controllers
         [HttpGet("buscar/{criterio}")]
         public ActionResult<List<Factura>> Buscar(string criterio)
         {
-            var facturas = _facturaRepositorio.Listar();
+            var facturas = _facturaRepositorio.buscarFactura(criterio);
 
-            //Buscar por de factura
-            var porNumero = facturas
-                .Where(f => f.numeroFactura.Contains(criterio, StringComparison.OrdinalIgnoreCase))
-                .ToList();
-            if (porNumero.Any()) return porNumero;
-
-            //Buscar por cliente
-            var cliente = _moduloCliente.ListarClientes()
-                .FirstOrDefault(c => c.numId == criterio);
-            if (cliente != null)
+            // Si no encuentra nada, devolvemos un error 404 con el criterio recibido
+            if (facturas == null || facturas.Count == 0)
             {
-                var porCliente = facturas
-                    .Where(f => f.clienteId.ToString() == cliente.numId)
-                    .ToList();
-                if (porCliente.Any()) return porCliente;
+                return NotFound(new { mensaje = "No se encontro nada para: " + criterio });
             }
 
-            return NotFound();
+            return Ok(facturas);
         }
 
         [HttpDelete("{numero}")]
         public IActionResult Delete(string numero)
         {
-            var factura = _facturaRepositorio.buscarFactura(numero);
-            if (factura == null) return NotFound(new { errores = new List<string> { "Factura no encontrada" } });
+            var facturas = _facturaRepositorio.buscarFactura(numero);
 
-            //Validar estado antes de intentar borrar
+            var factura = facturas.FirstOrDefault();
+
+            if (factura == null) return NotFound();
+
             if (factura.estado != "Pendiente")
             {
                 return BadRequest(new { errores = new List<string> { "No se puede eliminar una factura pagada o anulada" } });
@@ -101,7 +100,7 @@ namespace Carniceria.API.Controllers
 
             factura.numeroFactura = numero; // Nos aseguramos de que el número viaje
 
-            if (!_facturaRepositorio.Actualizar(factura))
+            if (!_facturaRepositorio.Actualizar(numero, factura))
                 return NotFound();
 
             return NoContent();
@@ -110,12 +109,21 @@ namespace Carniceria.API.Controllers
         [HttpPut("{numero}/anular")]
         public IActionResult Anular(string numero)
         {
-            var exito = _modulo.anularFactura(numero);
+            bool exito = _facturaRepositorio.Anular(numero);
 
             if (!exito)
+            {
                 return BadRequest(new { errores = new List<string> { "No se puede anular, compruebe que la factura exista y no esté anulada" } });
+            }
 
             return NoContent();
+        }
+
+        [HttpGet("reporte-semanal")]
+        public ActionResult<List<Factura>> GetReporteSemanal()
+        {
+            var reporte = _facturaRepositorio.obtenerVentas();
+            return Ok(reporte);
         }
     }
 }

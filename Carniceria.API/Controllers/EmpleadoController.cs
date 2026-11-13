@@ -79,18 +79,14 @@ namespace Carniceria.API.Controllers
             var empleado = _empleadoRepositorio.BuscarPorId(id);
             if (empleado == null) return NotFound();
 
-            //No se puede eliminar un empleado con una o más facturas
-            var moduloFactura = new ModuloFactura();
-            //Usar string.Equals para evitar NullReferenceException
-            bool tieneFacturas = moduloFactura.ListarFacturas()
-                .Any(f => string.Equals(f.empleadoId.ToString(), empleado.Id.ToString(), StringComparison.OrdinalIgnoreCase));
+            bool eliminado = _empleadoRepositorio.eliminar(id);
 
-            if (tieneFacturas)
+            if (!eliminado)
             {
+                //La base de datos no permite eliminar el empleado porque tiene facturas asociadas
                 return BadRequest(new { errores = new List<string> { "No se puede eliminar el empleado porque tiene facturas asociadas" } });
             }
 
-            _empleadoRepositorio.Eliminar(id);
             return NoContent();
         }
     }

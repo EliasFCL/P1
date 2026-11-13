@@ -1,6 +1,15 @@
 CREATE DataBase Carniceria;
 
 USE Carniceria;
+-- Borrar en orden jerárquico (evitar bloqueos)
+DELETE FROM DetallesFactura;
+DELETE FROM Facturas;
+DELETE FROM Productos;
+DELETE FROM Proveedores;
+DELETE FROM Empleados;
+DELETE FROM Puestos;
+DELETE FROM AreaTrabajo;
+DELETE FROM Clientes;
 
 CREATE TABLE Clientes (
 id UNIQUEIDENTIFIER  PRIMARY KEY,
@@ -14,22 +23,14 @@ fechaNacimiento DATETIME NOT NULL
 
 Select * FROM Clientes;
 
-ALTER TABLE Facturas DROP CONSTRAINT FK__Facturas__Emplea__6E01572D;
+SELECT numeroFactura, estado FROM Facturas;
 
 -- Tablas de empleado --
 CREATE TABLE AreaTrabajo(
  Id UNIQUEIDENTIFIER PRIMARY KEY,
  nombre NVARCHAR(100) NOT NULL UNIQUE
 )
--- Borrar en orden jerárquico (evitar bloqueos)
-DELETE FROM DetallesFactura;
-DELETE FROM Facturas;
-DELETE FROM Productos;
-DELETE FROM Proveedores;
-DELETE FROM Empleados;
-DELETE FROM Puestos;
-DELETE FROM AreaTrabajo;
-DELETE FROM Clientes;
+
 
 
 INSERT INTO AreaTrabajo (Id, nombre) VALUES 

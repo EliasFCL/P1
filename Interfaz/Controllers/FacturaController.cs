@@ -195,6 +195,14 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
             return RedirectToAction(nameof(IndexActualizar));
         }
 
+        public async Task<ActionResult> ReporteVentas()
+        {
+            var facturas = await _facturaService.ObtenerVentasAsync();
 
+            // Calcular el monto total vendido en la semana
+            ViewBag.TotalVendido = facturas.Sum(f => f.total);
+
+            return View(facturas);
+        }
     }
 }
