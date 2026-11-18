@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Models;
+﻿using Models;
 using Microsoft.Data.SqlClient;
 using AccesoDatos.Contexto;
 
@@ -291,5 +288,3 @@ namespace AccesoDatos.Repositorios
         }
     }
 }
-
-

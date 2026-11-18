@@ -25,14 +25,14 @@ namespace Carniceria.API.Controllers
         [HttpGet]
         public ActionResult<List<Cliente>> GetAll()
         {
-            var clientes = _clienteRepositorio.Listar();
+            var clientes = _clienteRepositorio.Listar;
             return Ok(clientes);
         }
 
         [HttpGet("{id}")]
         public ActionResult<Cliente> GetById(Guid id)
         {
-            var cliente = _clienteRepositorio.BuscarPorId(id);
+            var cliente = _clienteRepositorio.buscarPorId(id);
             if (cliente == null) return NotFound();
             return cliente;
         }
@@ -79,7 +79,7 @@ namespace Carniceria.API.Controllers
             if (errores != null && errores.Any())
                 return BadRequest(new { errores });
 
-            if (_clienteRepositorio.Listar().Any(c => c.numId == cliente.numId && c.Id != id))
+            if (_clienteRepositorio.Listar.Any(c => c.numId == cliente.numId && c.Id != id))
                 return BadRequest(new { errores = new List<string> { "Ese identificador ya existe" } });
 
             _clienteRepositorio.Actualizar(id, cliente);
@@ -89,7 +89,7 @@ namespace Carniceria.API.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(Guid id)
         {
-            var cliente = _clienteRepositorio.BuscarPorId(id);
+            var cliente = _clienteRepositorio.buscarPorId(id);
             if (cliente == null) return NotFound();
 
             bool eliminado = _clienteRepositorio.eliminar(id);
