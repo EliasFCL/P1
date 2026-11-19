@@ -59,11 +59,11 @@ namespace Carniceria.API.Validadores
             {
                 errores.Add("La existencia actual del producto debe ser mayor o igual a 0");
             }
-            if (producto.existeciaMinima < 0 || producto.existeciaMinima == null)
+            if (producto.existenciaMinima < 0 || producto.existenciaMinima == null)
             {
                 errores.Add("La existencia mínima del producto debe ser mayor o igual a cero.");
             }
-            if (producto.existeciaMinima.ToString().StartsWith("-") || producto.existenciaActual.ToString().StartsWith("-"))
+            if (producto.existenciaMinima.ToString().StartsWith("-") || producto.existenciaActual.ToString().StartsWith("-"))
             {
                 errores.Add("Ninguna existencia puede tener un valor negativo");
             }

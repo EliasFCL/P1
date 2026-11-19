@@ -7,10 +7,11 @@ namespace AccesoDatos.Contexto
     {
         public EmpleadoDbContext() : base()
         {
+            new DbContextOptionsBuilder<EmpleadoDbContext>().UseSqlServer(new Conectar().CadenaConexion());
         }
 
         protected override void OnConfiguring(
-            DbContextOptionsBuilder optionsBuilder)
+         DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
@@ -21,16 +22,7 @@ namespace AccesoDatos.Contexto
                 );
             }
         }
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Empleado>()
-                .Property(e => e.puestoID)
-                .HasColumnName("PuestoId");
 
-            modelBuilder.Entity<Empleado>()
-                .Property(e => e.puestoID)
-                .HasColumnName("PuestoId");
-        }
         public DbSet<Empleado> Empleados { get; set; }
     }
 }

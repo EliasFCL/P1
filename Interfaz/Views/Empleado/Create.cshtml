@@ -78,7 +78,6 @@
                 <label class="control-label">Área de trabajo</label>
 
                 <select asp-for="areaTrabajo" class="form-control">
-                    <option value="">Seleccione un área</option>
                     <option value="Administracion">Administración</option>
                     <option value="Ventas y Caja">Ventas y Caja</option>
                     <option value="Servicio al cliente">Servicio al cliente</option>
@@ -130,6 +129,19 @@
                             }
 
                             areaSeleccionada.addEventListener("change", cargarCargos);
+                            document.addEventListener("DOMContentLoaded", function() {
+
+                            if (areaSeleccionada.value) {
+                            //Llenar el combo
+                            cargarCargos();
+
+                            // Si el modelo tiene un cargo guardado, lo seleccionamos
+                            var cargoGuardado = "@Model.cargo";
+                            if (cargoGuardado) {
+                                cargoSeleccionado.value = cargoGuardado;
+                            }
+                    }
+                });
             </script>
 
             @*Para el radio buton*@

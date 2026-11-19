@@ -42,7 +42,7 @@ namespace Carniceria.API.Modulos
                 producto.unidadMedida = productoActualizado.unidadMedida;
                 producto.precio = productoActualizado.precio;
                 producto.existenciaActual = productoActualizado.existenciaActual;
-                producto.existeciaMinima = productoActualizado.existeciaMinima;
+                producto.existenciaMinima = productoActualizado.existenciaMinima;
                 producto.proveedorId = productoActualizado.proveedorId;
             }
             return true;

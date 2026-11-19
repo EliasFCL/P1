@@ -1,7 +1,12 @@
-CREATE DataBase Carniceria;
+DROP DATABASE Carniceria;
 
+
+CREATE DATABASE Carniceria;
 USE Carniceria;
--- Borrar en orden jerárquico (evitar bloqueos)
+USE Master;
+GO
+
+-- Borrar datos y tablas por jerarquía
 DELETE FROM DetallesFactura;
 DELETE FROM Facturas;
 DELETE FROM Productos;
@@ -10,27 +15,135 @@ DELETE FROM Empleados;
 DELETE FROM Puestos;
 DELETE FROM AreaTrabajo;
 DELETE FROM Clientes;
+GO
 
+DROP TABLE DetallesFactura;
+DROP TABLE Facturas;
+DROP TABLE Productos;
+DROP TABLE Proveedores;
+DROP TABLE Empleados;
+DROP TABLE Puestos;
+DROP TABLE AreaTrabajo;
+DROP TABLE Clientes;
+GO
+
+-- Tabla Clientes
 CREATE TABLE Clientes (
-id UNIQUEIDENTIFIER  PRIMARY KEY,
-tipoIdentificacion NVARCHAR(50),
-numId NVARCHAR(50) NOT NULL,
-nombre NVARCHAR(100) NOT NULL,
-apellido1 NVARCHAR(100) NOT NULL,
-apellido2 NVARCHAR(100) NOT NULL,
-fechaNacimiento DATETIME NOT NULL
+    id UNIQUEIDENTIFIER PRIMARY KEY,
+    tipoIdentificacion NVARCHAR(50),
+    numId NVARCHAR(50) NOT NULL,
+    nombre NVARCHAR(100) NOT NULL,
+    apellido1 NVARCHAR(100) NOT NULL,
+    apellido2 NVARCHAR(100) NOT NULL,
+    fechaNacimiento DATETIME NOT NULL
 );
+GO
 
-Select * FROM Clientes;
+-- Tabla para las áreas de trabajo
+CREATE TABLE AreaTrabajo (
+    Id UNIQUEIDENTIFIER PRIMARY KEY,
+    nombre NVARCHAR(100) NOT NULL UNIQUE
+);
+GO
 
-SELECT numeroFactura, estado FROM Facturas;
+-- Tabla para los puestos
+CREATE TABLE Puestos (
+    Id UNIQUEIDENTIFIER PRIMARY KEY,
+    nombre NVARCHAR(100) NOT NULL,
+    AreaTrabajoId UNIQUEIDENTIFIER NOT NULL,
+    FOREIGN KEY (AreaTrabajoId) REFERENCES AreaTrabajo(Id)
+);
+GO
 
--- Tablas de empleado --
-CREATE TABLE AreaTrabajo(
- Id UNIQUEIDENTIFIER PRIMARY KEY,
- nombre NVARCHAR(100) NOT NULL UNIQUE
-)
---Sin esto no se registran los empleados (verificar que AreaTrabajo y Puestos no esten vacias)
+-- Tabla Empleados
+CREATE TABLE Empleados (
+    Id UNIQUEIDENTIFIER PRIMARY KEY,
+    tipoIdentificacion NVARCHAR(50) NOT NULL,
+    numId NVARCHAR(50) NOT NULL UNIQUE,
+    nombre NVARCHAR(100) NOT NULL,
+    apellido1 NVARCHAR(100) NOT NULL,
+    apellido2 NVARCHAR(100) NOT NULL,
+    fechaNacimiento DATETIME NULL,
+    salario DECIMAL(18,2) NOT NULL,
+    fechaIngreso DATETIME NOT NULL,
+    turno NVARCHAR(50) NOT NULL,
+    PuestoId UNIQUEIDENTIFIER NOT NULL,
+    areaTrabajo NVARCHAR(100) NOT NULL,
+    cargo NVARCHAR(100) NOT NULL,
+    FOREIGN KEY (PuestoId) REFERENCES Puestos(Id)
+);
+GO
+SELECT * FROM Empleados
+ALTER TABLE Empleados ALTER COLUMN cargo NVARCHAR(100) NULL;
+ALTER TABLE Empleados ALTER COLUMN areaTrabajo NVARCHAR(100) NULL;
+
+-- Tabla proveedores
+CREATE TABLE Proveedores (
+    Id UNIQUEIDENTIFIER PRIMARY KEY,
+    tipoIdentificacion NVARCHAR(50) NOT NULL,
+    numId NVARCHAR(50) NOT NULL UNIQUE,
+    nombre NVARCHAR(100) NOT NULL,
+    RazonSocial NVARCHAR(150) NOT NULL,
+    Telefono INT NOT NULL,
+    CorreoElectronico NVARCHAR(100) NOT NULL,
+    TipoSuministro NVARCHAR(50) NOT NULL,
+    FrecuenciaEntrega NVARCHAR(50) NOT NULL,
+    apellido1 NVARCHAR(100) NULL,
+    apellido2 NVARCHAR(100) NULL,
+    fechaNacimiento DATETIME NULL
+);
+GO
+
+-- Tabla productos
+CREATE TABLE Productos (
+    Id UNIQUEIDENTIFIER PRIMARY KEY,
+    codigo NVARCHAR(50) NOT NULL UNIQUE,
+    nombre NVARCHAR(100) NOT NULL,
+    categoria NVARCHAR(50) NOT NULL,
+    unidadMedida NVARCHAR(50) NOT NULL,
+    precio DECIMAL(18,2) NOT NULL,
+    existenciaActual DECIMAL(18,2) NOT NULL,
+    existenciaMinima DECIMAL(18,2) NOT NULL,
+    ProveedorId UNIQUEIDENTIFIER NOT NULL,
+    FOREIGN KEY (ProveedorId) REFERENCES Proveedores(Id)
+);
+GO
+
+-- Tabla facturas
+CREATE TABLE Facturas (
+    numeroFactura NVARCHAR(50) PRIMARY KEY,
+    fecha DATETIME NOT NULL,
+    ClienteId UNIQUEIDENTIFIER NOT NULL,
+    EmpleadoId UNIQUEIDENTIFIER NOT NULL,
+    metodoPago NVARCHAR(50) NOT NULL,
+    descuento DECIMAL(5,2) NOT NULL,
+    estado NVARCHAR(50) NOT NULL,
+    subtotal DECIMAL(18,2) NOT NULL,
+    montoDescuento DECIMAL(18,2) NOT NULL,
+    baseGravable DECIMAL(18,2) NOT NULL,
+    iva DECIMAL(18,2) NOT NULL,
+    total DECIMAL(18,2) NOT NULL,
+    FOREIGN KEY (ClienteId) REFERENCES Clientes(Id),
+    FOREIGN KEY (EmpleadoId) REFERENCES Empleados(Id)
+);
+GO
+
+-- Tabla detalles
+CREATE TABLE DetallesFactura (
+    Id UNIQUEIDENTIFIER PRIMARY KEY,
+    numeroFactura NVARCHAR(50) NOT NULL, 
+    ProductoId UNIQUEIDENTIFIER NOT NULL, 
+    unidadMedida NVARCHAR(50) NOT NULL,
+    cantidad DECIMAL(18,2) NOT NULL,
+    precioUnitario DECIMAL(18,2) NOT NULL, 
+    subtotal DECIMAL(18,2) NOT NULL,
+    FOREIGN KEY (numeroFactura) REFERENCES Facturas(numeroFactura) ON DELETE CASCADE, 
+    FOREIGN KEY (ProductoId) REFERENCES Productos(Id)
+);
+GO
+
+-- Datos por defecto
+
 INSERT INTO AreaTrabajo (Id, nombre) VALUES 
 ('11111111-1111-1111-1111-111111111111', 'Administracion'), 
 ('11111111-1111-1111-1111-111111111112', 'Ventas y Caja'),
@@ -52,104 +165,6 @@ INSERT INTO Puestos (Id, nombre, AreaTrabajoId) VALUES
 ('22222222-2222-2222-2222-222222222230', 'Bodeguero', '11111111-1111-1111-1111-111111111115'),
 ('22222222-2222-2222-2222-222222222231', 'Auxiliar de inventario', '11111111-1111-1111-1111-111111111115'),
 ('22222222-2222-2222-2222-222222222232', 'Conductor', '11111111-1111-1111-1111-111111111116'),
-('22222222-2222-2222-2222-222222222233', 'Ayudante de distribución', '11111111-1111-1111-1111-111111111116'), -- CON TILDE, como tu JS
+('22222222-2222-2222-2222-222222222233', 'Ayudante de distribución', '11111111-1111-1111-1111-111111111116'),
 ('22222222-2222-2222-2222-222222222234', 'Personal de limpieza', '11111111-1111-1111-1111-111111111117');
-
-
-SELECT * FROM AreaTrabajo;
-SELECT * FROM Puestos;
-CREATE TABLE Puestos(
- Id UNIQUEIDENTIFIER PRIMARY KEY,
- nombre NVARCHAR(100) NOT NULL,
- AreaTrabajoId UNIQUEIDENTIFIER NOT NULL,
- FOREIGN KEY (AreaTrabajoId) REFERENCES areaTrabajo(Id)
-)
-
-CREATE TABLE Empleados (
-    Id UNIQUEIDENTIFIER PRIMARY KEY,
-    tipoIdentificacion NVARCHAR(50) NOT NULL,
-    numId NVARCHAR(50) NOT NULL UNIQUE,
-    nombre NVARCHAR(100) NOT NULL,
-    apellido1 NVARCHAR(100) NOT NULL,
-    apellido2 NVARCHAR(100) NOT NULL,
-    fechaNacimiento DATETIME NULL,
-    salario DECIMAL NOT NULL,
-    fechaIngreso DATETIME NOT NULL,
-    turno NVARCHAR(50) NOT NULL,
-    PuestoId UNIQUEIDENTIFIER NOT NULL,
-    FOREIGN KEY (PuestoId) REFERENCES Puestos(Id)
-);
-SELECT * FROM Puestos;
-SELECT * FROM AreaTrabajo;
-SELECT * FROM Empleados;
-
--- Tabla de proveedor
-CREATE TABLE Proveedores (
-    Id UNIQUEIDENTIFIER PRIMARY KEY,
-    tipoIdentificacion NVARCHAR(50) NOT NULL,
-    numId NVARCHAR(50) NOT NULL UNIQUE,
-    nombre NVARCHAR(100) NOT NULL,
-    RazonSocial NVARCHAR(150) NOT NULL,
-    Telefono INT NOT NULL,
-    CorreoElectronico NVARCHAR(100) NOT NULL,
-    TipoSuministro NVARCHAR(50) NOT NULL,
-    FrecuenciaEntrega NVARCHAR(50) NOT NULL
-);
-SELECT * FROM Proveedores;
-
-CREATE TABLE Productos (
-    Id UNIQUEIDENTIFIER PRIMARY KEY,
-    codigo NVARCHAR(50) NOT NULL UNIQUE,
-    nombre NVARCHAR(100) NOT NULL,
-    categoria NVARCHAR(50) NOT NULL,
-    unidadMedida NVARCHAR(50) NOT NULL,
-    precio DECIMAL NOT NULL,
-    existenciaActual INT NOT NULL,
-    existenciaMinima INT NOT NULL,
-    ProveedorId UNIQUEIDENTIFIER NOT NULL,
-    FOREIGN KEY (ProveedorId) REFERENCES Proveedores(Id)
-);
-
-ALTER TABLE Productos 
-ALTER COLUMN precio DECIMAL(18,2) NOT NULL;
-ALTER TABLE Productos ALTER COLUMN existenciaActual DECIMAL(18,2) NOT NULL;
-ALTER TABLE Productos ALTER COLUMN existenciaMinima DECIMAL(18,2) NOT NULL;
-Select * FROM Productos
-
-CREATE TABLE Facturas (
-    numeroFactura NVARCHAR(50) PRIMARY KEY,
-    fecha DATETIME NOT NULL,
-    ClienteId UNIQUEIDENTIFIER NOT NULL,
-    EmpleadoId UNIQUEIDENTIFIER NOT NULL,
-    metodoPago NVARCHAR(50) NOT NULL,
-    descuento INT NOT NULL,
-    estado NVARCHAR(50) NOT NULL,
-    subtotal DECIMAL NOT NULL,
-    montoDescuento DECIMAL NOT NULL,
-    baseGravable DECIMAL NOT NULL,
-    iva DECIMAL NOT NULL,
-    total DECIMAL NOT NULL,
-    FOREIGN KEY (ClienteId) REFERENCES Clientes(Id),
-    FOREIGN KEY (EmpleadoId) REFERENCES Empleados(Id)
-);
-SELECT * FROM Facturas;
-ALTER TABLE Facturas ALTER COLUMN subtotal DECIMAL(18,2) NOT NULL;
-ALTER TABLE Facturas ALTER COLUMN montoDescuento DECIMAL(18,2) NOT NULL;
-ALTER TABLE Facturas ALTER COLUMN baseGravable DECIMAL(18,2) NOT NULL;
-ALTER TABLE Facturas ALTER COLUMN iva DECIMAL(18,2) NOT NULL;
-ALTER TABLE Facturas ALTER COLUMN total DECIMAL(18,2) NOT NULL;
-ALTER TABLE Facturas ALTER COLUMN descuento DECIMAL(5,2) NOT NULL;
-
-CREATE TABLE DetallesFactura (
-    Id UNIQUEIDENTIFIER PRIMARY KEY,
-    numeroFactura NVARCHAR(50) NOT NULL, 
-    ProductoId UNIQUEIDENTIFIER NOT NULL, 
-    unidadMedida NVARCHAR(50) NOT NULL,
-    cantidad INT NOT NULL,
-    precioUnitario DECIMAL(18,2) NOT NULL, 
-    subtotal DECIMAL(18,2) NOT NULL,
-    FOREIGN KEY (numeroFactura) REFERENCES Facturas(numeroFactura) ON DELETE CASCADE, 
-    FOREIGN KEY (ProductoId) REFERENCES Productos(Id)
-);
-SELECT Id, nombre FROM Productos;
-ALTER TABLE DetallesFactura ALTER COLUMN cantidad DECIMAL(18,2) NOT NULL;
+GO

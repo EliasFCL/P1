@@ -22,12 +22,16 @@ namespace Carniceria.API.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<Empleado>> GetAll() => _empleadoRepositorio.Listar();
+        public ActionResult<List<Empleado>> GetAll()
+        {
+            var empleados = _empleadoRepositorio.Listar;
+            return Ok(empleados);
+        }
 
         [HttpGet("{id}")]
         public ActionResult<Empleado> GetById(Guid id)
         {
-            var e = _empleadoRepositorio.BuscarPorId(id);
+            var e = _empleadoRepositorio.buscarPorId(id);
             if (e == null) return NotFound();
             return e;
         }
@@ -35,7 +39,7 @@ namespace Carniceria.API.Controllers
         [HttpGet("porNumId/{numId}")]
         public ActionResult<Empleado> GetByNumId(string numId)
         {
-            var empleado = _empleadoRepositorio.BuscarPorNumId(numId);
+            var empleado = _empleadoRepositorio.buscarPorNumId(numId);
             if (empleado == null) return NotFound();
             return empleado;
         }
@@ -43,10 +47,10 @@ namespace Carniceria.API.Controllers
         [HttpPost]
         public ActionResult<Empleado> Create(Empleado empleado)
         {
-            try { 
+
             if (empleado == null) return BadRequest("Empleado vacío");
 
-            if (_empleadoRepositorio.Listar().Any(e => e.numId == empleado.numId))
+            if (_empleadoRepositorio.Listar.Any(e => e.numId == empleado.numId))
                 return BadRequest(new { errores = new List<string> { "Ese identificador ya existe" } });
 
             var errores = _validador.Validar(empleado);
@@ -56,11 +60,8 @@ namespace Carniceria.API.Controllers
             _empleadoRepositorio.Registrar(empleado);
             return CreatedAtAction(nameof(GetById), new { id = empleado.Id }, empleado);
             }
-            catch (Exception ex)
-            {
-                return BadRequest(new { errores = new List<string> { ex.Message } });
-            }
-        }
+        
+
 
         [HttpPut("{id}")]
         public IActionResult Update(Guid id, Empleado empleado)
@@ -72,7 +73,7 @@ namespace Carniceria.API.Controllers
             if (errores != null && errores.Any())
                 return BadRequest(new { errores });
 
-            if (_empleadoRepositorio.Listar().Any(e => e.numId == empleado.numId && e.Id != id))
+            if (_empleadoRepositorio.Listar.Any(e => e.numId == empleado.numId && e.Id != id))
                 return BadRequest(new { errores = new List<string> { "Ese identificador ya existe" } });
 
             if (!_empleadoRepositorio.Actualizar(id, empleado)) return NotFound();
@@ -82,7 +83,7 @@ namespace Carniceria.API.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(Guid id)
         {
-            var empleado = _empleadoRepositorio.BuscarPorId(id);
+            var empleado = _empleadoRepositorio.buscarPorId(id);
             if (empleado == null) return NotFound();
 
             bool eliminado = _empleadoRepositorio.eliminar(id);

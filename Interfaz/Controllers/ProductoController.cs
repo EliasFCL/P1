@@ -98,7 +98,7 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
 
 
             ModelState.Clear();
-            if (producto.existenciaActual <= producto.existeciaMinima)
+            if (producto.existenciaActual <= producto.existenciaMinima)
             {
                 ViewBag.Aviso = "Producto registrado: Existe un faltante de productos para el pedido correspondiente";
             }else { 

@@ -75,7 +75,7 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
             }
 
             ModelState.Clear();
-            ViewBag.MensajeExito = "Empleado registrado exitosamente.";
+            ViewBag.MensajeExito = "Empleado registrado exitosamente";
             return View(new Empleado() { Id = Guid.NewGuid() });
         }
 

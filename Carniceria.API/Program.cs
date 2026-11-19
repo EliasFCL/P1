@@ -18,10 +18,10 @@ builder.Services.AddOpenApi();
 //Registrar repositorio de clientes (sin esto salta error 505)
 string connectionString = builder.Configuration.GetConnectionString("CarniceriaDb");
 builder.Services.AddScoped<AccesoDatos.Repositorios.ClienteRepositorio>(provider => new AccesoDatos.Repositorios.ClienteRepositorio(new AccesoDatos.Contexto.ClienteDbContext()));
-builder.Services.AddScoped<AccesoDatos.Repositorios.EmpleadoRepositorio>(provider => new AccesoDatos.Repositorios.EmpleadoRepositorio(connectionString));
-//builder.Services.AddScoped<AccesoDatos.Repositorios.ProveedorRepositorio>(provider => new AccesoDatos.Repositorios.ProveedorRepositorio(new AccesoDatos.Contexto.ProveedorDbContext()));
-//builder.Services.AddScoped<AccesoDatos.Repositorios.ProductoRepositorio>(provider => new AccesoDatos.Repositorios.ProductoRepositorio(new AccesoDatos.Contexto.ProductoDbContext()));
-//builder.Services.AddScoped<AccesoDatos.Repositorios.FacturaRepositorio>(provider => new AccesoDatos.Repositorios.FacturaRepositorio(new AccesoDatos.Contexto.FacturaDbContext()));
+builder.Services.AddScoped<AccesoDatos.Repositorios.EmpleadoRepositorio>(provider => new AccesoDatos.Repositorios.EmpleadoRepositorio(new AccesoDatos.Contexto.EmpleadoDbContext()));
+builder.Services.AddScoped<AccesoDatos.Repositorios.ProveedorRepositorio>(provider => new AccesoDatos.Repositorios.ProveedorRepositorio(connectionString));
+builder.Services.AddScoped<AccesoDatos.Repositorios.ProductoRepositorio>(provider => new AccesoDatos.Repositorios.ProductoRepositorio(new AccesoDatos.Contexto.ProductoDbContext()));
+builder.Services.AddScoped<AccesoDatos.Repositorios.FacturaRepositorio>(provider => new AccesoDatos.Repositorios.FacturaRepositorio(connectionString));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -2,6 +2,7 @@
 using Carniceria.API.Modulos;
 using Carniceria.API.Validadores;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Models;
 using static Carniceria.API.Controllers.ProductosController;
 
@@ -37,12 +38,16 @@ namespace Carniceria.API.Controllers
 
 
         [HttpGet]
-        public ActionResult<List<Producto>> GetAll() => _productoRepositorio.Listar();
+        public ActionResult<List<Cliente>> GetAll()
+        {
+            var clientes = _productoRepositorio.Listar;
+            return Ok(clientes);
+        }
 
         [HttpGet("{id}")]
         public ActionResult<Producto> GetById(Guid id)
         {
-            var p = _productoRepositorio.BuscarPorId(id);
+            var p = _productoRepositorio.buscarPorId(id);
             if (p == null) return NotFound();
             return p;
         }
@@ -77,8 +82,17 @@ namespace Carniceria.API.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(Guid id)
         {
-            if (!_productoRepositorio.Eliminar(id)) return NotFound();
-            return NoContent();
+            try
+            {
+                bool eliminado = _productoRepositorio.Eliminar(id);
+                if (!eliminado) return NotFound(); 
+
+                return NoContent(); 
+            }
+            catch (DbUpdateException)
+            {
+                return BadRequest(new { errores = new List<string> { "No se puede eliminar el producto porque está asociado a una factura" } });
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Models
 {
@@ -16,8 +17,9 @@ namespace Models
         [Required(ErrorMessage = "El precio no puede estar vacio")]
         public decimal precio { get; set; }
         public decimal existenciaActual { get; set; }
-        public decimal existeciaMinima { get; set; }
+        public decimal existenciaMinima { get; set; }
         public Guid proveedorId { get; set; }
+        [NotMapped]
         public string nombreProveedor { get; set; }
     }
 }
