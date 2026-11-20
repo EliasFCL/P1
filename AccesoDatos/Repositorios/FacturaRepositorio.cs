@@ -23,18 +23,18 @@ namespace AccesoDatos.Repositorios
             {
                 try
                 {
-                    // Buscar el ID del cliente por su nombre
+
+                    var clientes = contexto.Clientes.ToList();
+
                     var cliente = contexto.Clientes
-                        .FirstOrDefault(c => c.nombre == factura.nombreCliente);
+                        .FirstOrDefault(c => c.Id == factura.clienteId);
+
+                    var empleado = contexto.Empleados .FirstOrDefault(e => e.Id == factura.empleadoId);
 
                     if (cliente == null)
                         throw new Exception("El cliente seleccionado no existe en la base de datos.");
 
                     Guid clienteId = cliente.Id;
-
-                    // Buscar ID del empleado por su nombre
-                    var empleado = contexto.Empleados
-                        .FirstOrDefault(e => e.nombre == factura.empleadoResponsable);
 
                     if (empleado == null)
                         throw new Exception("El empleado seleccionado no existe en la base de datos.");
@@ -317,7 +317,8 @@ namespace AccesoDatos.Repositorios
                         factura.iva = facturaExistente.iva;
                         factura.total = facturaExistente.total;
                     }
-
+                    facturaExistente.clienteId = factura.clienteId;
+                    facturaExistente.empleadoId = factura.empleadoId;
                     facturaExistente.metodoPago = factura.metodoPago;
                     facturaExistente.descuento = factura.descuento;
                     facturaExistente.estado = factura.estado;

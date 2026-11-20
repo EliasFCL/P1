@@ -55,7 +55,7 @@ CREATE TABLE Puestos (
 );
 GO
 
--- Tabla Empleados
+-- Tabla Empleados (Para que funcione se deben insertar los datos al final del Script)
 CREATE TABLE Empleados (
     Id UNIQUEIDENTIFIER PRIMARY KEY,
     tipoIdentificacion NVARCHAR(50) NOT NULL,
@@ -144,7 +144,7 @@ CREATE TABLE DetallesFactura (
 );
 GO
 
--- Datos por defecto
+-- Datos por defecto (Necesarios para guardar al empleado)
 
 INSERT INTO AreaTrabajo (Id, nombre) VALUES 
 ('11111111-1111-1111-1111-111111111111', 'Administracion'), 

@@ -37,13 +37,14 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
         }
         public async Task<ActionResult> Create()
         {
-            await CargarCombosAsync();
+            
             var nuevaFactura = new Factura
             {
                 numeroFactura = "F-" + Guid.NewGuid().ToString().Substring(0, 6).ToUpper(),
                 fecha = DateTime.Now
                 
             };
+            await CargarCombosAsync();
             return View(nuevaFactura);
         }
 
@@ -51,7 +52,11 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(Factura factura)
         {
-            if (factura == null) return View(new Factura());
+            if (factura == null)
+            {
+                await CargarCombosAsync();
+                return View(new Factura());
+            }
 
             var (ok, errores, creada) = await _facturaService.CrearAsync(factura);
             if (!ok)
@@ -79,8 +84,8 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
             var empleados = await _empleadoService.ListarAsync();
             var productos = await _productoService.ListarAsync();
 
-            ViewBag.Clientes = clientes.Select(c => c.nombre).ToList();
-            ViewBag.Empleados = empleados.Select(e => e.nombre).ToList();
+            ViewBag.Clientes = clientes;
+            ViewBag.Empleados = empleados;
             ViewBag.Productos = productos;
         }
 

@@ -50,14 +50,18 @@ namespace Carniceria.API.Controllers
 
             if (empleado == null) return BadRequest("Empleado vacío");
 
-            if (_empleadoRepositorio.Listar.Any(e => e.numId == empleado.numId))
-                return BadRequest(new { errores = new List<string> { "Ese identificador ya existe" } });
-
             var errores = _validador.Validar(empleado);
             if (errores != null && errores.Any())
                 return BadRequest(new { errores });
 
-            _empleadoRepositorio.Registrar(empleado);
+            if (_empleadoRepositorio.buscarPorNumId(empleado.numId) != null)
+                return BadRequest(new { errores = new List<string> { "Ese identificador ya existe" } });
+
+            bool guardadoExitoso = _empleadoRepositorio.Registrar(empleado);
+
+            if (!guardadoExitoso)
+                return BadRequest(new { errores = new List<string> { "Error al guardar en la base de datos" } });
+
             return CreatedAtAction(nameof(GetById), new { id = empleado.Id }, empleado);
         }
 

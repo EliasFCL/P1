@@ -7,7 +7,9 @@ namespace Models
         [Key]
         public string? numeroFactura { get; set; }// automatico
         public DateTime fecha { get; set; }
+        [Column("ClienteId")]
         public Guid clienteId { get; set; }
+        [Column("EmpleadoId")]
         public Guid empleadoId { get; set; }
         [NotMapped]
         public string nombreCliente { get; set; }
