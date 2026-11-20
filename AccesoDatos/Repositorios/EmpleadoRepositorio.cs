@@ -87,6 +87,11 @@ namespace AccesoDatos.Repositorios
                 existe.apellido1 = empleado.apellido1;
                 existe.apellido2 = empleado.apellido2;
                 existe.fechaNacimiento = empleado.fechaNacimiento;
+                existe.salario = empleado.salario;
+                existe.fechaIngreso = empleado.fechaIngreso;
+                existe.cargo = empleado.cargo;
+                existe.areaTrabajo = empleado.areaTrabajo;
+                existe.turno = empleado.turno;
                 contexto.SaveChanges();
                 return true;
             }

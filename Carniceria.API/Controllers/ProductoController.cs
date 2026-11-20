@@ -61,7 +61,7 @@ namespace Carniceria.API.Controllers
             if (errores != null && errores.Any())
                 return BadRequest(new { errores });
 
-            _productoRepositorio.Registrar(producto);
+            if (!_productoRepositorio.Registrar(producto)) return NotFound();
             return CreatedAtAction(nameof(GetById), new { id = producto.Id }, producto);
         }
 

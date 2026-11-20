@@ -46,7 +46,7 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
             if (string.IsNullOrWhiteSpace(busqueda)) return View();
             var proveedores = await _proveedorService.ListarAsync();
 
-            var proveedor = proveedores.Where(p => p.nombre.Equals(busqueda, StringComparison.OrdinalIgnoreCase) || p.RazonSocial.ToString() == busqueda).ToList();
+            var proveedor = proveedores.Where(p => p.numId.Equals(busqueda, StringComparison.OrdinalIgnoreCase) || p.RazonSocial.ToString() == busqueda).ToList();
             if (proveedor == null || !proveedor.Any())
             {
                 ViewBag.NoEncontrado = "No se encontró ningún proveedor con ese nombre o razón social";

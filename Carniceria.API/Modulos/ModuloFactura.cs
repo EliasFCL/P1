@@ -1,5 +1,6 @@
 ﻿//Logica para el número de la factura: https://stackoverflow.com/posts/63604623/edit
 //Adaptar la inicialización de objeto y colección: https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/object-and-collection-initializers
+using Carniceria.API.Validadores;
 using Models;
 
 namespace Carniceria.API.Modulos
@@ -31,6 +32,7 @@ namespace Carniceria.API.Modulos
 
             return numero;
         }
+        FacturaValidador validar = new FacturaValidador();
         //Metodo de registro
         public void registrarFactura(Factura factura)
         {

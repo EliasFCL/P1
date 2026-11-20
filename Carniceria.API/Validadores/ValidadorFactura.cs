@@ -10,15 +10,15 @@ namespace Carniceria.API.Validadores
 
             List<string> errores = new List<string>();
 
-            if (factura.clienteId == Guid.Empty)
-            {
-                errores.Add("Debe seleccionar un cliente");
-            }
+            //if (factura.clienteId == Guid.Empty)
+            //{
+            //    errores.Add("Debe seleccionar un cliente");
+            //}
 
-            if (factura.empleadoId == Guid.Empty)
-            {
-                errores.Add("Debe seleccionar un empleado responsable");
-            }
+            //if (factura.empleadoId == Guid.Empty)
+            //{
+            //    errores.Add("Debe seleccionar un empleado responsable");
+            //}
 
             if (string.IsNullOrWhiteSpace(factura.metodoPago))
             {
@@ -65,10 +65,7 @@ namespace Carniceria.API.Validadores
                             errores.Add($"La cantidad para el producto '{detalle.producto}' excede la existencia disponible de {productoEncontrado.existenciaActual}");
                         }
                     }
-                    else
-                    {
-                        errores.Add($"El producto '{detalle.producto}' no existe en el inventario");
-                    }
+
                 }
             }
             return errores;

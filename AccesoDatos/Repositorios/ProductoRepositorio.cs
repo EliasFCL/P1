@@ -22,7 +22,6 @@ namespace AccesoDatos.Repositorios
             existenciaActual = p.existenciaActual,
             existenciaMinima = p.existenciaMinima,
             proveedorId = p.proveedorId,
-         // Si el proveedor existe, pone su nombre. Si es null, pone "Sin Proveedor"
          nombreProveedor = prov != null ? prov.nombre : "Sin Proveedor"
         }).ToList();
         public Producto? buscarPorId(Guid id) => contexto.Productos.AsNoTracking().FirstOrDefault(p => p.Id == id);
@@ -55,6 +54,9 @@ namespace AccesoDatos.Repositorios
                 existe.categoria = producto.categoria;
                 existe.unidadMedida = producto.unidadMedida;
                 existe.precio = producto.precio;
+                existe.existenciaActual = producto.existenciaActual;
+                existe.existenciaMinima = producto.existenciaMinima;
+                existe.proveedorId = producto.proveedorId;
                 contexto.SaveChanges();
                 return true;
             }

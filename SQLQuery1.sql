@@ -38,7 +38,7 @@ CREATE TABLE Clientes (
     fechaNacimiento DATETIME NOT NULL
 );
 GO
-
+SELECT * FROM Clientes
 -- Tabla para las áreas de trabajo
 CREATE TABLE AreaTrabajo (
     Id UNIQUEIDENTIFIER PRIMARY KEY,
@@ -93,7 +93,7 @@ CREATE TABLE Proveedores (
     fechaNacimiento DATETIME NULL
 );
 GO
-
+SELECT * FROM Proveedores
 -- Tabla productos
 CREATE TABLE Productos (
     Id UNIQUEIDENTIFIER PRIMARY KEY,
@@ -108,7 +108,7 @@ CREATE TABLE Productos (
     FOREIGN KEY (ProveedorId) REFERENCES Proveedores(Id)
 );
 GO
-
+Select * FROM PRODUCTOS
 -- Tabla facturas
 CREATE TABLE Facturas (
     numeroFactura NVARCHAR(50) PRIMARY KEY,
@@ -127,6 +127,8 @@ CREATE TABLE Facturas (
     FOREIGN KEY (EmpleadoId) REFERENCES Empleados(Id)
 );
 GO
+
+SELECT * FROM Facturas
 
 -- Tabla detalles
 CREATE TABLE DetallesFactura (

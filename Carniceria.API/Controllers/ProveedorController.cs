@@ -28,13 +28,17 @@ namespace Carniceria.API.Controllers
 
         // GET: api/proveedores
         [HttpGet]
-        public ActionResult<List<Proveedor>> GetAll() => _proveedorRepositorio.Listar();
+        public ActionResult<List<Proveedor>> GetAll()
+        {
+            var proveedores = _proveedorRepositorio.Listar;
+            return Ok(proveedores);
+        }
 
         // GET: api/proveedores/5
         [HttpGet("{id}")]
         public ActionResult<Proveedor> GetById(Guid id)
         {
-            var p = _proveedorRepositorio.Listar().FirstOrDefault(x => x.Id == id);
+            var p = _proveedorRepositorio.Listar.FirstOrDefault(x => x.Id == id);
             if (p == null) return NotFound();
             return p;
         }
@@ -43,7 +47,7 @@ namespace Carniceria.API.Controllers
         [HttpGet("buscar/{busqueda}")]
         public ActionResult<Proveedor> Buscar(string busqueda)
         {
-            var p = _proveedorRepositorio.BuscarPorNumId(busqueda);
+            var p = _proveedorRepositorio.buscarPorNumId(busqueda);
             if (p == null) return NotFound();
             return p;
         }
@@ -67,7 +71,7 @@ namespace Carniceria.API.Controllers
             if (errores != null && errores.Any())
                 return BadRequest(new { errores });
 
-            if (_proveedorRepositorio.Listar().Any(p => p.numId == proveedor.numId))
+            if (_proveedorRepositorio.Listar.Any(p => p.numId == proveedor.numId))
                 return BadRequest(new { errores = new List<string> { "Ese ID de proveedor ya existe" } });
 
             _proveedorRepositorio.Registrar(proveedor);
@@ -87,7 +91,7 @@ namespace Carniceria.API.Controllers
             if (errores != null && errores.Any())
                 return BadRequest(new { errores });
 
-            if (_proveedorRepositorio.Listar().Any(p => p.numId == proveedor.numId && p.Id != id))
+            if (_proveedorRepositorio.Listar.Any(p => p.numId == proveedor.numId && p.Id != id))
                 return BadRequest(new { errores = new List<string> { "Ese ID de proveedor ya existe" } });
 
             if (!_proveedorRepositorio.Actualizar(id, proveedor)) return NotFound();
@@ -98,7 +102,7 @@ namespace Carniceria.API.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(Guid id)
         {
-            var proveedor = _proveedorRepositorio.Listar().FirstOrDefault(p => p.Id == id);
+            var proveedor = _proveedorRepositorio.Listar.FirstOrDefault(p => p.Id == id);
             if (proveedor == null) return NotFound();
 
             //No se puede eliminar un proveedor que esté asociado como proveedor principal de uno o más productos

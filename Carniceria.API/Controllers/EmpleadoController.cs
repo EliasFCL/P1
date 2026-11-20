@@ -59,8 +59,7 @@ namespace Carniceria.API.Controllers
 
             _empleadoRepositorio.Registrar(empleado);
             return CreatedAtAction(nameof(GetById), new { id = empleado.Id }, empleado);
-            }
-        
+        }
 
 
         [HttpPut("{id}")]

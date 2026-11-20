@@ -3,6 +3,7 @@ using Carniceria.API.Modulos;
 using Carniceria.API.Validadores;
 using Microsoft.AspNetCore.Mvc;
 using Models;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Carniceria.API.Controllers
 {
@@ -30,17 +31,18 @@ namespace Carniceria.API.Controllers
 
             return Ok(factura);
         }
-        private readonly FacturaValidador _validador = new FacturaValidador();
+        FacturaValidador validar = new FacturaValidador();
         [HttpPost]
         public ActionResult<Factura> Create(Factura factura)
         {
-            try { 
+            try {
+            var errores = validar.Validar(factura);
+
+                if (errores != null && errores.Any())
+                    return BadRequest(new { errores });
+
             if (factura == null)
-                return BadRequest(new { errores = new List<string> { "Factura vacía." } });
-            if (factura.descuento < 0 || factura.descuento > 25)
-            {
-                return BadRequest(new { errores = new List<string> { "El descuento debe estar entre 0 y 25" } });
-            }
+                return BadRequest(new { errores = new List<string> { "Factura vacía" } });
 
             if (factura.detalles == null || !factura.detalles.Any())
                 return BadRequest(new { errores = new List<string> { "La factura debe tener al menos un detalle" } });
@@ -49,7 +51,7 @@ namespace Carniceria.API.Controllers
             bool guardado = _facturaRepositorio.Registrar(factura);
 
             if (!guardado)
-                return BadRequest(new { errores = new List<string> { "Error al guardar la factura en la base de datos." } });
+                return BadRequest(new { errores = new List<string> { "Error al guardar la factura en la base de datos" } });
 
             return Ok(factura);
             }
@@ -103,11 +105,13 @@ namespace Carniceria.API.Controllers
         public IActionResult Update(string numero, Factura factura)
         {
             try {
-            if (factura == null) return BadRequest();
+                var errores = validar.Validar(factura);
+                if (errores != null && errores.Any())
+                    return BadRequest(new { errores });
+                if (factura == null) return BadRequest();
 
             factura.numeroFactura = numero; //Asegurar el número de factura que se está actualizando
-
-            if (!_facturaRepositorio.Actualizar(numero, factura))
+                if (!_facturaRepositorio.Actualizar(numero, factura))
                 return NotFound();
 
             return NoContent();

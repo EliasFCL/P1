@@ -1,188 +1,68 @@
-﻿using Models;
-using AccesoDatos.Contexto;
-using Microsoft.Data.SqlClient;
+﻿using AccesoDatos.Contexto;
+using Microsoft.EntityFrameworkCore;
+using Models;
 namespace AccesoDatos.Repositorios
 {
     public class ProveedorRepositorio
     {
-        private readonly string conexionString;
-        Conectar conectar = new Conectar();
-        public ProveedorRepositorio(string connectionString)
+        private readonly ProveedorDbContext contexto;
+        public IReadOnlyCollection<Proveedor> Listar => contexto.Proveedores.AsNoTracking().OrderBy(p => p.nombre).ToList();
+        public Proveedor? buscarPorId(Guid id) => contexto.Proveedores.AsNoTracking().FirstOrDefault(p => p.Id == id);
+        public Proveedor? buscarPorNumId(string numId) => contexto.Proveedores.AsNoTracking().FirstOrDefault(p => p.numId == numId);
+        public ProveedorRepositorio(ProveedorDbContext contexto)
         {
-            conexionString = connectionString;
+            this.contexto = contexto;
         }
-
 
         public bool Registrar(Proveedor proveedor)
         {
-            using (var conexion = new SqlConnection(conexionString))
+            if(contexto.Proveedores.Any(existing => existing.numId == proveedor.numId))
             {
-                string consulta = @"
-            INSERT INTO Proveedores (Id, tipoIdentificacion, numId, nombre, RazonSocial, Telefono, CorreoElectronico, TipoSuministro, FrecuenciaEntrega)
-            VALUES (@Id, @tipoIdentificacion, @numId, @nombre, @RazonSocial, @Telefono, @CorreoElectronico, @TipoSuministro, @FrecuenciaEntrega)";
-
-                using (var comando = new SqlCommand(consulta, conexion))
-                {
-                    comando.Parameters.AddWithValue("@Id", proveedor.Id);
-                    comando.Parameters.AddWithValue("@tipoIdentificacion", proveedor.tipoIdentificacion);
-                    comando.Parameters.AddWithValue("@numId", proveedor.numId);
-                    comando.Parameters.AddWithValue("@nombre", proveedor.nombre);
-                    comando.Parameters.AddWithValue("@RazonSocial", proveedor.RazonSocial);
-                    comando.Parameters.AddWithValue("@Telefono", proveedor.Telefono);
-                    comando.Parameters.AddWithValue("@CorreoElectronico", proveedor.CorreoElectronico);
-                    comando.Parameters.AddWithValue("@TipoSuministro", proveedor.TipoSuministro);
-                    comando.Parameters.AddWithValue("@FrecuenciaEntrega", proveedor.FrecuenciaEntrega);
-
-                    conexion.Open();
-                    int filasAfectadas = comando.ExecuteNonQuery();
-                    return filasAfectadas > 0;
-                }
+                return false;
             }
-        }
-
-        public List<Proveedor> Listar()
-        {
-            var proveedores = new List<Proveedor>();
-            using (var conexion = new SqlConnection(conexionString))
-            {
-                string consulta = "SELECT * FROM Proveedores";
-                using (var comando = new SqlCommand(consulta, conexion))
-                {
-                    conexion.Open();
-                    using (var lector = comando.ExecuteReader())
-                    {
-                        while (lector.Read())
-                        {
-                            var proveedor = new Proveedor
-                            {
-                                Id = lector.GetGuid(0),
-                                tipoIdentificacion = lector.GetString(1),
-                                numId = lector.GetString(2),
-                                nombre = lector.GetString(3),
-                                RazonSocial = lector.GetString(4),
-                                Telefono = lector.GetInt32(5),
-                                CorreoElectronico = lector.GetString(6),
-                                TipoSuministro = lector.GetString(7),
-                                FrecuenciaEntrega = lector.GetString(8)
-                            };
-                            proveedores.Add(proveedor);
-                        }
-                    }
-                }
-            }
-            return proveedores;
-        }
-
-        public Proveedor BuscarPorId(Guid id)
-        {
-            using (var conexion = new SqlConnection(conexionString))
-            {
-                string consulta = "SELECT * FROM Proveedores WHERE Id = @Id";
-                using (var comando = new SqlCommand(consulta, conexion))
-                {
-                    comando.Parameters.AddWithValue("@Id", id);
-                    conexion.Open();
-                    using (var lector = comando.ExecuteReader())
-                    {
-                        if (lector.Read())
-                        {
-                            return new Proveedor
-                            {
-                                Id = lector.GetGuid(0),
-                                tipoIdentificacion = lector.GetString(1),
-                                numId = lector.GetString(2),
-                                nombre = lector.GetString(3),
-                                RazonSocial = lector.GetString(4),
-                                Telefono = lector.GetInt32(5),
-                                CorreoElectronico = lector.GetString(6),
-                                TipoSuministro = lector.GetString(7),
-                                FrecuenciaEntrega = lector.GetString(8)
-                            };
-                        }
-                    }
-                }
-            }
-            return null;
-        }
-
-        public Proveedor BuscarPorNumId(string numId)
-        {
-            using (var conexion = new SqlConnection(conexionString))
-            {
-                string consulta = "SELECT * FROM Proveedores WHERE numId = @numId";
-                using (var comando = new SqlCommand(consulta, conexion))
-                {
-                    comando.Parameters.AddWithValue("@numId", numId);
-                    conexion.Open();
-                    using (var lector = comando.ExecuteReader())
-                    {
-                        if (lector.Read())
-                        {
-                            return new Proveedor
-                            {
-                                Id = lector.GetGuid(0),
-                                tipoIdentificacion = lector.GetString(1),
-                                numId = lector.GetString(2),
-                                nombre = lector.GetString(3),
-                                RazonSocial = lector.GetString(4),
-                                Telefono = lector.GetInt32(5),
-                                CorreoElectronico = lector.GetString(6),
-                                TipoSuministro = lector.GetString(7),
-                                FrecuenciaEntrega = lector.GetString(8)
-                            };
-                        }
-                    }
-                }
-            }
-            return null;
+            contexto.Proveedores.Add(proveedor);
+            contexto.SaveChanges();
+            return true;
         }
 
         public bool Eliminar(Guid id)
         {
-            using (var conexion = new SqlConnection(conexionString))
-            {
-                string consulta = "DELETE FROM Proveedores WHERE Id = @Id";
-                using (var comando = new SqlCommand(consulta, conexion))
+            try {
+                var existe = contexto.Proveedores.FirstOrDefault(p => p.Id == id);
+                if (existe != null)
                 {
-                    comando.Parameters.AddWithValue("@Id", id);
-                    conexion.Open();
-                    int filasAfectadas = comando.ExecuteNonQuery();
-                    return filasAfectadas > 0;
+                    contexto.Proveedores.Remove(existe);
+                    contexto.SaveChanges();
+                    return true;
                 }
+                return false;
+            }
+            catch(Exception ex)
+            {
+                return false;
             }
         }
 
         public bool Actualizar(Guid id, Proveedor proveedor)
         {
-            using (var conexion = new SqlConnection(conexionString))
+            var existe = contexto.Proveedores.FirstOrDefault(p => p.Id == id);
+            if(existe != null)
             {
-                string consulta = @"
-            UPDATE Proveedores
-            SET tipoIdentificacion = @tipoIdentificacion,
-                numId = @numId,
-                nombre = @nombre,
-                RazonSocial = @RazonSocial,
-                Telefono = @Telefono,
-                CorreoElectronico = @CorreoElectronico,
-                TipoSuministro = @TipoSuministro,
-                FrecuenciaEntrega = @FrecuenciaEntrega
-            WHERE Id = @Id";
-                using (var comando = new SqlCommand(consulta, conexion))
-                {
-                    comando.Parameters.AddWithValue("@Id", id);
-                    comando.Parameters.AddWithValue("@tipoIdentificacion", proveedor.tipoIdentificacion);
-                    comando.Parameters.AddWithValue("@numId", proveedor.numId);
-                    comando.Parameters.AddWithValue("@nombre", proveedor.nombre);
-                    comando.Parameters.AddWithValue("@RazonSocial", proveedor.RazonSocial);
-                    comando.Parameters.AddWithValue("@Telefono", proveedor.Telefono);
-                    comando.Parameters.AddWithValue("@CorreoElectronico", proveedor.CorreoElectronico);
-                    comando.Parameters.AddWithValue("@TipoSuministro", proveedor.TipoSuministro);
-                    comando.Parameters.AddWithValue("@FrecuenciaEntrega", proveedor.FrecuenciaEntrega);
-                    conexion.Open();
-                    int filasAfectadas = comando.ExecuteNonQuery();
-                    return filasAfectadas > 0;
-                }
+                existe.tipoIdentificacion = proveedor.tipoIdentificacion;
+                existe.numId = proveedor.numId;
+                existe.nombre = proveedor.nombre;
+                existe.apellido1 = proveedor.apellido1;
+                existe.apellido2 = proveedor.apellido2;
+                existe.fechaNacimiento = proveedor.fechaNacimiento;
+                existe.RazonSocial = proveedor.RazonSocial;
+                existe.Telefono = proveedor.Telefono;
+                existe.TipoSuministro = proveedor.TipoSuministro;
+                existe.CorreoElectronico = proveedor.CorreoElectronico;
+                existe.FrecuenciaEntrega = proveedor.FrecuenciaEntrega;
+                contexto.SaveChanges();
+                return true;
             }
+            return false;
         }
     }
 }
