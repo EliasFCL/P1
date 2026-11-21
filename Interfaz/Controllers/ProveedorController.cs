@@ -43,7 +43,11 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
 
         public async Task<ActionResult> Details(string busqueda)
         {
-            if (string.IsNullOrWhiteSpace(busqueda)) return View();
+            if (string.IsNullOrWhiteSpace(busqueda))
+            {
+                ViewBag.Leyenda = "Por favor, digite un código o razón social";
+                return View(new List<Proveedor>());
+            }
             var proveedores = await _proveedorService.ListarAsync();
 
             var proveedor = proveedores.Where(p => p.numId.Equals(busqueda, StringComparison.OrdinalIgnoreCase) || p.RazonSocial.ToString() == busqueda).ToList();

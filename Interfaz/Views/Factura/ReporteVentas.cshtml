@@ -8,7 +8,7 @@
 <p>Facturas pagadas de la semana actual (Lunes a Domingo)</p>
 <hr />
 
-<table class="table table-striped">
+<table class="table">
     <thead>
         <tr>
             <th>Número de Factura</th>
@@ -41,13 +41,13 @@
         else
         {
             <tr>
-                <td colspan="8" class="text-center">No hay facturas pagadas registradas en la semana actual.</td>
+                <td colspan="8" class="text-center">No hay facturas pagadas registradas en la semana actual</td>
             </tr>
         }
     </tbody>
 </table>
 
-<div class="alert alert-success mt-4 text-end">
+<div>
     <h4><strong>Monto Total Vendido en la Semana: @(((decimal)ViewBag.TotalVendido).ToString("N2")) CRC</strong></h4>
 </div>
 

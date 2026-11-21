@@ -7,7 +7,7 @@
 <h1>Buscar Producto</h1>
             @if (ViewBag.NoEncontrado != null)
             {
-                <p style="color: darkorange;">
+                <p style="color: red;">
                     @ViewBag.NoEncontrado
                 </p>
             }
@@ -15,6 +15,12 @@
             {
                 <p style="color: green;">
                     @ViewBag.Encontrado
+                </p>
+            }
+            @if (ViewBag.Leyenda != null)
+            {
+                <p style="color: blue;">
+                    @ViewBag.Leyenda
                 </p>
             }
 <form asp-action="Details" method="get">

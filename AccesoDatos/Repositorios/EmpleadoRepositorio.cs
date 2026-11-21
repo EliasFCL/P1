@@ -1,4 +1,5 @@
-﻿using AccesoDatos.Contexto;
+﻿//Registrar adaptado: https://stackoverflow.com/questions/60006737/efcore-dbconnection-createcommand-parameters-not-passing
+using AccesoDatos.Contexto;
 using Microsoft.EntityFrameworkCore;
 using Models;
 
@@ -10,6 +11,7 @@ namespace AccesoDatos.Repositorios
         public IReadOnlyCollection<Empleado> Listar => contexto.Empleados.AsNoTracking().OrderBy(e => e.nombre).ToList();
         public Empleado? buscarPorId(Guid id) => contexto.Empleados.AsNoTracking().FirstOrDefault(e => e.Id == id);
         public Empleado? buscarPorNumId(string numId) => contexto.Empleados.AsNoTracking().FirstOrDefault(e => e.numId == numId);
+
         public EmpleadoRepositorio(EmpleadoDbContext contexto)
         {
             this.contexto = contexto;
@@ -29,7 +31,7 @@ namespace AccesoDatos.Repositorios
                 {
                     conexion.Open();
                 }
-
+                //Inyectar consulta
                 using (var consulta = conexion.CreateCommand())
                 {
                     consulta.CommandText = "SELECT Id FROM Puestos WHERE nombre = @nombre";
@@ -52,7 +54,7 @@ namespace AccesoDatos.Repositorios
             }
 
             contexto.Empleados.Add(empleado);
-            contexto.SaveChanges();
+            contexto.SaveChanges();//Guardar los datos
             return true;
         }
         public bool eliminar(Guid id)

@@ -19,6 +19,10 @@
 {
     <p style="color: darkorange;">@ViewBag.Repetido</p>
 }
+@if (ViewBag.Leyenda != null)
+{
+    <p style="color: blue;">@ViewBag.Leyenda</p>
+}
 
 <form asp-action="Details" method="get">
     <div class="form-group">

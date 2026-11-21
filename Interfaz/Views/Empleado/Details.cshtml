@@ -17,6 +17,12 @@
                     @ViewBag.Encontrado
                 </p>
             }
+            @if (ViewBag.Leyenda != null)
+            {
+                <p style="color: blue;">
+                    @ViewBag.Leyenda
+                </p>
+            }
 <form asp-action="Details" method="get">
     <div class="form-group">
         <label for="numId">Número de identificación</label>

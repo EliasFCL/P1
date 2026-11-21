@@ -14,6 +14,7 @@
             <th>Cliente</th>
             <th>Empleado responsable</th>
             <th>Producto</th>
+            <th>Cantidad</th>
             <th>Método de pago</th>
             <th>Descuento (%)</th>
             <th>Subtotal</th>
@@ -38,6 +39,16 @@
                     else
                     {
                         <span>Sin productos</span>
+                    }
+                </td>
+                <td>
+                    @if (item.detalles != null && item.detalles.Any())
+                    {
+                        @string.Join(", ", item.detalles.Select(d => d.cantidad))
+                    }
+                    else
+                    {
+                        <span>Sin cantidad</span>
                     }
                 </td>
                 <td>@Html.DisplayFor(model => item.metodoPago)</td>

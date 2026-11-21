@@ -21,6 +21,5 @@ namespace AccesoDatos.Contexto
             }
         }
         public DbSet<Proveedor> Proveedores { get; set; }
-    
     }
 }

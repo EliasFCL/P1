@@ -1,5 +1,5 @@
 //Repositorio consultado para adaptar el MVC al RESTful: https://github.com/AlanRacic/MovieManagementAPI#1
-
+//Inyecciones de dependencia: https://learn.microsoft.com/es-mx/aspnet/core/fundamentals/dependency-injection y https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.dependencyinjection.servicecollectionserviceextensions
 using AccesoDatos.Contexto.AccesoDatos.Contexto;
 using AccesoDatos.Repositorios;
 

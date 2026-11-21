@@ -53,7 +53,11 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
 
         public async Task<ActionResult> Details(string busqueda)
         {
-            if (string.IsNullOrWhiteSpace(busqueda)) return View();
+            if (string.IsNullOrWhiteSpace(busqueda))
+            {
+                ViewBag.Leyenda = "Por favor, digite un código o nombre del producto";
+                return View();
+            }
             var productos = await _productoService.ListarAsync();
 
             var producto = productos.Where(p => p.nombre.Equals(busqueda, StringComparison.OrdinalIgnoreCase)|| p.codigo.ToString() == busqueda).ToList();

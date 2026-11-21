@@ -1,6 +1,6 @@
 ﻿//Estructura de los nuevos controllers: Guía para la creación de una web API 14:14 y
 //https://learn.microsoft.com/lb-lu/aspnet/core/tutorials/first-web-api?view=aspnetcore-10.0&preserve-view=true&tabs=visual-studio
-
+//Inyectar para igualar: Guía para el configurar el acceso a datos parte #3 2:07
 using Microsoft.AspNetCore.Mvc;
 using Models;
 using Carniceria.API.Modulos;
@@ -48,10 +48,8 @@ namespace Carniceria.API.Controllers
         [HttpPost]
         public ActionResult<Cliente> Create(Cliente cliente)
         {
-            //Validar que no venga vacío
             if (cliente == null) return BadRequest("Cliente vacío");
 
-            //Validar reglas de negocio (nombres, formato de cédula, etc.)
             var errores = _validador.Validar(cliente);
             if (errores != null && errores.Any())
                 return BadRequest(new { errores });
@@ -60,13 +58,12 @@ namespace Carniceria.API.Controllers
             if (_clienteRepositorio.buscarPorNumId(cliente.numId) != null)
                 return BadRequest(new { errores = new List<string> { "Ese identificador ya existe" } });
 
-            //Guardar en SQL Server
+            //Guardar en la BD
             bool guardadoExitoso = _clienteRepositorio.Registrar(cliente);
 
             if (!guardadoExitoso)
                 return BadRequest(new { errores = new List<string> { "Error al guardar en la base de datos" } });
 
-            //Retornar la respuesta exitosa
             return CreatedAtAction(nameof(GetById), new { id = cliente.Id }, cliente);
         }
         [HttpPut("{id}")]

@@ -43,7 +43,11 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
 
         public async Task<ActionResult> Details(string numId)
         {
-            if (string.IsNullOrWhiteSpace(numId)) return View();
+            if (string.IsNullOrWhiteSpace(numId))
+            {
+                ViewBag.Leyenda = "Por favor, digite un número de identificacion";
+                return View();
+            }
 
             var empleado = await _empleadoService.BuscarPorNumIdAsync(numId);
             if (empleado == null)

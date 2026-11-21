@@ -1,4 +1,5 @@
-﻿using AccesoDatos.Contexto;
+﻿//Adaptar anular: https://learn.microsoft.com/es-mx/ef/core/saving
+using AccesoDatos.Contexto;
 using AccesoDatos.Contexto.AccesoDatos.Contexto;
 //using Microsoft.Data.SqlClient;
 //using Microsoft.EntityFrameworkCore;
@@ -41,25 +42,25 @@ namespace AccesoDatos.Repositorios
 
                     Guid empleadoId = empleado.Id;
 
-                    // Calcular antes de guardar
+                    //Calcular antes de guardar
                     factura.subtotal = factura.detalles.Sum(d => d.cantidad * d.precioUnitario);
                     factura.montoDescuento = (factura.subtotal * factura.descuento) / 100m;
                     factura.baseGravable = factura.subtotal - factura.montoDescuento;
                     factura.iva = factura.baseGravable * 0.13m;
                     factura.total = factura.baseGravable + factura.iva;
 
-                    // Asignar los IDs
+                    //Asignar los IDs
                     factura.clienteId = clienteId;
                     factura.empleadoId = empleadoId;
 
-                    // Guardar factura
+                    //Guardar factura
                     contexto.Facturas.Add(factura);
                     contexto.SaveChanges();
 
-                    // Guardar detalles
+                    //Guardar detalles
                     foreach (var detalle in factura.detalles)
                     {
-                        // Buscar el producto por su nombre
+                        //Buscar el producto por su nombre
                         var producto = contexto.Productos
                             .FirstOrDefault(p => p.nombre == detalle.producto);
 
@@ -68,7 +69,7 @@ namespace AccesoDatos.Repositorios
 
                         Guid productoId = producto.Id;
 
-                        // Comprobar inventario
+                        //Comprobar inventario
                         if (factura.estado == "Pagada")
                         {
                             decimal inventarioActual = producto.existenciaActual;
@@ -84,10 +85,10 @@ namespace AccesoDatos.Repositorios
                             producto.existenciaActual -= detalle.cantidad;
                         }
 
-                        // Calcular subtotal del detalle
+                        //Calcular subtotal del detalle
                         detalle.subtotal = detalle.cantidad * detalle.precioUnitario;
 
-                        // Crear detalle
+                        //Crear detalle
                         var nuevoDetalle = new DetalleFactura
                         {
                             Id = Guid.NewGuid(),
@@ -102,10 +103,10 @@ namespace AccesoDatos.Repositorios
                         contexto.DetallesFactura.Add(nuevoDetalle);
                     }
 
-                    // Guardar cambios
+                    //Guardar cambios
                     contexto.SaveChanges();
 
-                    // Confirmar transacción
+                    //Confirmar transacción
                     transaccion.Commit();
 
                     return true;
@@ -116,7 +117,7 @@ namespace AccesoDatos.Repositorios
                     transaccion.Rollback();
                     contexto.ChangeTracker.Clear();
 
-                    throw new Exception("ERROR AL GUARDAR FACTURA: " + ex.Message);
+                    throw new Exception("Error al guardar la factura: " + ex.Message);
                 }
             }
         }
@@ -167,11 +168,8 @@ namespace AccesoDatos.Repositorios
                     }
                 ).ToList();
             }
-
             return lista;
         }
-
-
 
         public List<Factura> buscarFactura(string criterio)
         {
@@ -223,9 +221,6 @@ namespace AccesoDatos.Repositorios
 
             return facturas;
         }
-
-
-
         public bool Eliminar(string numeroFactura)
         {
             using (var transaccion = contexto.Database.BeginTransaction())
@@ -261,8 +256,6 @@ namespace AccesoDatos.Repositorios
                 }
             }
         }
-
-
 
         public bool Actualizar(string numero, Factura factura)
         {
@@ -353,8 +346,8 @@ namespace AccesoDatos.Repositorios
                             if (inventarioActual < detalle.cantidad)
                             {
                                 throw new Exception(
-                                    $"Su solicitud del producto '{detalle.producto}' supera " +
-                                    "la cantidad almacenada en el inventario.");
+                                    $"La cantidad solicitada para '{detalle.producto}' supera " +
+                                    "la cantidad almacenada en el inventario");
                             }
 
                             producto.existenciaActual -= detalle.cantidad;
@@ -375,9 +368,7 @@ namespace AccesoDatos.Repositorios
                     }
 
                     contexto.SaveChanges();
-
                     transaccion.Commit();
-
                     return true;
                 }
                 catch (Exception ex)
@@ -389,9 +380,6 @@ namespace AccesoDatos.Repositorios
                 }
             }
         }
-
-
-
         public List<Factura> obtenerVentas()
         {
             var lista = new List<Factura>();
@@ -424,11 +412,8 @@ namespace AccesoDatos.Repositorios
                     total = f.total
                 }
             ).ToList();
-
             return lista;
         }
-
-
 
         public bool Anular(string numero)
         {
@@ -476,10 +461,9 @@ namespace AccesoDatos.Repositorios
                     transaccion.Rollback();
                     contexto.ChangeTracker.Clear();
 
-                    throw new Exception("ERROR AL ANULAR FACTURA: " + ex.Message);
+                    throw new Exception("Hubo un error al anular la factura: " + ex.Message);
                 }
             }
         }
-
     }
 }

@@ -1,4 +1,5 @@
-﻿using Models;
+﻿//LinkQ: https://learn.microsoft.com/es-mx/ef/core/querying/complex-query-operators
+using Models;
 using AccesoDatos.Contexto;
 using Microsoft.EntityFrameworkCore;
 
@@ -74,21 +75,6 @@ namespace AccesoDatos.Repositorios
             }
             return false;
         }
-
-        //public decimal? ObtenerPrecioPorId(Guid id)
-        //{
-        //    using (var conexion = new SqlConnection(conexionString))
-        //    {
-        //        string consulta = "SELECT precio FROM Productos WHERE Id = @Id";
-        //        using (var comando = new SqlCommand(consulta, conexion))
-        //        {
-        //            comando.Parameters.AddWithValue("@Id", id);
-        //            conexion.Open();
-        //            var resultado = comando.ExecuteScalar();
-        //            return resultado != null ? Convert.ToDecimal(resultado) : (decimal?)null;
-        //        }
-        //    }
-        //}
 
         public decimal? ObtenerPrecioPorCombinacion(string categoria, string unidadMedida)
         {

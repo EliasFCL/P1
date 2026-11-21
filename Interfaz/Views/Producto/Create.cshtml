@@ -127,7 +127,7 @@
                     var precio = document.getElementById("precio");
 
                     if (data.existe) {
-                        precio.value = data.precio.toString().replace(/\./g, ',');
+                        precio.value = data.precio.toString().replace(/\,/g, '.');
                         precio.readOnly = true;
                     
                     }

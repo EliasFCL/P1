@@ -1,7 +1,7 @@
-﻿
+﻿// OnModelCreating: https://learn.microsoft.com/en-us/aspnet/core/security/authentication/customize-identity-model?view=aspnetcore-11.0&tabs=aspnetcore y
+// https://www.learnentityframeworkcore.com/configuration/fluent-api/ignore-method
 using Models;
 using Microsoft.EntityFrameworkCore;
-using AccesoDatos.Configuraciones;
 using AccesoDatos.Contexto;
 
 namespace AccesoDatos.Contexto

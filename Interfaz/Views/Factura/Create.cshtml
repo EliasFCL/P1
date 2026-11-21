@@ -5,7 +5,8 @@
 @*Mantener la fila si hay errores: https://learn.microsoft.com/zh-tw/archive/msdn-technet-forums/da7eed02-fc23-4774-a52d-c28798390372 y
 https://learn.microsoft.com/en-us/archive/msdn-technet-forums/576686b3-85b2-425e-b9c4-d334a64fc93d#1
 Adaptar calculo en tiempo real: https://stackoverflow.com/revisions/a1d67cac-3b85-4a39-aaad-c0f918a3f65d/view-source*@
-
+@*Bloqueo de decimales: https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/number*@
+@*buscar el con name$: https://api.jquery.com/attribute-ends-with-selector/*@
 @model Models.Factura
 
 @{
@@ -146,7 +147,7 @@ Adaptar calculo en tiempo real: https://stackoverflow.com/revisions/a1d67cac-3b8
      var cuerpo = document.getElementById("cuerpoDetalles");
       var fila = cuerpo.insertRow(-1);
 
-       // 1. Celda 1: Producto (Eliminamos el option vacío)
+       //Celda del producto
      var celda1 = fila.insertCell(0);
         celda1.innerHTML = `
         <select name="detalles[${indice}].producto" class="form-control" onchange="copiarProducto(this)">
@@ -161,7 +162,7 @@ Adaptar calculo en tiempo real: https://stackoverflow.com/revisions/a1d67cac-3b8
         celda2.innerHTML = `<input type="text" class="form-control unidad" name="detalles[${indice}].unidadMedida" readonly />`;
 
         var celda3 = fila.insertCell(2);
-        celda3.innerHTML = `<input type="number" min="1" step="0.01" value="1" class="form-control" name="detalles[${indice}].cantidad" onkeydown="return event.key != 'Enter';" oninput="this.closest('tr').querySelector('.subtotal').value = ((parseFloat(this.value) || 0) * (parseFloat(this.closest('tr').querySelector('.precio').value) || 0)).toFixed(2)" />`;
+        celda3.innerHTML = `<input type="number" min="1" step="any" value="1" class="form-control" name="detalles[${indice}].cantidad" onkeydown="return event.key != 'Enter';" oninput="calcularSubtotal(this)" />`;
 
         var celda4 = fila.insertCell(3);
         celda4.innerHTML = `<input type="number" step="0.01" class="form-control precio" name="detalles[${indice}].precioUnitario" readonly />`;
@@ -172,12 +173,12 @@ Adaptar calculo en tiempo real: https://stackoverflow.com/revisions/a1d67cac-3b8
         var celda6 = fila.insertCell(5);
         celda6.innerHTML = `<button type="button" class="btn btn-danger" onclick="this.closest('tr').remove()">X</button>`;
 
-        //Cargar los datos del producto seleccionado en la nueva fila automaticamente 
+        //Cargar los datos del producto seleccionado en la nueva fila  
         var selectProducto = fila.querySelector("select");
             if (selectProducto && selectProducto.options.length > 0) {
             copiarProducto(selectProducto);
         
-        // Calculamos el subtotal inicial
+        //Calcular el subtotal inicial
         var precio = parseFloat(fila.querySelector(".precio").value) || 0;
         fila.querySelector(".subtotal").value = precio.toFixed(2);
         }
@@ -188,8 +189,15 @@ Adaptar calculo en tiempo real: https://stackoverflow.com/revisions/a1d67cac-3b8
     function copiarProducto(select) {
         const fila = select.closest("tr");
         const opcion = select.selectedOptions[0];
+
         fila.querySelector(".unidad").value = opcion.dataset.unidad || "";
         fila.querySelector(".precio").value = opcion.dataset.precio || "";
+
+        const unidad = (opcion.dataset.unidad || "").trim().toLowerCase();
+
+        fila.querySelector("input[name$='.cantidad']").step =
+        ['kg', 'kilogramo', 'libra'].includes(unidad) ? '0.01' : '1';
+
         calcularSubtotal(select);
     }
 
@@ -201,10 +209,8 @@ Adaptar calculo en tiempo real: https://stackoverflow.com/revisions/a1d67cac-3b8
         const cantidad = parseFloat(fila.querySelector("input[name$='.cantidad']").value) || 0;
         const precio = parseFloat(fila.querySelector(".precio").value) || 0;
         
-        // Calcular y poner el subtotal en su celda
+        //Calcular y poner el subtotal en su celda
         const subtotal = cantidad * precio;
         fila.querySelector(".subtotal").value = subtotal.toFixed(2);
     }
-
-    //window.addEventListener("DOMContentLoaded", agregarFila);//Fila por defecto al cargar la página
 </script>

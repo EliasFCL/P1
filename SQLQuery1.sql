@@ -1,10 +1,8 @@
+USE Master;
 DROP DATABASE Carniceria;
-
 
 CREATE DATABASE Carniceria;
 USE Carniceria;
-USE Master;
-GO
 
 -- Borrar datos y tablas por jerarquía
 DELETE FROM DetallesFactura;
@@ -15,7 +13,6 @@ DELETE FROM Empleados;
 DELETE FROM Puestos;
 DELETE FROM AreaTrabajo;
 DELETE FROM Clientes;
-GO
 
 DROP TABLE DetallesFactura;
 DROP TABLE Facturas;
@@ -25,7 +22,6 @@ DROP TABLE Empleados;
 DROP TABLE Puestos;
 DROP TABLE AreaTrabajo;
 DROP TABLE Clientes;
-GO
 
 -- Tabla Clientes
 CREATE TABLE Clientes (
@@ -37,14 +33,12 @@ CREATE TABLE Clientes (
     apellido2 NVARCHAR(100) NOT NULL,
     fechaNacimiento DATETIME NOT NULL
 );
-GO
 SELECT * FROM Clientes
 -- Tabla para las áreas de trabajo
 CREATE TABLE AreaTrabajo (
     Id UNIQUEIDENTIFIER PRIMARY KEY,
     nombre NVARCHAR(100) NOT NULL UNIQUE
 );
-GO
 
 -- Tabla para los puestos
 CREATE TABLE Puestos (
@@ -53,7 +47,6 @@ CREATE TABLE Puestos (
     AreaTrabajoId UNIQUEIDENTIFIER NOT NULL,
     FOREIGN KEY (AreaTrabajoId) REFERENCES AreaTrabajo(Id)
 );
-GO
 
 -- Tabla Empleados (Para que funcione se deben insertar los datos al final del Script)
 CREATE TABLE Empleados (
@@ -72,8 +65,9 @@ CREATE TABLE Empleados (
     cargo NVARCHAR(100) NOT NULL,
     FOREIGN KEY (PuestoId) REFERENCES Puestos(Id)
 );
-GO
+
 SELECT * FROM Empleados
+
 ALTER TABLE Empleados ALTER COLUMN cargo NVARCHAR(100) NULL;
 ALTER TABLE Empleados ALTER COLUMN areaTrabajo NVARCHAR(100) NULL;
 
@@ -92,8 +86,9 @@ CREATE TABLE Proveedores (
     apellido2 NVARCHAR(100) NULL,
     fechaNacimiento DATETIME NULL
 );
-GO
+
 SELECT * FROM Proveedores
+
 -- Tabla productos
 CREATE TABLE Productos (
     Id UNIQUEIDENTIFIER PRIMARY KEY,
@@ -107,8 +102,9 @@ CREATE TABLE Productos (
     ProveedorId UNIQUEIDENTIFIER NOT NULL,
     FOREIGN KEY (ProveedorId) REFERENCES Proveedores(Id)
 );
-GO
+
 Select * FROM PRODUCTOS
+
 -- Tabla facturas
 CREATE TABLE Facturas (
     numeroFactura NVARCHAR(50) PRIMARY KEY,
@@ -126,7 +122,6 @@ CREATE TABLE Facturas (
     FOREIGN KEY (ClienteId) REFERENCES Clientes(Id),
     FOREIGN KEY (EmpleadoId) REFERENCES Empleados(Id)
 );
-GO
 
 SELECT * FROM Facturas
 
@@ -169,4 +164,3 @@ INSERT INTO Puestos (Id, nombre, AreaTrabajoId) VALUES
 ('22222222-2222-2222-2222-222222222232', 'Conductor', '11111111-1111-1111-1111-111111111116'),
 ('22222222-2222-2222-2222-222222222233', 'Ayudante de distribución', '11111111-1111-1111-1111-111111111116'),
 ('22222222-2222-2222-2222-222222222234', 'Personal de limpieza', '11111111-1111-1111-1111-111111111117');
-GO

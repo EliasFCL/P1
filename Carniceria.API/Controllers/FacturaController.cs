@@ -74,7 +74,7 @@ namespace Carniceria.API.Controllers
         {
             var facturas = _facturaRepositorio.buscarFactura(criterio);
 
-            // Si no encuentra nada, devolvemos un error 404 con el criterio recibido
+            //Si no se encuentra se devuelve error 404
             if (facturas == null || facturas.Count == 0)
             {
                 return NotFound(new { mensaje = "No se encontro nada para: " + criterio });

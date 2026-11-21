@@ -2,7 +2,7 @@
     https://stackoverflow.com/questions/62341661/how-to-dynamically-add-an-array-to-a-dropdown-depending-on-another-dropdown-list
 *@
 @*Radio button: https://learn.microsoft.com/en-au/answers/questions/1186498/radio-buttons#1*@
-
+@*Seleccionar cargo: https://stackoverflow.com/questions/51367021/passing-a-string-to-function-but-expecting-an-array*@
 @model Models.Empleado
 
 @{
@@ -135,7 +135,7 @@
                             //Llenar el combo
                             cargarCargos();
 
-                            // Si el modelo tiene un cargo guardado, lo seleccionamos
+                            //Si el modelo tiene un cargo guardado, lo seleccionamos
                             var cargoGuardado = "@Model.cargo";
                             if (cargoGuardado) {
                                 cargoSeleccionado.value = cargoGuardado;

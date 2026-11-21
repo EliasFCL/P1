@@ -1,4 +1,4 @@
-﻿//Metodos: Tutoría impartida por el profesor Roger Lara el 16 de Noviembre
+﻿//Repositorio: Tutoría impartida por el profesor Roger Lara el 16 de Noviembre
 
 using AccesoDatos.Contexto;
 using Models;

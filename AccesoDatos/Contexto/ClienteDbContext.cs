@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿//Contextos: https://learn.microsoft.com/es-es/ef/core/dbcontext-configuration y video guía para el configurar el acceso a datos parte #3 7:00
+
+using Microsoft.EntityFrameworkCore;
 using Models;
 
 namespace AccesoDatos.Contexto

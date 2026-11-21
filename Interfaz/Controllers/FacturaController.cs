@@ -91,7 +91,11 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
 
         public async Task<ActionResult> Details(string criterio)
         {
-            if (string.IsNullOrWhiteSpace(criterio)) return View();
+            if (string.IsNullOrWhiteSpace(criterio))
+            {
+                ViewBag.Leyenda = "Por favor, digite el número de factura o el nombre del cliente asociado";
+                return View(new List<Factura>());
+            }
             var facturas = await _facturaService.BuscarAsync(criterio);
             if (facturas == null || !facturas.Any())
             {

@@ -160,7 +160,7 @@
 
         //Celda 3: Cantidad
         var celda3 = fila.insertCell(2);
-        celda3.innerHTML = `<input type="number" min="1" value="1" class="form-control" name="detalles[${indice}].cantidad" onkeydown="return event.key != 'Enter';" oninput="this.closest('tr').querySelector('.subtotal').value = ((parseFloat(this.value) || 0) * (parseFloat(this.closest('tr').querySelector('.precio').value) || 0)).toFixed(2)" />`;
+        celda3.innerHTML = `<input type="number" min="1" step="any" value="1" class="form-control" name="detalles[${indice}].cantidad" onkeydown="return event.key != 'Enter';" oninput="calcularSubtotal(this)" />`;
 
         //Celda 4: Precio Unitario
         var celda4 = fila.insertCell(3);
@@ -180,9 +180,16 @@
     //Autocompletar datos
     function copiarProducto(select) {
         const fila = select.closest("tr");
-        const opt = select.selectedOptions[0];
-        fila.querySelector(".unidad").value = opt.dataset.unidad || "";
-        fila.querySelector(".precio").value = opt.dataset.precio || "";
+        const opcion = select.selectedOptions[0];
+
+        fila.querySelector(".unidad").value = opcion.dataset.unidad || "";
+        fila.querySelector(".precio").value = opcion.dataset.precio || "";
+
+        const unidad = (opcion.dataset.unidad || "").trim().toLowerCase();
+
+        fila.querySelector("input[name$='.cantidad']").step =
+            ['kg', 'kilogramo', 'libra'].includes(unidad) ? '0.01' : '1';
+
         calcularSubtotal(select);
     }
 
