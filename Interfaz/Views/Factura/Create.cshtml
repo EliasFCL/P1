@@ -213,7 +213,7 @@ Adaptar calculo en tiempo real: https://stackoverflow.com/revisions/a1d67cac-3b8
         const cantidad = parseFloat(fila.querySelector("input[name$='.cantidad']").value) || 0;
         const precio = parseFloat(fila.querySelector(".precio").value) || 0;
         
-        // Calcular y poner el subtotal en su celda
+        //Calcular y poner el subtotal en su celda
         const subtotal = cantidad * precio;
         fila.querySelector(".subtotal").value = subtotal.toFixed(2);
     }

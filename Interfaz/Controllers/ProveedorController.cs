@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Models;
 using Proyecto1_EliasCorderoLeon.Services;
-using System.Globalization;
-using static System.Net.WebRequestMethods;
 
 namespace Proyecto1_EliasCorderoLeon.Controllers
 {

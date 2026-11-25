@@ -14,7 +14,6 @@ namespace Carniceria.API.Controllers
     public class ClientesController : ControllerBase
     {
         private readonly ClienteRepositorio _clienteRepositorio;
-        private static ModuloCliente _modulo = new ModuloCliente();
         private readonly ClienteValidador _validador = new ClienteValidador();
 
         public ClientesController(ClienteRepositorio clienteRepositorio)

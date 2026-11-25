@@ -8,9 +8,11 @@ namespace AccesoDatos.Repositorios
     public class ProductoRepositorio
     {
         private readonly ProductoDbContext contexto;
+
+        //Obtener datos, Listar con LinkQ
         public IReadOnlyCollection<Producto> Listar => (from p in contexto.Productos.AsNoTracking()
             join prov in contexto.Proveedores.AsNoTracking() on p.proveedorId equals prov.Id into proveedores
-            from prov in proveedores.DefaultIfEmpty() // Esto hace el LEFT JOIN
+            from prov in proveedores.DefaultIfEmpty() //Hacer JOIN
             orderby p.nombre
         select new Producto
         {
@@ -23,12 +25,11 @@ namespace AccesoDatos.Repositorios
             existenciaActual = p.existenciaActual,
             existenciaMinima = p.existenciaMinima,
             proveedorId = p.proveedorId,
-         nombreProveedor = prov != null ? prov.nombre : "Sin Proveedor"
+            nombreProveedor = prov != null ? prov.nombre : "Sin Proveedor"
         }).ToList();
         public Producto? buscarPorId(Guid id) => contexto.Productos.AsNoTracking().FirstOrDefault(p => p.Id == id);
         public Producto? buscarPorCodigo(string codigo) => contexto.Productos.AsNoTracking().FirstOrDefault(p => p.codigo == codigo);
 
-       // Conectar conectar = new Conectar();
         public ProductoRepositorio(ProductoDbContext contexto)
         {
             this.contexto = contexto;
@@ -70,7 +71,7 @@ namespace AccesoDatos.Repositorios
             if (existe != null)
             {
                 contexto.Productos.Remove(existe);
-                contexto.SaveChanges(); // Si está en una factura, se lanza una excepción
+                contexto.SaveChanges();
                 return true;
             }
             return false;
@@ -78,8 +79,7 @@ namespace AccesoDatos.Repositorios
 
         public decimal? ObtenerPrecioPorCombinacion(string categoria, string unidadMedida)
         {
-            var producto = contexto.Productos.AsNoTracking()
-                .FirstOrDefault(p => p.categoria == categoria && p.unidadMedida == unidadMedida);
+            var producto = contexto.Productos.AsNoTracking().FirstOrDefault(p => p.categoria == categoria && p.unidadMedida == unidadMedida);
             return producto?.precio;
         }
     }

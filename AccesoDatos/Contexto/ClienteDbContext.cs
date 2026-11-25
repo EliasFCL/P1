@@ -1,5 +1,4 @@
 ﻿//Contextos: https://learn.microsoft.com/es-es/ef/core/dbcontext-configuration y video guía para el configurar el acceso a datos parte #3 7:00
-
 using Microsoft.EntityFrameworkCore;
 using Models;
 
@@ -11,20 +10,18 @@ namespace AccesoDatos.Contexto
         {
             new DbContextOptionsBuilder<ClienteDbContext>().UseSqlServer(new Conectar().CadenaConexion());
         }
-
-        protected override void OnConfiguring(
-         DbContextOptionsBuilder optionsBuilder)
+        //Configurar conexión
+        protected override void OnConfiguring( DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
                 Conectar conectar = new Conectar();
 
-                optionsBuilder.UseSqlServer(
-                    conectar.CadenaConexion()
+                optionsBuilder.UseSqlServer(conectar.CadenaConexion()
                 );
             }
         }
 
-        public DbSet<Cliente> Clientes { get; set; }
+        public DbSet<Cliente> Clientes { get; set; } //Definir tabla
     }
 }

@@ -9,6 +9,8 @@ namespace AccesoDatos.Contexto
         {
             new DbContextOptionsBuilder<ProveedorDbContext>().UseSqlServer(new Conectar().CadenaConexion());
         }
+
+        //Configurar conexión
         protected override void OnConfiguring(
          DbContextOptionsBuilder optionsBuilder)
         {
@@ -20,6 +22,6 @@ namespace AccesoDatos.Contexto
                 );
             }
         }
-        public DbSet<Proveedor> Proveedores { get; set; }
+        public DbSet<Proveedor> Proveedores { get; set; }//Definir tabla
     }
 }

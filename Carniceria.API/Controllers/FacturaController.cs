@@ -3,7 +3,6 @@ using Carniceria.API.Modulos;
 using Carniceria.API.Validadores;
 using Microsoft.AspNetCore.Mvc;
 using Models;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Carniceria.API.Controllers
 {
@@ -11,7 +10,6 @@ namespace Carniceria.API.Controllers
     [ApiController]
     public class FacturasController : ControllerBase
     {
-        private static ModuloFactura _modulo = new ModuloFactura();
         private readonly FacturaRepositorio _facturaRepositorio;
 
         public FacturasController(FacturaRepositorio facturaRepositorio)
@@ -66,8 +64,6 @@ namespace Carniceria.API.Controllers
         {
             return _facturaRepositorio.Listar();
         }
-
-        private static ModuloCliente _moduloCliente = new ModuloCliente();
 
         [HttpGet("buscar/{criterio}")]
         public ActionResult<List<Factura>> Buscar(string criterio)

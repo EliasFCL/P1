@@ -1,4 +1,4 @@
-﻿
+﻿//Clase que devuelve la dirección de la base de datos
 namespace AccesoDatos.Contexto
 {
     public class Conectar

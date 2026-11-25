@@ -104,7 +104,7 @@
                                 <td><input type="text" class="form-control unidad" name="detalles[@i].unidadMedida" value="@detalle.unidadMedida" readonly /></td>
                                 <td>
                                     @{
-                                        // Verificamos si la unidad permite decimales
+                                        //Verificar que se permitan decimales
                                         var unidadActual = (detalle.unidadMedida ?? "").Trim().ToLower();
                                         var esDecimal = new[] { "kg", "kilogramo", "libra", "lb" }.Contains(unidadActual);
                                     }

@@ -6,6 +6,7 @@ namespace AccesoDatos.Repositorios
     public class ProveedorRepositorio
     {
         private readonly ProveedorDbContext contexto;
+        //Obtener datos
         public IReadOnlyCollection<Proveedor> Listar => contexto.Proveedores.AsNoTracking().OrderBy(p => p.nombre).ToList();
         public Proveedor? buscarPorId(Guid id) => contexto.Proveedores.AsNoTracking().FirstOrDefault(p => p.Id == id);
         public Proveedor? buscarPorNumId(string numId) => contexto.Proveedores.AsNoTracking().FirstOrDefault(p => p.numId == numId);

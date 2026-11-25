@@ -1,5 +1,4 @@
 ﻿//Adaptar anular: https://learn.microsoft.com/es-mx/ef/core/saving
-using AccesoDatos.Contexto;
 using AccesoDatos.Contexto.AccesoDatos.Contexto;
 using Models;
 
@@ -7,9 +6,7 @@ namespace AccesoDatos.Repositorios
 {
     public class FacturaRepositorio
     {
-       //private readonly string conexionString;
         private readonly FacturaDbContexto contexto;
-       // Conectar conectar = new Conectar();
 
         public FacturaRepositorio(FacturaDbContexto contexto)
         {
@@ -22,9 +19,6 @@ namespace AccesoDatos.Repositorios
             {
                 try
                 {
-
-                   // var clientes = contexto.Clientes.ToList();
-
                     var cliente = contexto.Clientes.FirstOrDefault(c => c.Id == factura.clienteId);
 
                     var empleado = contexto.Empleados .FirstOrDefault(e => e.Id == factura.empleadoId);
@@ -73,8 +67,7 @@ namespace AccesoDatos.Repositorios
                             if (inventarioActual < detalle.cantidad)
                             {
                                 throw new Exception(
-                                    $"Su solicitud supera la cantidad almacenada en el inventario. " +
-                                    $"Solicitado: {detalle.cantidad}, Disponible: {inventarioActual}");
+                                    $"Su solicitud supera la cantidad almacenada en el inventario. "+$"Solicitado: {detalle.cantidad}, Disponible: {inventarioActual}");
                             }
 
                             // Actualizar inventario
@@ -223,17 +216,13 @@ namespace AccesoDatos.Repositorios
             {
                 try
                 {
-                    var detalles = contexto.DetallesFactura
-                        .Where(d => d.numeroFactura == numeroFactura)
-                        .ToList();
+                    var factura = contexto.Facturas.FirstOrDefault(f => f.numeroFactura == numeroFactura);
 
-                    contexto.DetallesFactura.RemoveRange(detalles);
+                    var detalles = contexto.DetallesFactura.Where(d => d.numeroFactura == numeroFactura).ToList();
 
-                    var factura = contexto.Facturas
-                        .FirstOrDefault(f => f.numeroFactura == numeroFactura);
+                    contexto.DetallesFactura.RemoveRange(detalles); //Borrar primero los detalles por las LLaves foraneas
 
-                    if (factura == null)
-                        throw new Exception("No se encontró la factura para eliminar.");
+                    if (factura == null) throw new Exception("No se encontró la factura para eliminar");
 
                     contexto.Facturas.Remove(factura);
 
@@ -261,24 +250,19 @@ namespace AccesoDatos.Repositorios
                 {
                     factura.numeroFactura = numero;
 
-                    var facturaExistente = contexto.Facturas
-                        .FirstOrDefault(f => f.numeroFactura == numero);
+                    var facturaExistente = contexto.Facturas.FirstOrDefault(f => f.numeroFactura == numero);
 
-                    if (facturaExistente == null)
-                        throw new Exception("La factura no existe en la base de datos.");
+                    if (facturaExistente == null) throw new Exception("La factura no existe en la base de datos.");
 
                     string estadoAnterior = facturaExistente.estado;
 
                     if (estadoAnterior == "Pagada")
                     {
-                        var detallesAnteriores = contexto.DetallesFactura
-                            .Where(d => d.numeroFactura == numero)
-                            .ToList();
+                        var detallesAnteriores = contexto.DetallesFactura.Where(d => d.numeroFactura == numero).ToList();
 
                         foreach (var detalleAnterior in detallesAnteriores)
                         {
-                            var productoAnterior = contexto.Productos
-                                .FirstOrDefault(p => p.Id == detalleAnterior.ProductoId);
+                            var productoAnterior = contexto.Productos.FirstOrDefault(p => p.Id == detalleAnterior.ProductoId);
 
                             if (productoAnterior != null)
                             {
@@ -287,8 +271,7 @@ namespace AccesoDatos.Repositorios
                         }
                     }
 
-                    decimal subtotalCalculado = factura.detalles.Sum(
-                        d => d.cantidad * d.precioUnitario);
+                    decimal subtotalCalculado = factura.detalles.Sum(d => d.cantidad * d.precioUnitario);
 
                     if (subtotalCalculado > 0)
                     {
@@ -317,21 +300,15 @@ namespace AccesoDatos.Repositorios
                     facturaExistente.iva = factura.iva;
                     facturaExistente.total = factura.total;
 
-                    var detallesViejos = contexto.DetallesFactura
-                        .Where(d => d.numeroFactura == numero)
-                        .ToList();
+                    var detallesViejos = contexto.DetallesFactura.Where(d => d.numeroFactura == numero).ToList();
 
                     contexto.DetallesFactura.RemoveRange(detallesViejos);
 
                     foreach (var detalle in factura.detalles)
                     {
-                        var producto = contexto.Productos
-                            .FirstOrDefault(p =>
-                                p.nombre.Trim() == detalle.producto.Trim());
+                        var producto = contexto.Productos.FirstOrDefault(p =>p.nombre.Trim() == detalle.producto.Trim());
 
-                        if (producto == null)
-                            throw new Exception(
-                                $"El producto '{detalle.producto}' no existe en el inventario.");
+                        if (producto == null) throw new Exception($"El producto '{detalle.producto}' no existe en el inventario.");
 
                         Guid productoId = producto.Id;
 
@@ -341,9 +318,7 @@ namespace AccesoDatos.Repositorios
 
                             if (inventarioActual < detalle.cantidad)
                             {
-                                throw new Exception(
-                                    $"La cantidad solicitada para '{detalle.producto}' supera " +
-                                    "la cantidad almacenada en el inventario");
+                                throw new Exception( $"La cantidad solicitada para '{detalle.producto}' supera "+"la cantidad almacenada en el inventario");
                             }
 
                             producto.existenciaActual -= detalle.cantidad;
@@ -380,8 +355,7 @@ namespace AccesoDatos.Repositorios
         {
             var lista = new List<Factura>();
 
-            int diferencia = (7 + ((int)DateTime.Now.DayOfWeek -
-                (int)DayOfWeek.Monday)) % 7;
+            int diferencia = (7 + ((int)DateTime.Now.DayOfWeek - (int)DayOfWeek.Monday)) % 7;
 
             DateTime lunes = DateTime.Now.AddDays(-diferencia).Date;
             DateTime domingo = lunes.AddDays(6).Date;
@@ -417,8 +391,7 @@ namespace AccesoDatos.Repositorios
             {
                 try
                 {
-                    var factura = contexto.Facturas
-                        .FirstOrDefault(f => f.numeroFactura == numero.Trim());
+                    var factura = contexto.Facturas.FirstOrDefault(f => f.numeroFactura == numero.Trim());
 
                     if (factura == null)
                         throw new Exception("La factura no existe en la base de datos.");
@@ -430,14 +403,11 @@ namespace AccesoDatos.Repositorios
 
                     if (estadoActual == "Pagada")
                     {
-                        var detalles = contexto.DetallesFactura
-                            .Where(d => d.numeroFactura == numero.Trim())
-                            .ToList();
+                        var detalles = contexto.DetallesFactura.Where(d => d.numeroFactura == numero.Trim()).ToList();
 
                         foreach (var detalle in detalles)
                         {
-                            var producto = contexto.Productos
-                                .FirstOrDefault(p => p.Id == detalle.ProductoId);
+                            var producto = contexto.Productos.FirstOrDefault(p => p.Id == detalle.ProductoId);
 
                             if (producto != null)
                             {

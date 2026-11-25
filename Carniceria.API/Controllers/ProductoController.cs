@@ -4,7 +4,6 @@ using Carniceria.API.Validadores;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Models;
-using static Carniceria.API.Controllers.ProductosController;
 
 namespace Carniceria.API.Controllers
 {

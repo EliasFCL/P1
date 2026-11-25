@@ -9,7 +9,7 @@ namespace AccesoDatos.Contexto
         {
             new DbContextOptionsBuilder<ProductoDbContext>().UseSqlServer(new Conectar().CadenaConexion());
         }
-
+        //Configurar conexión
         protected override void OnConfiguring(
          DbContextOptionsBuilder optionsBuilder)
         {
@@ -17,12 +17,10 @@ namespace AccesoDatos.Contexto
             {
                 Conectar conectar = new Conectar();
 
-                optionsBuilder.UseSqlServer(
-                    conectar.CadenaConexion()
-                );
+                optionsBuilder.UseSqlServer(conectar.CadenaConexion());
             }
         }
-
+        //Definir tablas
         public DbSet<Producto> Productos { get; set; }
         public DbSet<Proveedor> Proveedores { get; set; }
     }

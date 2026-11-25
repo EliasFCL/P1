@@ -9,20 +9,18 @@ namespace AccesoDatos.Contexto
         {
             new DbContextOptionsBuilder<EmpleadoDbContext>().UseSqlServer(new Conectar().CadenaConexion());
         }
-
-        protected override void OnConfiguring(
-         DbContextOptionsBuilder optionsBuilder)
+        //Configurar conexión
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
                 Conectar conectar = new Conectar();
 
-                optionsBuilder.UseSqlServer(
-                    conectar.CadenaConexion()
+                optionsBuilder.UseSqlServer(conectar.CadenaConexion()
                 );
             }
         }
 
-        public DbSet<Empleado> Empleados { get; set; }
+        public DbSet<Empleado> Empleados { get; set; }//Definir tabla
     }
 }

@@ -160,7 +160,7 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
 
             if (factura.estado == "Anulada")
             {
-                TempData["Error"] = "Una factura anulada no puede modificarse.";
+                TempData["Error"] = "Una factura anulada no puede modificarse";
                 return RedirectToAction(nameof(IndexActualizar));
             }
 
@@ -208,7 +208,7 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
         {
             var facturas = await _facturaService.ObtenerVentasAsync();
 
-            // Calcular el monto total vendido en la semana
+            //Mostrar el monto total vendido en la semana
             ViewBag.TotalVendido = facturas.Sum(f => f.total);
 
             return View(facturas);

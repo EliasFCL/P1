@@ -12,7 +12,6 @@ namespace Carniceria.API.Controllers
     [ApiController]
     public class EmpleadosController : ControllerBase
     {
-        private static ModuloEmpleado _modulo = new ModuloEmpleado();
         private readonly EmpleadoRepositorio _empleadoRepositorio;
         private readonly EmpleadoValidador _validador = new EmpleadoValidador();
 
