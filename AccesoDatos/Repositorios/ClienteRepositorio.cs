@@ -20,6 +20,7 @@ namespace AccesoDatos.Repositorios
 
         public bool Registrar(Cliente cliente)
         {
+            //Retornar false si ya existe
             if (contexto.Clientes.Any(existing => existing.numId == cliente.numId))
             {
                 return false;

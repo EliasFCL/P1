@@ -102,7 +102,19 @@
                                     </select>
                                 </td>
                                 <td><input type="text" class="form-control unidad" name="detalles[@i].unidadMedida" value="@detalle.unidadMedida" readonly /></td>
-                                <td><input type="number" min="1" class="form-control" name="detalles[@i].cantidad" value="@detalle.cantidad" /></td>
+                                <td>
+                                    @{
+                                        // Verificamos si la unidad permite decimales
+                                        var unidadActual = (detalle.unidadMedida ?? "").Trim().ToLower();
+                                        var esDecimal = new[] { "kg", "kilogramo", "libra", "lb" }.Contains(unidadActual);
+                                    }
+                                    <input type="number" min="1"
+                                           step="@(esDecimal ? "0.01" : "1")"
+                                           class="form-control"
+                                           name="detalles[@i].cantidad"
+                                           value="@detalle.cantidad"
+                                           oninput="calcularSubtotal(this)" />
+                                </td>
                                 <td><input type="number" step="0.01" class="form-control precio" name="detalles[@i].precioUnitario" value="@detalle.precioUnitario.ToString(System.Globalization.CultureInfo.InvariantCulture)" readonly /></td>
                                 <td><input type="number" step="0.01" class="form-control subtotal" name="detalles[@i].subtotal" value="@detalle.subtotal.ToString(System.Globalization.CultureInfo.InvariantCulture)" readonly /></td>
                                 <td>
@@ -160,7 +172,7 @@
 
         //Celda 3: Cantidad
         var celda3 = fila.insertCell(2);
-        celda3.innerHTML = `<input type="number" min="1" step="any" value="1" class="form-control" name="detalles[${indice}].cantidad" onkeydown="return event.key != 'Enter';" oninput="calcularSubtotal(this)" />`;
+        celda3.innerHTML = `<input type="number" min="1" step="1" value="1" class="form-control" name="detalles[${indice}].cantidad" onkeydown="return event.key != 'Enter';" oninput="calcularSubtotal(this)" />`;
 
         //Celda 4: Precio Unitario
         var celda4 = fila.insertCell(3);

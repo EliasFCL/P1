@@ -28,7 +28,7 @@ namespace AccesoDatos.Repositorios
         public Producto? buscarPorId(Guid id) => contexto.Productos.AsNoTracking().FirstOrDefault(p => p.Id == id);
         public Producto? buscarPorCodigo(string codigo) => contexto.Productos.AsNoTracking().FirstOrDefault(p => p.codigo == codigo);
 
-        Conectar conectar = new Conectar();
+       // Conectar conectar = new Conectar();
         public ProductoRepositorio(ProductoDbContext contexto)
         {
             this.contexto = contexto;
@@ -70,7 +70,7 @@ namespace AccesoDatos.Repositorios
             if (existe != null)
             {
                 contexto.Productos.Remove(existe);
-                contexto.SaveChanges(); // Si está en una factura, esto lanzará DbUpdateException automáticamente
+                contexto.SaveChanges(); // Si está en una factura, se lanza una excepción
                 return true;
             }
             return false;

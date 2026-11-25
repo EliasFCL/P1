@@ -1,17 +1,15 @@
 ﻿//Adaptar anular: https://learn.microsoft.com/es-mx/ef/core/saving
 using AccesoDatos.Contexto;
 using AccesoDatos.Contexto.AccesoDatos.Contexto;
-//using Microsoft.Data.SqlClient;
-//using Microsoft.EntityFrameworkCore;
 using Models;
 
 namespace AccesoDatos.Repositorios
 {
     public class FacturaRepositorio
     {
-        private readonly string conexionString;
+       //private readonly string conexionString;
         private readonly FacturaDbContexto contexto;
-        Conectar conectar = new Conectar();
+       // Conectar conectar = new Conectar();
 
         public FacturaRepositorio(FacturaDbContexto contexto)
         {
@@ -25,10 +23,9 @@ namespace AccesoDatos.Repositorios
                 try
                 {
 
-                    var clientes = contexto.Clientes.ToList();
+                   // var clientes = contexto.Clientes.ToList();
 
-                    var cliente = contexto.Clientes
-                        .FirstOrDefault(c => c.Id == factura.clienteId);
+                    var cliente = contexto.Clientes.FirstOrDefault(c => c.Id == factura.clienteId);
 
                     var empleado = contexto.Empleados .FirstOrDefault(e => e.Id == factura.empleadoId);
 
@@ -61,11 +58,10 @@ namespace AccesoDatos.Repositorios
                     foreach (var detalle in factura.detalles)
                     {
                         //Buscar el producto por su nombre
-                        var producto = contexto.Productos
-                            .FirstOrDefault(p => p.nombre == detalle.producto);
+                        var producto = contexto.Productos.FirstOrDefault(p => p.nombre == detalle.producto);
 
                         if (producto == null)
-                            throw new Exception($"El producto '{detalle.producto}' no existe en la base de datos.");
+                            throw new Exception($"El producto '{detalle.producto}' no existe en la base de datos");
 
                         Guid productoId = producto.Id;
 

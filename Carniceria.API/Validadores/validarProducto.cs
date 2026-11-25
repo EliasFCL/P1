@@ -41,17 +41,17 @@ namespace Carniceria.API.Validadores
             //Validar unidad de medida
             if (string.IsNullOrWhiteSpace(producto.unidadMedida))
             {
-                errores.Add("La unidad de medida del producto es obligatoria.");
+                errores.Add("La unidad de medida del producto es obligatoria");
             }
 
             //Validar precio
             if (producto.precio == null || producto.precio == 0)
             {
-                errores.Add("El precio del producto debe ser mayor que cero.");
+                errores.Add("El precio del producto debe ser mayor que cero");
             }
-            if (!producto.unidadMedida.Equals("Kilogramo") & !producto.unidadMedida.Equals("Libra") && producto.existenciaActual % 1 != 0 && producto.existenciaMinima % 1 != 0)
+            if ((!producto.unidadMedida.Equals("Kilogramo") && !producto.unidadMedida.Equals("Libra")) && (producto.existenciaActual % 1 != 0 || producto.existenciaMinima % 1 != 0))
             {
-                errores.Add("Solo Kilogramo y libra pueden tener decimales en su unidad de medida");
+                errores.Add("Solo Kilogramo y libra pueden tener decimales en sus existencias");
             }
 
             //Validar existencias

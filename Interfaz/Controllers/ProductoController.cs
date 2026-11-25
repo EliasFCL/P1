@@ -27,7 +27,6 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
         private async Task CargarCombosAsync()
         {
             var proveedor = await _proveedorService.ListarAsync();
-
             ViewBag.Proveedores = proveedor.Select(p => p.nombre).ToList();
         }
 
@@ -40,6 +39,7 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
         public async Task<ActionResult> IndexActualizar()
         {
             ViewBag.Actualizado = TempData["Actualizado"];
+            ViewBag.Aviso = TempData["Aviso"];
             var productos = await _productoService.ListarAsync();
             return View(productos);
         }
@@ -104,7 +104,8 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
             ModelState.Clear();
             if (producto.existenciaActual <= producto.existenciaMinima)
             {
-                ViewBag.Aviso = "Producto registrado: Existe un faltante de productos para el pedido correspondiente";
+                ViewBag.MensajeExito = "Producto registrado";
+                ViewBag.Aviso = "Advertencia: Existe un faltante de productos para el pedido correspondiente";
             }else { 
                 ViewBag.MensajeExito = "Producto registrado exitosamente";
             }
@@ -115,8 +116,8 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
         public async Task<ActionResult> Edit(Guid id)
         {
             var producto = await _productoService.BuscarPorIdAsync(id);
-            ViewBag.Proveedores = await _proveedorService.ListarAsync();
             if (producto == null) return NotFound();
+            ViewBag.Proveedores = await _proveedorService.ListarAsync();
             return View(producto);
         }
 
@@ -131,6 +132,10 @@ namespace Proyecto1_EliasCorderoLeon.Controllers
                 foreach (var err in errores) ModelState.AddModelError(string.Empty, err);
                 ViewBag.Proveedores = await _proveedorService.ListarAsync();
                 return View(producto);
+            }
+            if (producto.existenciaActual <= producto.existenciaMinima)
+            {
+                TempData["Aviso"] = "Advertencia: Existe un faltante de productos para el pedido actualizado";;
             }
 
             TempData["Actualizado"] = "Producto con id único " + producto.Id + " actualizado";

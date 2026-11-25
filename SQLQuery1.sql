@@ -10,18 +10,20 @@ DELETE FROM Facturas;
 DELETE FROM Productos;
 DELETE FROM Proveedores;
 DELETE FROM Empleados;
+DELETE FROM Clientes;
+
 DELETE FROM Puestos;
 DELETE FROM AreaTrabajo;
-DELETE FROM Clientes;
 
 DROP TABLE DetallesFactura;
 DROP TABLE Facturas;
 DROP TABLE Productos;
 DROP TABLE Proveedores;
 DROP TABLE Empleados;
+DROP TABLE Clientes;
+
 DROP TABLE Puestos;
 DROP TABLE AreaTrabajo;
-DROP TABLE Clientes;
 
 -- Tabla Clientes
 CREATE TABLE Clientes (
