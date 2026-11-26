@@ -107,9 +107,8 @@ namespace Carniceria.API.Controllers
 
             //No se puede eliminar un proveedor que esté asociado como proveedor principal de uno o más productos
             var moduloProd = new ModuloProducto();
-            bool esProveedorPrincipal = moduloProd.ListarProductos().Any(p => string.Equals(p.proveedorId.ToString(), proveedor.nombre, StringComparison.OrdinalIgnoreCase));
-
-            if (esProveedorPrincipal)
+            bool eliminado = _proveedorRepositorio.Eliminar(id);
+            if (!eliminado)
             {
                 return BadRequest(new { errores = new List<string> { "No se puede eliminar el proveedor porque es proveedor principal de uno o más productos" } });
             }

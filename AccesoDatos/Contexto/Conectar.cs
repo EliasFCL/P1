@@ -6,7 +6,8 @@ namespace AccesoDatos.Contexto
         
         public string CadenaConexion ()
         {
-            string cadena = "Data Source=DESKTOP-5EQR0M8\\SQLEXPRESS07;Initial Catalog=Carniceria;Integrated Security=True;Encrypt=False;TrustServerCertificate=True";
+            string cadena = @"Data Source=.\SQLEXPRESS07;Initial Catalog=Carniceria;Integrated Security=True;Encrypt=False;TrustServerCertificate=True";
+
             return cadena;
         }
     }

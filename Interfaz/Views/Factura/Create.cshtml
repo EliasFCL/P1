@@ -20,7 +20,7 @@ Adaptar calculo en tiempo real: https://stackoverflow.com/revisions/a1d67cac-3b8
 
 <div class="row">
     <div class="col-md-9">
-        <form asp-action="Create">
+        <form asp-action="Create" id="formFactura">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             
             @if (ViewBag.MensajeExito != null)
@@ -119,8 +119,10 @@ Adaptar calculo en tiempo real: https://stackoverflow.com/revisions/a1d67cac-3b8
                                     </select>
                                 </td>
                                 <td><input type="text" class="form-control unidad" name="detalles[@i].unidadMedida" value="@detalle.unidadMedida" readonly /></td>
-                                <td><input type="number" min="1" class="form-control" name="detalles[@i].cantidad" value="@detalle.cantidad" /></td>
+                                <td><input type="number" step="0.01" min="1" class="form-control" name="detalles[@i].cantidad" value="@detalle.cantidad" /></td>
                                 <td><input type="number" step="0.01" class="form-control precio" name="detalles[@i].precioUnitario" value="@detalle.precioUnitario.ToString(System.Globalization.CultureInfo.InvariantCulture)" readonly /></td>
+                                <td><input type="number" step="0.01" class="form-control subtotal" name="detalles[@i].subtotal" value="@detalle.subtotal.ToString(System.Globalization.CultureInfo.InvariantCulture)" readonly /></td>
+                                <td style="display: none;"><input type="hidden" name="detalles[@i]." value="@detalle.cantidad" /></td> <!-- Celda oculta para evitar borrado de celda -->
                                 <td><button type="button" class="btn btn-danger" onclick="this.closest('tr').remove()">X</button></td>
                             </tr>
                         }
@@ -131,6 +133,7 @@ Adaptar calculo en tiempo real: https://stackoverflow.com/revisions/a1d67cac-3b8
 
             <div style="margin-top: 15px;">
                 <input type="submit" value="Registrar factura" class="btn btn-primary" />
+
             </div>
         </form>
     </div>
@@ -158,9 +161,9 @@ Adaptar calculo en tiempo real: https://stackoverflow.com/revisions/a1d67cac-3b8
                         @foreach (var p in productos)
                         {
                                     <option value="@p.nombre"
-                data-unidad="@p.unidadMedida"
-                data-precio="@p.precio.ToString(System.Globalization.CultureInfo.InvariantCulture)">
-                                                @p.nombre
+                                        data-unidad="@p.unidadMedida"
+                                        data-precio="@p.precio.ToString(System.Globalization.CultureInfo.InvariantCulture)">
+                                        @p.nombre
                                     </option>
                         }
                     </select>
