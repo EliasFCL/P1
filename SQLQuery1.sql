@@ -1,29 +1,81 @@
-USE Master;
-DROP DATABASE Carniceria;
+USE master
+GO
 
-CREATE DATABASE Carniceria;
-USE Carniceria;
+-- Para cerrar las conexiones que tenga abiertas la BD y se pueda eliminar
+ALTER DATABASE Carniceria SET SINGLE_USER WITH ROLLBACK IMMEDIATE
+
+DROP DATABASE IF EXISTS Carniceria
+GO
+
+CREATE DATABASE Carniceria
+GO
+
+USE Carniceria
+GO
 
 --Borrar datos y tablas por jerarquía
-DELETE FROM DetallesFactura;
-DELETE FROM Facturas;
-DELETE FROM Productos;
-DELETE FROM Proveedores;
-DELETE FROM Empleados;
-DELETE FROM Clientes;
+IF OBJECT_ID('DetallesFactura', 'U') IS NOT NULL
+BEGIN
+    DELETE FROM DetallesFactura;
 
-DELETE FROM Puestos;
-DELETE FROM AreaTrabajo;
+    DROP TABLE DetallesFactura;
+END
 
-DROP TABLE DetallesFactura;
-DROP TABLE Facturas;
-DROP TABLE Productos;
-DROP TABLE Proveedores;
-DROP TABLE Empleados;
-DROP TABLE Clientes;
+IF OBJECT_ID('Facturas', 'U') IS NOT NULL
+BEGIN
+    DELETE FROM Facturas;
 
-DROP TABLE Puestos;
-DROP TABLE AreaTrabajo;
+    DROP TABLE Facturas;
+END
+GO
+
+IF OBJECT_ID('Productos', 'U') IS NOT NULL
+BEGIN
+    DELETE FROM Productos;
+
+    DROP TABLE Productos;
+END
+GO
+
+IF OBJECT_ID('Proveedores', 'U') IS NOT NULL
+BEGIN
+    DELETE FROM Proveedores;
+
+    DROP TABLE Proveedores;
+END
+GO
+
+IF OBJECT_ID('Empleados', 'U') IS NOT NULL
+BEGIN
+    DELETE FROM Empleados;
+
+    DROP TABLE Empleados;
+END
+GO
+
+IF OBJECT_ID('Clientes', 'U') IS NOT NULL
+BEGIN
+    DELETE FROM Clientes;
+
+    DROP TABLE Clientes;
+END
+GO
+
+IF OBJECT_ID('Puestos', 'U') IS NOT NULL
+BEGIN
+    DELETE FROM Puestos;
+
+    DROP TABLE Puestos;
+END
+GO
+
+IF OBJECT_ID('AreaTrabajo', 'U') IS NOT NULL
+BEGIN
+    DELETE FROM AreaTrabajo;
+
+    DROP TABLE AreaTrabajo;
+END
+GO
 
 --Tabla Clientes
 CREATE TABLE Clientes (
@@ -35,7 +87,6 @@ CREATE TABLE Clientes (
     apellido2 NVARCHAR(100) NOT NULL,
     fechaNacimiento DATETIME NOT NULL
 );
-SELECT * FROM Clientes
 
 --Tabla para las áreas de trabajo
 CREATE TABLE AreaTrabajo (
@@ -68,7 +119,6 @@ CREATE TABLE Empleados (
     cargo NVARCHAR(100) NOT NULL,
     FOREIGN KEY (PuestoId) REFERENCES Puestos(Id)
 );
-SELECT * FROM Empleados
 
 --Tabla proveedores
 CREATE TABLE Proveedores (
@@ -85,7 +135,6 @@ CREATE TABLE Proveedores (
     apellido2 NVARCHAR(100) NULL,
     fechaNacimiento DATETIME NULL
 );
-SELECT * FROM Proveedores
 
 --Tabla productos
 CREATE TABLE Productos (
@@ -100,7 +149,6 @@ CREATE TABLE Productos (
     ProveedorId UNIQUEIDENTIFIER NOT NULL,
     FOREIGN KEY (ProveedorId) REFERENCES Proveedores(Id)
 );
-Select * FROM PRODUCTOS
 
 --Tabla facturas
 CREATE TABLE Facturas (
@@ -119,8 +167,6 @@ CREATE TABLE Facturas (
     FOREIGN KEY (ClienteId) REFERENCES Clientes(Id),
     FOREIGN KEY (EmpleadoId) REFERENCES Empleados(Id)
 );
-
-SELECT * FROM Facturas
 
 --Tabla detalles
 CREATE TABLE DetallesFactura (
